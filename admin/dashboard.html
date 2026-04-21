@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Admin Panel | KopKar MES</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../manifest.json" />
+  <meta name="theme-color" content="#166534" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="../icons/icon-192.png" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="../css/style.css" />
+
+  <!-- Chart.js (admin only) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="dash-page">
+  <div id="sbOverlay" class="sb-overlay"></div>
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sb-head">
+      <div class="sb-logo brand-hex">
+        <svg viewBox="0 0 56 64" fill="none">
+          <path d="M28 2L54 16.5V47.5L28 62L2 47.5V16.5L28 2Z" fill="url(#sbG)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+          <circle cx="28" cy="33" r="9" fill="rgba(255,255,255,0.15)"/>
+          <circle cx="28" cy="33" r="5" fill="white" opacity="0.9"/>
+          <path d="M22 24l6-7 6 7" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <defs>
+            <linearGradient id="sbG" x1="2" y1="2" x2="54" y2="62" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#15803d"/><stop offset="100%" stop-color="#22c55e"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="sb-brand">
+        <span class="sb-name">KopKar MES</span>
+        <span class="sb-sub">Admin Panel</span>
+      </div>
+      <button id="sbClose" class="sb-close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="sb-user-card">
+      <div class="sb-avatar" id="sbAvatar">—</div>
+      <div>
+        <div class="sb-uname" id="sbUname">—</div>
+        <span class="sb-urole" id="sbUrole">Administrator</span>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+      <div class="nav-grp-lbl">Admin Panel</div>
+      <a class="nav-link" data-sec="adm-home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Overview
+      </a>
+      <a class="nav-link" data-sec="adm-barang">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>Kelola Barang
+      </a>
+      <a class="nav-link" data-sec="adm-pengguna">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Kelola Pengguna
+      </a>
+      <a class="nav-link" data-sec="adm-pinjaman">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Approval Pinjaman
+        <span class="nav-badge" id="admPendingBadge">2</span>
+      </a>
+      <a class="nav-link" data-sec="adm-laporan">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Laporan
+      </a>
+    </nav>
+
+    <button id="logoutBtn" class="sb-logout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Keluar
+    </button>
+  </aside>
+
+  <!-- ══ MAIN WRAP ══ -->
+  <div class="main-wrap">
+
+    <header class="topbar">
+      <button id="hamBtn" class="ham-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <span class="tb-title" id="tbTitle">Beranda</span>
+      <div class="tb-right">
+        <div class="tb-notif">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </div>
+        <div class="tb-avatar" id="tbAvatar">—</div>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- ═══ ADM HOME ═══ -->
+      <section class="sec" id="adm-home">
+        <div class="page-hero green-hero">
+          <div class="ph-body">
+            <div class="ph-greet" id="admGreet">Selamat pagi,</div>
+            <div class="ph-name" id="admName">Administrator</div>
+            <div class="ph-sub">Panel Manajemen KopKar MES</div>
+          </div>
+          <div class="ph-illo">⚙️</div>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-ico kpi-ico--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 00-2 2v2h12V5a2 2 0 00-2-2z"/></svg></div>
+            <div class="kpi-val" id="adm-total-pinjam">Rp 0</div>
+            <div class="kpi-lbl">Total Pinjaman Disalurkan</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-ico kpi-ico--orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+            <div class="kpi-val" id="adm-aktif">0</div>
+            <div class="kpi-lbl">Pinjaman Aktif</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-ico kpi-ico--blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+            <div class="kpi-val">7</div>
+            <div class="kpi-lbl">Total Anggota Aktif</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-ico kpi-ico--purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+            <div class="kpi-val" id="adm-pending">0</div>
+            <div class="kpi-lbl">Menunggu Approval</div>
+          </div>
+        </div>
+        <div class="card-box card-box--mb">
+          <h3 class="card-box__title">Tren Omset Bulanan</h3>
+          <canvas id="chartOmset" height="90"></canvas>
+        </div>
+        <div class="card-box">
+          <h3 class="card-box__title">Distribusi Status Pinjaman</h3>
+          <canvas id="chartPinjaman" height="160"></canvas>
+        </div>
+      </section>
+
+      <!-- ═══ ADM BARANG ═══ -->
+      <section class="sec" id="adm-barang" style="display:none">
+        <div class="sec-hd"><div><h2>Kelola Barang</h2><p>Manajemen inventori koperasi</p></div></div>
+        <div class="table-wrap">
+          <table class="dtable">
+            <thead><tr><th>#</th><th>Nama Barang</th><th>Kategori</th><th>Harga</th><th>Stok</th><th>Aksi</th></tr></thead>
+            <tbody id="tbodyBarang"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ═══ ADM PENGGUNA ═══ -->
+      <section class="sec" id="adm-pengguna" style="display:none">
+        <div class="sec-hd"><div><h2>Kelola Pengguna</h2><p>Daftar anggota dan administrator</p></div></div>
+        <div class="table-wrap">
+          <table class="dtable">
+            <thead><tr><th>#</th><th>NIK</th><th>Nama</th><th>Departemen</th><th>Role</th><th>Status</th></tr></thead>
+            <tbody id="tbUsers"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ═══ ADM APPROVAL ═══ -->
+      <section class="sec" id="adm-pinjaman" style="display:none">
+        <div class="sec-hd"><div><h2>Approval Pinjaman</h2><p>Pengajuan yang menunggu persetujuan</p></div></div>
+        <div id="approvalList"></div>
+      </section>
+
+      <!-- ═══ ADM LAPORAN ═══ -->
+      <section class="sec" id="adm-laporan" style="display:none">
+        <div class="sec-hd"><div><h2>Laporan</h2><p>Ekspor data &amp; laporan koperasi</p></div></div>
+        <div class="card-box">
+          <h3 class="card-box__title">Ekspor Laporan</h3>
+          <div class="export-actions">
+            <button class="btn-prim" onclick="exportPDF('admin')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-ico"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Unduh Laporan Koperasi (PDF)
+            </button>
+            <button class="btn-sec" onclick="exportPDF('struk')">Cetak Struk Transaksi</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div><!-- /main-wrap -->
+</div><!-- /dash-page -->
+
+<!-- ══ MODAL EDIT BARANG ══ -->
+<div id="modalBarang" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-hd">
+      <h3>Edit Barang</h3>
+      <button class="modal-x" onclick="closeBarangModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="formBarang">
+        <input type="hidden" id="brgKode" />
+        <div class="field-grp">
+          <label>Nama Barang</label>
+          <div class="field-box"><input type="text" id="brgNama" required /></div>
+        </div>
+        <div class="form-row-2">
+          <div class="field-grp">
+            <label>Kategori</label>
+            <div class="field-box">
+              <select id="brgKat">
+                <option>Sembako</option><option>Minuman</option>
+                <option>Snack</option><option>Kebersihan</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-grp">
+            <label>Harga</label>
+            <div class="field-box"><input type="number" id="brgHarga" min="0" required /></div>
+          </div>
+        </div>
+        <div class="field-grp">
+          <label>Stok</label>
+          <div class="field-box"><input type="number" id="brgStok" min="0" required /></div>
+        </div>
+        <div class="modal-ft">
+          <button type="button" class="btn-sec" onclick="closeBarangModal()">Batal</button>
+          <button type="submit" class="btn-prim">Simpan Perubahan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<!-- ══ SCRIPTS — load order matters ══ -->
+<script src="../js/shared.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

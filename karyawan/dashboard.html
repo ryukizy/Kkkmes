@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Dashboard | KopKar MES</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="../manifest.json" />
+  <meta name="theme-color" content="#065F46" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="../icons/icon-192.png" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="../css/style.css" />
+  <!-- Swiper.js CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+  <style>
+    /* ══════════════════════════════════════════════
+       PREMIUM COLOR UPGRADE — Dark Emerald Palette
+       ══════════════════════════════════════════════ */
+    :root {
+      --hero-grad-start : #065F46;
+      --hero-grad-end   : #047857;
+      --accent-mint     : #10B981;
+      --text-slate      : #1E293B;
+      --text-muted-slate: #64748B;
+      --bg-app          : #F5F7FA;
+      --surface         : #ffffff;
+    }
+
+    /* Override app background */
+    body { background: var(--bg-app); }
+    .content { background: var(--bg-app); }
+
+    /* ── UNIFIED HERO CARD ──────────────────────── */
+    .hero-unified {
+      background: linear-gradient(135deg, var(--hero-grad-start) 0%, var(--hero-grad-end) 100%);
+      border-radius: 0 0 28px 28px;
+      padding: 20px 20px 24px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 0;
+      /* subtle texture overlay */
+      box-shadow: 0 8px 32px rgba(6,95,70,0.28);
+    }
+    .hero-unified::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      pointer-events: none;
+    }
+    .hero-unified::after {
+      content: '';
+      position: absolute;
+      bottom: -30px; left: 40px;
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      pointer-events: none;
+    }
+
+    /* Greeting row */
+    .hu-greet-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .hu-greet-text { line-height: 1.3; }
+    .hu-greet      { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.7); letter-spacing: .4px; }
+    .hu-name       { font-size: 15px; font-weight: 700; color: #fff; }
+    .hu-badge      {
+      font-size: 10px; font-weight: 600; color: var(--accent-mint);
+      background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3);
+      padding: 3px 10px; border-radius: 20px; letter-spacing: .3px;
+    }
+
+    /* Saldo label */
+    .hu-saldo-label {
+      font-size: 10px; font-weight: 600; letter-spacing: 1.2px;
+      color: rgba(255,255,255,0.6); text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    /* Main amount — biggest element */
+    .hu-saldo-amount {
+      font-size: 34px; font-weight: 800;
+      color: #fff; letter-spacing: -0.5px; line-height: 1.1;
+      margin-bottom: 20px;
+    }
+
+    /* Limit pinjaman bar — at bottom of card */
+    .hu-limit {
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+    .hu-limit-row {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 7px;
+    }
+    .hu-limit-lbl  { font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.65); }
+    .hu-limit-val  { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.92); }
+    .hu-limit-bar  { height: 5px; background: rgba(255,255,255,0.18); border-radius: 99px; overflow: hidden; }
+    .hu-limit-fill { height: 100%; background: var(--accent-mint); border-radius: 99px; transition: width .5s ease; }
+
+    /* ── SIMPANAN CAROUSEL ──────────────────────── */
+    .simp-carousel-wrap {
+      overflow: hidden; padding: 16px 0 4px;
+      position: relative;
+    }
+    .simp-carousel-track {
+      display: flex; gap: 10px;
+      padding: 0 16px;
+      animation: simp-scroll 18s linear infinite;
+      width: max-content;
+    }
+    .simp-carousel-wrap:hover .simp-carousel-track { animation-play-state: paused; }
+
+    @keyframes simp-scroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .simp-carousel-card {
+      background: var(--surface);
+      border-radius: 14px;
+      padding: 14px 16px;
+      min-width: 140px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      display: flex; align-items: center; gap: 10px;
+      flex-shrink: 0;
+    }
+    .simp-carousel-card--accent { background: #f0fdf4; }
+    .scc-ico {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .scc-ico svg { width: 18px; height: 18px; }
+    .scc-ico--green  { background: #dcfce7; color: #15803d; }
+    .scc-ico--blue   { background: #dbeafe; color: #2563eb; }
+    .scc-ico--teal   { background: #ccfbf1; color: #0d9488; }
+    .scc-ico--amber  { background: #fef3c7; color: #d97706; }
+    .scc-label       { font-size: 10px; font-weight: 500; color: var(--text-muted-slate); margin-bottom: 2px; }
+    .scc-amount      { font-size: 13px; font-weight: 700; color: var(--text-slate); }
+    .scc-amount--accent { color: #16a34a; }
+
+    /* ── NEWS BANNER — Swiper.js carousel ──────────── */
+    .news-section      { padding: 0; margin-top: 20px; }
+    .news-section-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 16px; }
+    .news-section-head h3 { font-size: 14px; font-weight: 700; color: var(--text-slate); }
+    .news-see-all { font-size: 12px; font-weight: 600; color: var(--accent-mint); background: none; border: none; cursor: pointer; padding: 0; }
+
+    /* Swiper overrides */
+    .news-swiper { padding: 0 16px 24px !important; overflow: visible !important; }
+    .news-swiper .swiper-wrapper { align-items: stretch; }
+    .news-swiper .swiper-slide  { width: 284px !important; height: auto; }
+
+    /* Dots pagination */
+    .news-swiper .swiper-pagination { bottom: 4px !important; }
+    .news-swiper .swiper-pagination-bullet { background: #cbd5e1; opacity: 1; width: 6px; height: 6px; }
+    .news-swiper .swiper-pagination-bullet-active { background: var(--accent-mint); width: 18px; border-radius: 3px; transition: width .3s; }
+
+    .news-banner {
+      min-width: 280px; max-width: 300px;
+      border-radius: 16px; overflow: hidden;
+      flex-shrink: 0; scroll-snap-align: start;
+      cursor: pointer; position: relative;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .news-banner:hover  { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.14); }
+    .news-banner:active { transform: scale(.98); }
+
+    .nb-img {
+      width: 100%; height: 120px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px;
+      position: relative;
+    }
+    .nb-img--emerald { background: linear-gradient(135deg, #065F46, #047857); }
+    .nb-img--blue    { background: linear-gradient(135deg, #1e3a8a, #2563eb); }
+    .nb-img--amber   { background: linear-gradient(135deg, #92400e, #d97706); }
+    .nb-img--teal    { background: linear-gradient(135deg, #134e4a, #0d9488); }
+
+    .nb-tag {
+      position: absolute; top: 10px; left: 10px;
+      font-size: 9px; font-weight: 700; letter-spacing: .6px;
+      text-transform: uppercase; color: #fff;
+      background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
+      padding: 3px 8px; border-radius: 20px;
+      backdrop-filter: blur(6px);
+    }
+
+    .nb-body { background: var(--surface); padding: 12px 14px; }
+    .nb-title { font-size: 13px; font-weight: 700; color: var(--text-slate); margin-bottom: 3px; line-height: 1.3; }
+    .nb-desc  { font-size: 11px; color: var(--text-muted-slate); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .nb-date  { font-size: 10px; color: #94a3b8; margin-top: 6px; }
+
+    /* ── NEWS DETAIL MODAL ───────────────────────── */
+    .news-modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 9000;
+      background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
+      align-items: flex-end; justify-content: center;
+    }
+    .news-modal-overlay.show { display: flex; animation: modal-in .25s ease; }
+    @keyframes modal-in { from { opacity: 0; } to { opacity: 1; } }
+    .news-modal-box {
+      background: var(--surface); border-radius: 24px 24px 0 0;
+      width: 100%; max-width: 480px; max-height: 85vh;
+      overflow-y: auto; padding: 0 0 40px;
+      animation: sheet-up .3s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes sheet-up { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .nm-hero {
+      height: 180px; display: flex; align-items: center;
+      justify-content: center; font-size: 52px;
+      position: relative; border-radius: 24px 24px 0 0; overflow: hidden;
+    }
+    .nm-close {
+      position: absolute; top: 14px; right: 14px;
+      background: rgba(0,0,0,0.3); border: none; border-radius: 50%;
+      width: 32px; height: 32px; color: #fff; cursor: pointer;
+      font-size: 16px; display: flex; align-items: center; justify-content: center;
+    }
+    .nm-body { padding: 20px 20px 0; }
+    .nm-tag  { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; }
+    .nm-tag--emerald { background: #dcfce7; color: #065F46; }
+    .nm-tag--blue    { background: #dbeafe; color: #1e40af; }
+    .nm-tag--amber   { background: #fef3c7; color: #92400e; }
+    .nm-tag--teal    { background: #ccfbf1; color: #134e4a; }
+    .nm-title  { font-size: 18px; font-weight: 800; color: var(--text-slate); line-height: 1.3; margin-bottom: 6px; }
+    .nm-date   { font-size: 11px; color: #94a3b8; margin-bottom: 14px; }
+    .nm-content{ font-size: 14px; color: #475569; line-height: 1.7; }
+
+    /* ── UPGRADE: Premium card shadows & text ────── */
+    .card-section .cs-head h3 { color: var(--text-slate); font-size: 15px; }
+    .widget-card { box-shadow: 0 2px 16px rgba(0,0,0,0.07); }
+    .card-box    { box-shadow: 0 2px 16px rgba(0,0,0,0.07); }
+
+    /* Accent mint for active button states */
+    .btn-prim {
+      background: linear-gradient(135deg, var(--hero-grad-start), var(--hero-grad-end));
+    }
+    .btn-prim:hover { opacity: .9; }
+
+    /* Bottom nav active state uses accent mint */
+    .bn-item.active svg { stroke: var(--accent-mint); }
+    .bn-item.active { color: var(--accent-mint); }
+
+    /* ── TOPBAR: FULLY REMOVED ── */
+    .topbar { display: none !important; }
+
+    /* Hero card bleeds flush to top — respects notch/safe-area */
+    .content { padding-top: 0 !important; }
+    #kar-home { padding-top: 0; }
+    .hero-unified {
+      padding-top: calc(env(safe-area-inset-top, 14px) + 20px);
+    }
+
+    /* ── NOTIF BELL inside hero card ── */
+    .hu-notif-btn {
+      position: relative;
+      width: 38px; height: 38px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; flex-shrink: 0;
+      transition: background .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .hu-notif-btn:active { background: rgba(255,255,255,0.22); transform: scale(.94); }
+    .hu-notif-btn svg { width: 18px; height: 18px; stroke: rgba(255,255,255,0.9); fill: none; }
+    .hu-notif-dot {
+      position: absolute; top: 7px; right: 7px;
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent-mint);
+      border: 1.5px solid var(--hero-grad-start);
+      animation: notif-pulse 2.4s ease-in-out infinite;
+    }
+    @keyframes notif-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,.5); }
+      50%       { box-shadow: 0 0 0 4px rgba(16,185,129,0); }
+    }
+
+    /* Other sections: top spacing since topbar is gone */
+    .sec:not(#kar-home) { padding-top: calc(env(safe-area-inset-top, 0px) + 12px); }
+
+    /* Status pinjaman spacing */
+    .card-section { padding: 0 16px; margin-top: 20px; }
+    .card-section:last-child { margin-bottom: 24px; }
+  </style>
+</head>
+<body>
+
+<div class="dash-page">
+  <div id="sbOverlay" class="sb-overlay"></div>
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sb-head">
+      <div class="sb-logo brand-hex">
+        <svg viewBox="0 0 56 64" fill="none">
+          <path d="M28 2L54 16.5V47.5L28 62L2 47.5V16.5L28 2Z" fill="url(#sbGK)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+          <circle cx="28" cy="33" r="9" fill="rgba(255,255,255,0.15)"/>
+          <circle cx="28" cy="33" r="5" fill="white" opacity="0.9"/>
+          <path d="M22 24l6-7 6 7" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <defs>
+            <linearGradient id="sbGK" x1="2" y1="2" x2="54" y2="62" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#065F46"/><stop offset="100%" stop-color="#047857"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="sb-brand">
+        <span class="sb-name">KopKar MES</span>
+        <span class="sb-sub">Koperasi Karyawan</span>
+      </div>
+      <button id="sbClose" class="sb-close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="sb-user-card">
+      <div class="sb-avatar" id="sbAvatar">—</div>
+      <div>
+        <div class="sb-uname" id="sbUname">—</div>
+        <span class="sb-urole" id="sbUrole">Karyawan</span>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+      <div class="nav-grp-lbl">Menu Utama</div>
+      <a class="nav-link" data-sec="kar-home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Beranda
+      </a>
+      <a class="nav-link" data-sec="kar-simpanan">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 00-2 2v2h12V5a2 2 0 00-2-2z"/></svg>Saldo Simpanan
+      </a>
+      <a class="nav-link" data-sec="kar-pinjaman">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Pinjaman
+      </a>
+      <div class="nav-grp-lbl">Belanja</div>
+      <a class="nav-link" data-sec="kar-katalog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        Katalog Belanja
+        <span class="nav-badge cart-cnt" id="cartCnt">0</span>
+      </a>
+      <a class="nav-link" data-sec="kar-keranjang">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.95-1.56L23 6H6"/></svg>Keranjang
+      </a>
+      <a class="nav-link" data-sec="kar-riwayat">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>Riwayat
+      </a>
+      <div class="nav-grp-lbl">Akun</div>
+      <a class="nav-link" data-sec="kar-profil">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profil &amp; Akun
+      </a>
+    </nav>
+
+    <button id="logoutBtn" class="sb-logout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Keluar
+    </button>
+  </aside>
+
+  <!-- ══ MAIN WRAP ══ -->
+  <div class="main-wrap">
+
+    <!-- TOPBAR REMOVED — notif bell moved into hero card -->
+
+    <main class="content">
+
+      <!-- ═══════════════════════════════════════
+           KAR HOME  — Redesigned
+           ═══════════════════════════════════════ -->
+      <section class="sec" id="kar-home">
+
+        <!-- ① UNIFIED HERO CARD — Dark Emerald, no topbar, full-bleed -->
+        <div class="hero-unified">
+          <div class="hu-greet-row">
+            <div class="hu-greet-text">
+              <div class="hu-greet" id="karGreet">Selamat pagi,</div>
+              <div class="hu-name"  id="karName">—</div>
+            </div>
+            <!-- Notif bell relocated here from topbar -->
+            <div style="display:flex;align-items:center;gap:10px">
+              <button class="hu-notif-btn" onclick="showToast('🔔 Tidak ada notifikasi baru', 'toast-info')" aria-label="Notifikasi">
+                <svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                <span class="hu-notif-dot"></span>
+              </button>
+              <div class="hu-badge">✓ Aktif</div>
+            </div>
+          </div>
+
+          <div class="hu-saldo-label">TOTAL SALDO SIMPANAN</div>
+          <div class="hu-saldo-amount" id="totalSaldo">—</div>
+
+          <!-- Limit Pinjaman bar — anchored to bottom of card -->
+          <div class="hu-limit">
+            <div class="hu-limit-row">
+              <span class="hu-limit-lbl">Limit Pinjaman Tersedia</span>
+              <span class="hu-limit-val" id="shcLimitVal">—</span>
+            </div>
+            <div class="hu-limit-bar">
+              <div class="hu-limit-fill" id="shcLimitFill" style="width:0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ② SIMPANAN CAROUSEL (auto-scroll, swipeable) -->
+        <div class="simp-carousel-wrap" id="simpCarouselWrap">
+          <div class="simp-carousel-track" id="simpCarouselTrack">
+            <!-- 4 real cards -->
+            <div class="simp-carousel-card">
+              <div class="scc-ico scc-ico--green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2L3 7v6c0 5.25 3.75 10.15 9 11.35C17.25 23.15 21 18.25 21 13V7l-9-5z"/></svg>
+              </div>
+              <div class="scc-body">
+                <div class="scc-label">Pokok</div>
+                <div class="scc-amount" id="simpPok">—</div>
+              </div>
+            </div>
+            <div class="simp-carousel-card">
+              <div class="scc-ico scc-ico--blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+              </div>
+              <div class="scc-body">
+                <div class="scc-label">Wajib</div>
+                <div class="scc-amount" id="simpWaj">—</div>
+              </div>
+            </div>
+            <div class="simp-carousel-card">
+              <div class="scc-ico scc-ico--teal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/><circle cx="12" cy="12" r="9"/></svg>
+              </div>
+              <div class="scc-body">
+                <div class="scc-label">Sukarela</div>
+                <div class="scc-amount" id="simpSuk">—</div>
+              </div>
+            </div>
+            <div class="simp-carousel-card simp-carousel-card--accent">
+              <div class="scc-ico scc-ico--amber">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              </div>
+              <div class="scc-body">
+                <div class="scc-label">Est. SHU</div>
+                <div class="scc-amount scc-amount--accent" id="simpSHU">—</div>
+              </div>
+            </div>
+            <!-- 4 clone cards for seamless loop -->
+            <div class="simp-carousel-card" aria-hidden="true">
+              <div class="scc-ico scc-ico--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2L3 7v6c0 5.25 3.75 10.15 9 11.35C17.25 23.15 21 18.25 21 13V7l-9-5z"/></svg></div>
+              <div class="scc-body"><div class="scc-label">Pokok</div><div class="scc-amount" id="simpPokClone">—</div></div>
+            </div>
+            <div class="simp-carousel-card" aria-hidden="true">
+              <div class="scc-ico scc-ico--blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg></div>
+              <div class="scc-body"><div class="scc-label">Wajib</div><div class="scc-amount" id="simpWajClone">—</div></div>
+            </div>
+            <div class="simp-carousel-card" aria-hidden="true">
+              <div class="scc-ico scc-ico--teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/><circle cx="12" cy="12" r="9"/></svg></div>
+              <div class="scc-body"><div class="scc-label">Sukarela</div><div class="scc-amount" id="simpSukClone">—</div></div>
+            </div>
+            <div class="simp-carousel-card simp-carousel-card--accent" aria-hidden="true">
+              <div class="scc-ico scc-ico--amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+              <div class="scc-body"><div class="scc-label">Est. SHU</div><div class="scc-amount scc-amount--accent" id="simpSHUClone">—</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ③ KABAR KOPERASI — Swiper.js Infinite Autoplay Carousel -->
+        <div class="news-section">
+          <div class="news-section-head">
+            <h3>📢 Kabar Koperasi</h3>
+            <button class="news-see-all" onclick="openNewsModal(null, true)">Lihat semua →</button>
+          </div>
+          <!-- Swiper container -->
+          <div class="swiper news-swiper" id="newsSwiperEl">
+            <div class="swiper-wrapper" id="newsSwiperWrapper">
+              <!-- slides injected by JS -->
+            </div>
+            <div class="swiper-pagination"></div>
+          </div>
+        </div>
+
+        <!-- Status Pinjaman -->
+        <div class="card-section">
+          <div class="cs-head">
+            <h3>Status Pinjaman</h3>
+            <button class="cs-link" onclick="_showSec('kar-pinjaman')">Kelola →</button>
+          </div>
+          <div class="widget-card">
+            <div class="wc-label">Sisa Pinjaman Aktif</div>
+            <div class="wc-amount" id="widPinjamanVal">—</div>
+            <div class="wc-sub" id="widPinjamanKet">—</div>
+            <div class="wc-prog-wrap">
+              <div class="pprog-label">
+                <span id="wPinjamanProgLbl">—</span><span id="wPinjamanProgPct">—</span>
+              </div>
+              <div class="pprog-bar"><div class="pprog-fill" id="wPinjamanProgFill"></div></div>
+            </div>
+            <button class="btn-prim btn-full btn-mt" onclick="_showSec('kar-pinjaman')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-ico"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+              Kelola Pinjaman
+            </button>
+          </div>
+        </div>
+
+        <!-- Riwayat Belanja -->
+        <div class="card-section">
+          <div class="cs-head">
+            <h3>Riwayat Belanja</h3>
+            <button class="cs-link" onclick="_showSec('kar-riwayat')">Lihat semua →</button>
+          </div>
+          <div class="widget-card widget-card--flush" id="karTxList">
+            <div class="tx-empty">Memuat data...</div>
+          </div>
+        </div>
+
+      </section><!-- /kar-home -->
+
+      <!-- ═══ KAR SIMPANAN ═══ -->
+      <section class="sec" id="kar-simpanan" style="display:none">
+        <div class="sec-hd"><div><h2>Saldo Simpanan</h2><p>Rincian simpanan Anda di KopKar MES</p></div></div>
+        <div class="saldo-cards">
+          <div class="saldo-card">
+            <div class="sc-icon-wrap sc-icon-wrap--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="sc-svg"><path d="M12 2L3 7v6c0 5.25 3.75 10.15 9 11.35C17.25 23.15 21 18.25 21 13V7l-9-5z"/></svg></div>
+            <div class="sc-info"><div class="sc-name">Simpanan Pokok</div><div class="sc-desc">Setoran awal keanggotaan</div></div>
+            <div class="sc-amount green-text" id="detPok">—</div>
+          </div>
+          <div class="saldo-card">
+            <div class="sc-icon-wrap sc-icon-wrap--blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="sc-svg"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg></div>
+            <div class="sc-info"><div class="sc-name">Simpanan Wajib</div><div class="sc-desc">Potongan gaji bulanan</div></div>
+            <div class="sc-amount" id="detWaj">—</div>
+          </div>
+          <div class="saldo-card">
+            <div class="sc-icon-wrap sc-icon-wrap--teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="sc-svg"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/><circle cx="12" cy="12" r="9"/></svg></div>
+            <div class="sc-info"><div class="sc-name">Simpanan Sukarela</div><div class="sc-desc">Setoran tambahan anggota</div></div>
+            <div class="sc-amount" id="detSuk">—</div>
+          </div>
+          <div class="saldo-card saldo-card--accent">
+            <div class="sc-icon-wrap sc-icon-wrap--amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="sc-svg"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+            <div class="sc-info"><div class="sc-name">Estimasi SHU</div><div class="sc-desc">12% dari total simpanan</div></div>
+            <div class="sc-amount green-text" id="detSHU">—</div>
+          </div>
+        </div>
+        <div class="card-box card-box--mb">
+          <div class="sp-row highlight"><span>Total Simpanan</span><strong id="detTot" class="green-text">—</strong></div>
+        </div>
+        <div class="card-section">
+          <div class="cs-head"><h3>Mutasi Simpanan</h3></div>
+          <div class="table-wrap">
+            <table class="dtable">
+              <thead><tr><th>#</th><th>Tanggal</th><th>Keterangan</th><th>Jenis</th><th>Nominal</th></tr></thead>
+              <tbody id="tbMutasi"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ KAR PINJAMAN ═══ -->
+      <section class="sec" id="kar-pinjaman" style="display:none">
+        <div class="sec-hd"><div><h2>Pinjaman</h2><p>Pengajuan &amp; status pinjaman Anda</p></div></div>
+        <div class="pinjaman-tabs">
+          <button class="ptab active" onclick="setKarPinTab(this,'kpt-status')">Status Pinjaman</button>
+          <button class="ptab" onclick="setKarPinTab(this,'kpt-ajukan')">Ajukan Pinjaman</button>
+        </div>
+        <div id="kpt-status"><div id="myPinjamanCont"></div></div>
+        <div id="kpt-ajukan" hidden>
+          <div class="card-box">
+            <h3 class="card-box__title">Formulir Pengajuan</h3>
+            <form id="loanForm">
+              <div class="field-grp">
+                <label>Nominal Pinjaman</label>
+                <div class="field-box"><span class="fi-text">Rp</span><input type="number" id="loanNominal" placeholder="Contoh: 5000000" min="500000" max="15000000" step="500000" oninput="updateSimulasi()" required /></div>
+                <div class="field-hint">Maksimum Rp 15.000.000 (2× total simpanan)</div>
+              </div>
+              <div class="field-grp">
+                <label>Tujuan Pinjaman</label>
+                <div class="field-box"><input type="text" id="loanTujuan" placeholder="Contoh: Renovasi Rumah" required /></div>
+              </div>
+              <div class="field-grp">
+                <label>Tenor (bulan)</label>
+                <div class="tenor-options">
+                  <button type="button" class="tenor-btn" onclick="setTenor(this,3)">3 bln</button>
+                  <button type="button" class="tenor-btn active" onclick="setTenor(this,6)">6 bln</button>
+                  <button type="button" class="tenor-btn" onclick="setTenor(this,12)">12 bln</button>
+                  <button type="button" class="tenor-btn" onclick="setTenor(this,18)">18 bln</button>
+                  <button type="button" class="tenor-btn" onclick="setTenor(this,24)">24 bln</button>
+                </div>
+              </div>
+              <div class="sim-result">
+                <div class="sr-main"><div class="sr-label">Estimasi Cicilan / Bulan</div><div class="sr-val" id="simCicilan">Rp 0</div></div>
+                <div class="sr-grid">
+                  <div class="sr-item"><p>Nominal</p><strong id="simNominal">Rp 0</strong></div>
+                  <div class="sr-item"><p>Tenor</p><strong id="simTenor">6 bulan</strong></div>
+                  <div class="sr-item sr-item--full"><p>Total Bayar</p><strong id="simTotal">Rp 0</strong></div>
+                </div>
+                <div class="sr-amort-toggle"><button type="button" class="btn-amort" onclick="toggleAmort()">Lihat Jadwal Angsuran ↓</button></div>
+                <div id="amortTable" hidden class="sr-amort-body"></div>
+              </div>
+              <button type="submit" class="btn-prim btn-full btn-mt">Ajukan Pinjaman</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ KAR KATALOG ═══ -->
+      <section class="sec" id="kar-katalog" style="display:none">
+        <div class="sec-hd"><div><h2>Belanja Koperasi</h2><p>Produk tersedia dengan harga spesial anggota</p></div></div>
+        <div class="act-bar">
+          <div class="searchbox">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Cari produk..." oninput="filterKatalog(this.value)" />
+          </div>
+          <div class="filter-tabs">
+            <button class="ftab active" onclick="setFtab(this,'semua')">Semua</button>
+            <button class="ftab" onclick="setFtab(this,'Sembako')">Sembako</button>
+            <button class="ftab" onclick="setFtab(this,'Minuman')">Minuman</button>
+            <button class="ftab" onclick="setFtab(this,'Snack')">Snack</button>
+            <button class="ftab" onclick="setFtab(this,'Kebersihan')">Kebersihan</button>
+          </div>
+        </div>
+        <div class="prod-grid" id="prodGrid"></div>
+      </section>
+
+      <!-- Cart FAB -->
+      <div id="cartFab" class="cart-fab" hidden onclick="_showSec('kar-keranjang')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="cart-fab__ico"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.95-1.56L23 6H6"/></svg>
+        <span id="cartFabTxt">0 item</span>
+        <span class="cart-fab__sep">·</span>
+        <span id="cartFabAmt">Rp 0</span>
+      </div>
+
+      <!-- ═══ KAR KERANJANG ═══ -->
+      <section class="sec" id="kar-keranjang" style="display:none">
+        <div class="sec-hd"><div><h2>Keranjang Belanja</h2><p>Review pesanan sebelum checkout</p></div></div>
+        <div class="cart-layout">
+          <div id="cartItemsCol">
+            <div id="emptyCart" class="empty-state">
+              <div class="es-ico">🛒</div>
+              <p>Keranjang masih kosong</p>
+              <button class="btn-prim" onclick="_showSec('kar-katalog')">Mulai Belanja</button>
+            </div>
+          </div>
+          <div id="cartSumCol" class="card-box" hidden>
+            <h3 class="card-box__title">Ringkasan Pesanan</h3>
+            <div class="sum-row"><span>Subtotal</span><span id="cSubtotal">Rp 0</span></div>
+            <div class="sum-row sum-row--discount"><span>Diskon 5% anggota</span><span id="cDiscount">- Rp 0</span></div>
+            <div class="sum-divider"></div>
+            <div class="sum-row sum-row--bold"><span>Total</span><span id="cTotal">Rp 0</span></div>
+            <button class="btn-prim btn-full btn-mt" onclick="checkout()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" class="btn-ico"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+              Checkout Sekarang
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ KAR RIWAYAT ═══ -->
+      <section class="sec" id="kar-riwayat" style="display:none">
+        <div class="sec-hd"><div><h2>Riwayat Transaksi</h2><p>Histori belanja &amp; cicilan pinjaman</p></div></div>
+        <div class="riwayat-tabs">
+          <button class="rtab active" onclick="setRtab(this,'rt-belanja')">Riwayat Belanja</button>
+          <button class="rtab" onclick="setRtab(this,'rt-cicilan')">Cicilan Pinjaman</button>
+        </div>
+        <div id="rt-belanja">
+          <div class="table-wrap">
+            <table class="dtable">
+              <thead><tr><th>#</th><th>Tanggal</th><th>Produk</th><th>Total</th><th>Status</th></tr></thead>
+              <tbody id="tbRwBelanja"></tbody>
+            </table>
+          </div>
+        </div>
+        <div id="rt-cicilan" hidden>
+          <div class="table-wrap">
+            <table class="dtable">
+              <thead><tr><th>#</th><th>Tanggal</th><th>Keterangan</th><th>Nominal</th><th>Status</th></tr></thead>
+              <tbody id="tbRwCicilan"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ KAR PROFIL ═══ -->
+      <section class="sec" id="kar-profil" style="display:none">
+        <div class="profil-hero">
+          <div class="profil-avatar" id="profilAvatar">—</div>
+          <div class="profil-hero-info">
+            <div class="profil-name" id="profilName">—</div>
+            <div class="profil-role">Karyawan · <span id="profilDept">—</span></div>
+            <div class="profil-nik">NIK: <span id="profilNIK">—</span></div>
+          </div>
+        </div>
+        <div id="pwaInstallRow" class="profil-menu-group" hidden>
+          <div class="profil-group-label">Aplikasi</div>
+          <button class="profil-menu-item profil-menu-item--install" onclick="triggerPWAInstall()">
+            <div class="pmi-left"><div class="pmi-ico pmi-ico--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div><div class="pmi-text"><div class="pmi-title">Install Aplikasi</div><div class="pmi-desc">Tambahkan ke layar utama HP Anda</div></div></div>
+            <div class="pmi-badge-install">Pasang</div>
+          </button>
+        </div>
+        <div class="profil-menu-group">
+          <div class="profil-group-label">Simpanan &amp; Keuangan</div>
+          <button class="profil-menu-item" onclick="_showSec('kar-simpanan')">
+            <div class="pmi-left"><div class="pmi-ico pmi-ico--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 00-2 2v2h12V5a2 2 0 00-2-2z"/></svg></div><div class="pmi-text"><div class="pmi-title">Saldo Simpanan</div><div class="pmi-desc">Lihat rincian &amp; mutasi simpanan</div></div></div>
+            <svg class="pmi-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <button class="profil-menu-item" onclick="_showSec('kar-pinjaman')">
+            <div class="pmi-left"><div class="pmi-ico pmi-ico--blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div><div class="pmi-text"><div class="pmi-title">Pinjaman Saya</div><div class="pmi-desc">Status &amp; pengajuan pinjaman</div></div></div>
+            <svg class="pmi-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <button class="profil-menu-item" onclick="_showSec('kar-riwayat')">
+            <div class="pmi-left"><div class="pmi-ico pmi-ico--teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg></div><div class="pmi-text"><div class="pmi-title">Riwayat Transaksi</div><div class="pmi-desc">Histori belanja &amp; cicilan</div></div></div>
+            <svg class="pmi-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+        <div class="profil-menu-group">
+          <div class="profil-group-label">Informasi</div>
+          <button class="profil-menu-item" onclick="_showSec('kar-tentang')">
+            <div class="pmi-left"><div class="pmi-ico pmi-ico--slate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div class="pmi-text"><div class="pmi-title">Tentang Koperasi</div><div class="pmi-desc">Profil &amp; informasi KopKar MES</div></div></div>
+            <svg class="pmi-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+        <div class="profil-menu-group">
+          <div class="profil-group-label">Akun</div>
+          <button class="profil-menu-item profil-menu-item--danger" id="profilLogoutBtn">
+            <div class="pmi-left"><div class="pmi-ico pmi-ico--red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div><div class="pmi-text"><div class="pmi-title">Keluar</div><div class="pmi-desc">Logout dari akun ini</div></div></div>
+          </button>
+        </div>
+        <div class="profil-version">
+          <div class="pv-logo"><svg viewBox="0 0 24 24" fill="none" width="20" height="20"><path d="M12 1L3 5v7c0 5.25 3.75 9.5 9 11 5.25-1.5 9-5.75 9-11V5l-9-4z" fill="rgba(6,95,70,0.12)" stroke="#065F46" stroke-width="1.5"/><circle cx="12" cy="12" r="3.5" fill="#065F46"/></svg></div>
+          <div class="pv-app">KopKar MES</div>
+          <div class="pv-ver">Versi 3.1.0 · PT. Mandiri Eka Semesta</div>
+        </div>
+      </section>
+
+      <!-- ═══ KAR TENTANG ═══ -->
+      <section class="sec" id="kar-tentang" style="display:none">
+        <div class="sec-hd"><div><h2>Tentang Koperasi</h2><p>Profil &amp; informasi KopKar MES</p></div></div>
+        <div class="tentang-brand">
+          <div class="tb-hex">
+            <svg viewBox="0 0 56 64" fill="none" width="56" height="64">
+              <path d="M28 2L54 16.5V47.5L28 62L2 47.5V16.5L28 2Z" fill="url(#tbGK2)" stroke="rgba(6,95,70,0.3)" stroke-width="1.5"/>
+              <circle cx="28" cy="33" r="9" fill="rgba(6,95,70,0.12)"/>
+              <circle cx="28" cy="33" r="5" fill="#065F46"/>
+              <path d="M22 24l6-7 6 7" stroke="rgba(6,95,70,0.6)" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <defs><linearGradient id="tbGK2" x1="2" y1="2" x2="54" y2="62" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#dcfce7"/><stop offset="100%" stop-color="#bbf7d0"/></linearGradient></defs>
+            </svg>
+          </div>
+          <div class="tb-name">KopKar MES</div>
+          <div class="tb-fullname">Koperasi Konsumen Karyawan<br>PT. Mandiri Eka Semesta</div>
+        </div>
+        <div class="tentang-stats">
+          <div class="ts-item"><div class="ts-val">128</div><div class="ts-lbl">Anggota Aktif</div></div>
+          <div class="ts-divider"></div>
+          <div class="ts-item"><div class="ts-val">Rp 4,2M</div><div class="ts-lbl">Dana Tersalur</div></div>
+          <div class="ts-divider"></div>
+          <div class="ts-item"><div class="ts-val">12 Th</div><div class="ts-lbl">Berdiri</div></div>
+        </div>
+        <div class="tentang-section">
+          <div class="tentang-section-title">Tentang Kami</div>
+          <div class="card-box"><p class="tentang-p">Koperasi Konsumen Karyawan PT. Mandiri Eka Semesta (KopKar MES) adalah koperasi primer yang didirikan oleh dan untuk seluruh karyawan PT. Mandiri Eka Semesta. Berdiri sejak tahun 2012, koperasi ini berkomitmen untuk meningkatkan kesejahteraan anggota melalui layanan simpanan, pinjaman berbunga rendah, dan fasilitas belanja kebutuhan sehari-hari.</p></div>
+        </div>
+        <div class="tentang-section">
+          <div class="tentang-section-title">Legalitas</div>
+          <div class="card-box">
+            <div class="tentang-info-row"><span class="tir-label">Badan Hukum</span><span class="tir-val">No. 123/BH/KWK/2012</span></div>
+            <div class="tentang-info-row"><span class="tir-label">NPWP Koperasi</span><span class="tir-val">12.345.678.9-012.000</span></div>
+            <div class="tentang-info-row"><span class="tir-label">Alamat</span><span class="tir-val">Jl. Industri Raya No. 1, Kawasan Industri MES</span></div>
+            <div class="tentang-info-row"><span class="tir-label">Email</span><span class="tir-val">koperasi@mandirieka.co.id</span></div>
+          </div>
+        </div>
+        <div class="tentang-footer"><div>Dibuat dengan ❤️ untuk kesejahteraan anggota</div><div class="tentang-footer-ver">KopKar MES v3.1 · © 2025</div></div>
+      </section>
+
+    </main>
+
+    <!-- ══ BOTTOM NAV ══ -->
+    <nav class="bottom-nav" id="navKaryawanBottom" hidden>
+      <button class="bn-item active" data-sec="kar-home" onclick="_showSec('kar-home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Beranda
+      </button>
+      <button class="bn-item" data-sec="kar-simpanan" onclick="_showSec('kar-simpanan')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8a2 2 0 00-2 2v2h12V5a2 2 0 00-2-2z"/></svg>
+        Simpanan
+      </button>
+      <button class="bn-item" data-sec="kar-pinjaman" onclick="_showSec('kar-pinjaman')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        Pinjaman
+      </button>
+      <button class="bn-item" data-sec="kar-katalog" onclick="_showSec('kar-katalog')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        Belanja
+        <span class="bn-badge" id="bnCartBadge" hidden>0</span>
+      </button>
+      <button class="bn-item" data-sec="kar-profil" onclick="_showSec('kar-profil')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Profil
+        <span class="bn-badge bn-badge--pwa" id="bnPwaDot" hidden>!</span>
+      </button>
+    </nav>
+
+  </div><!-- /main-wrap -->
+</div><!-- /dash-page -->
+
+<!-- ══ NEWS DETAIL MODAL ══ -->
+<div class="news-modal-overlay" id="newsModalOverlay" onclick="closeNewsModal(event)">
+  <div class="news-modal-box" id="newsModalBox">
+    <div class="nm-hero nb-img--emerald" id="nmHero" style="font-size:52px">📢</div>
+    <button class="nm-close" onclick="closeNewsModal()">✕</button>
+    <div class="nm-body">
+      <span class="nm-tag nm-tag--emerald" id="nmTag">Pengumuman</span>
+      <div class="nm-title"  id="nmTitle">—</div>
+      <div class="nm-date"   id="nmDate">—</div>
+      <div class="nm-content" id="nmContent">—</div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<!-- ══ SCRIPTS ══ -->
+<!-- Swiper.js -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="../js/shared.js"></script>
+<script src="karyawan.js"></script>
+
+<script>
+// ══════════════════════════════════════════════════
+//  NEWS DATA
+// ══════════════════════════════════════════════════
+const NEWS_DATA = [
+  {
+    id: 1, tag: 'Pengumuman', tagClass: 'emerald', emoji: '🎉', bg: 'emerald',
+    title: 'THR Lebaran 2025 Sudah Dapat Diambil',
+    desc: 'Tunjangan Hari Raya (THR) Idul Fitri 1446 H telah ditransfer ke rekening simpanan masing-masing anggota.',
+    date: '22 Mar 2025',
+    content: 'Yth. seluruh anggota KopKar MES,\n\nTunjangan Hari Raya (THR) Idul Fitri 1446 H telah resmi ditransfer ke rekening simpanan masing-masing anggota per tanggal 22 Maret 2025.\n\nBesaran THR dihitung berdasarkan masa kerja dan besaran simpanan sesuai aturan AD/ART Koperasi. Anggota dapat melihat detail pada halaman Saldo Simpanan.\n\nSemoga THR ini dapat bermanfaat dan digunakan sebaik-baiknya. Kami mengucapkan Selamat Hari Raya Idul Fitri, Mohon Maaf Lahir dan Batin.\n\nHormat kami,\nPengurus KopKar MES'
+  },
+  {
+    id: 2, tag: 'RAT', tagClass: 'blue', emoji: '📋', bg: 'blue',
+    title: 'Rapat Anggota Tahunan (RAT) 2025',
+    desc: 'RAT KopKar MES 2025 dijadwalkan pada 15 April 2025 pukul 09.00 WIB di Aula Perusahaan.',
+    date: '10 Mar 2025',
+    content: 'Yth. seluruh anggota KopKar MES,\n\nDengan hormat, kami mengundang seluruh anggota untuk menghadiri:\n\n📅 Rapat Anggota Tahunan (RAT) 2025\n🗓 Tanggal: 15 April 2025\n⏰ Pukul: 09.00 WIB – selesai\n📍 Tempat: Aula PT. Mandiri Eka Semesta, Lantai 2\n\nAgenda:\n1. Laporan pertanggungjawaban pengurus & pengawas\n2. Persetujuan Rencana Kerja & Anggaran 2025\n3. Penetapan SHU tahun buku 2024\n4. Pemilihan pengurus baru (jika diperlukan)\n5. Tanya jawab & penutup\n\nKehadiran Anda sangat penting. Daftar konfirmasi kehadiran kepada sekretariat koperasi paling lambat 10 April 2025.\n\nHormat kami,\nPengurus KopKar MES'
+  },
+  {
+    id: 3, tag: 'Promo', tagClass: 'amber', emoji: '🛒', bg: 'amber',
+    title: 'Promo Belanja: Diskon Tambahan 3%',
+    desc: 'Khusus bulan April, nikmati diskon tambahan 3% untuk semua produk sembako di toko koperasi.',
+    date: '01 Apr 2025',
+    content: 'Halo Anggota KopKar MES!\n\nKami senang mengumumkan promo spesial untuk bulan April 2025:\n\n🎁 DISKON TAMBAHAN 3% untuk semua produk kategori SEMBAKO\n\nPromo berlaku:\n• Periode: 1 – 30 April 2025\n• Khusus pembelian via aplikasi KopKar MES\n• Dapat digabung dengan diskon anggota 5% yang sudah ada\n• Total diskon maksimum: 8%\n\nProduk yang termasuk promo:\n✅ Beras, Gula, Minyak Goreng\n✅ Tepung, Garam, Mie Instan\n✅ Dan semua produk berlabel "Sembako"\n\nSegera manfaatkan promo ini! Stok terbatas.\n\nTim KopKar MES'
+  },
+  {
+    id: 4, tag: 'Info', tagClass: 'teal', emoji: '💡', bg: 'teal',
+    title: 'Layanan Pinjaman Darurat Tersedia',
+    desc: 'KopKar MES kini menyediakan fasilitas pinjaman darurat dengan proses persetujuan 1×24 jam.',
+    date: '05 Apr 2025',
+    content: 'Yth. Anggota KopKar MES,\n\nKami dengan bangga mengumumkan layanan baru:\n\n🚨 PINJAMAN DARURAT\n\nFitur unggulan:\n• Proses approval: 1×24 jam kerja\n• Nominal: Rp 500.000 – Rp 5.000.000\n• Tenor: 1–6 bulan\n• Bunga: sama seperti pinjaman reguler (1%/bulan)\n• Persyaratan: anggota aktif min. 6 bulan\n\nLayanan ini dihadirkan untuk membantu anggota dalam situasi mendesak seperti biaya medis, kebutuhan keluarga mendadak, dll.\n\nCara pengajuan:\n1. Buka menu Pinjaman\n2. Pilih "Ajukan Pinjaman"\n3. Tuliskan keterangan "DARURAT" di kolom tujuan\n\nTim kami akan memprioritaskan pengajuan tersebut.\n\nHormat kami,\nPengurus KopKar MES'
+  },
+];
+
+// ══════════════════════════════════════════════════
+//  SWIPER NEWS CAROUSEL — Infinite autoplay 3.5s
+// ══════════════════════════════════════════════════
+let newsSwiper = null;
+
+function renderNewsSwiper() {
+  const wrapper = document.getElementById('newsSwiperWrapper');
+  if (!wrapper) return;
+
+  // Inject slides (doubled for Swiper loop mode)
+  wrapper.innerHTML = NEWS_DATA.map(n => `
+    <div class="swiper-slide">
+      <div class="news-banner" onclick="openNewsModal(${n.id})">
+        <div class="nb-img nb-img--${n.bg}">
+          <span class="nb-tag">${n.tag}</span>
+          <span style="font-size:36px;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.3))">${n.emoji}</span>
+        </div>
+        <div class="nb-body">
+          <div class="nb-title">${n.title}</div>
+          <div class="nb-desc">${n.desc}</div>
+          <div class="nb-date">📅 ${n.date}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // Destroy existing instance if reinitialising
+  if (newsSwiper) { newsSwiper.destroy(true, true); newsSwiper = null; }
+
+  newsSwiper = new Swiper('#newsSwiperEl', {
+    // Layout
+    slidesPerView : 'auto',
+    spaceBetween  : 12,
+    centeredSlides: false,
+
+    // Infinite autoplay loop
+    loop        : true,
+    autoplay    : {
+      delay                : 3500,   // 3.5 s jeda antar slide
+      disableOnInteraction : false,  // resume setelah user geser
+      pauseOnMouseEnter    : true,
+    },
+
+    // Smooth transition
+    speed: 500,
+    effect: 'slide',
+
+    // Touch / swipe — manual override tetap berjalan
+    grabCursor          : true,
+    touchStartPreventDefault: false,
+
+    // Dots pagination
+    pagination: {
+      el        : '.news-swiper .swiper-pagination',
+      clickable : true,
+    },
+  });
+}
+
+// ══════════════════════════════════════════════════
+//  NEWS DETAIL MODAL
+// ══════════════════════════════════════════════════
+function openNewsModal(id, listMode) {
+  const overlay = document.getElementById('newsModalOverlay');
+  overlay.classList.add('show');
+  document.body.style.overflow = 'hidden';
+  // Pause autoplay while modal open
+  if (newsSwiper) newsSwiper.autoplay.stop();
+
+  if (listMode) {
+    document.getElementById('nmHero').className    = 'nm-hero nb-img--emerald';
+    document.getElementById('nmHero').innerHTML    = '📢';
+    document.getElementById('nmTag').textContent   = 'Semua Berita';
+    document.getElementById('nmTag').className     = 'nm-tag nm-tag--emerald';
+    document.getElementById('nmTitle').textContent = 'Kabar Koperasi';
+    document.getElementById('nmDate').textContent  = '';
+    document.getElementById('nmContent').innerHTML = NEWS_DATA.map(n => `
+      <div onclick="openNewsModal(${n.id})" style="cursor:pointer;padding:12px 0;border-bottom:1px solid #f1f5f9;display:flex;gap:10px;align-items:flex-start">
+        <div style="font-size:24px;line-height:1;flex-shrink:0">${n.emoji}</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#1e293b;margin-bottom:2px">${n.title}</div>
+          <div style="font-size:11px;color:#94a3b8">${n.date}</div>
+        </div>
+      </div>`).join('');
+    return;
+  }
+
+  const n = NEWS_DATA.find(x => x.id === id);
+  if (!n) return;
+  document.getElementById('nmHero').className     = `nm-hero nb-img--${n.bg}`;
+  document.getElementById('nmHero').innerHTML     = `<span style="font-size:52px;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.3))">${n.emoji}</span>`;
+  document.getElementById('nmTag').textContent    = n.tag;
+  document.getElementById('nmTag').className      = `nm-tag nm-tag--${n.tagClass}`;
+  document.getElementById('nmTitle').textContent  = n.title;
+  document.getElementById('nmDate').textContent   = `📅 ${n.date}`;
+  document.getElementById('nmContent').innerHTML  = n.content.replace(/\n/g, '<br>');
+}
+
+function closeNewsModal(e) {
+  if (e && e.target !== document.getElementById('newsModalOverlay')) return;
+  document.getElementById('newsModalOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+  // Resume autoplay after modal closes
+  if (newsSwiper) newsSwiper.autoplay.start();
+}
+
+// ══════════════════════════════════════════════════
+//  INIT on load
+// ══════════════════════════════════════════════════
+window.addEventListener('load', () => {
+  renderNewsSwiper();
+  // No topbar syncing needed — topbar is removed
+});
+</script>
+</body>
+</html>
