@@ -119,14 +119,20 @@
     .simp-carousel-wrap {
       overflow: hidden; padding: 16px 0 4px;
       position: relative;
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
     }
+    .simp-carousel-wrap.dragging { cursor: grabbing; }
     .simp-carousel-track {
       display: flex; gap: 10px;
       padding: 0 16px;
       animation: simp-scroll 18s linear infinite;
       width: max-content;
+      will-change: transform;
     }
-    .simp-carousel-wrap:hover .simp-carousel-track { animation-play-state: paused; }
+    .simp-carousel-wrap:hover .simp-carousel-track,
+    .simp-carousel-wrap.dragging .simp-carousel-track { animation-play-state: paused; }
 
     @keyframes simp-scroll {
       0%   { transform: translateX(0); }
@@ -307,78 +313,374 @@
     /* Status pinjaman spacing */
     .card-section { padding: 0 16px; margin-top: 20px; }
     .card-section:last-child { margin-bottom: 24px; }
-    /* ── PPOB STYLES — selaras design system KopKar MES ── */
-
-    /* Container halaman: beri batas agar tidak terentang di laptop */
+    /* ── PPOB STYLES v2 — Premium Redesign ── */
     #kar-ppob {
       max-width: 640px;
       margin-left: auto;
       margin-right: auto;
+      padding-bottom: 32px;
+    }
+
+    /* Hero banner PPOB */
+    .ppob-hero {
+      background: linear-gradient(135deg, #065F46 0%, #047857 60%, #059669 100%);
+      margin: 0 16px 20px;
+      border-radius: 20px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 6px 24px rgba(6,95,70,0.28);
+      position: relative;
+      overflow: hidden;
+    }
+    .ppob-hero::before {
+      content: '';
+      position: absolute;
+      right: -20px; top: -30px;
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+    .ppob-hero::after {
+      content: '';
+      position: absolute;
+      right: 30px; bottom: -40px;
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+    .ppob-hero-text h3 {
+      font-size: 17px; font-weight: 800; color: #fff; margin-bottom: 3px;
+    }
+    .ppob-hero-text p { font-size: 12px; color: rgba(255,255,255,0.7); }
+    .ppob-hero-icons { display: flex; gap: 8px; position: relative; z-index: 1; }
+    .ppob-hero-icon {
+      width: 40px; height: 40px; border-radius: 12px;
+      background: rgba(255,255,255,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.2);
     }
 
     /* Tab Bar */
     .ppob-tab-bar {
       display: flex;
-      gap: 6px;
-      background: var(--surface);
-      border-radius: 14px;
-      padding: 5px;
-      margin: 0 16px 14px;
-      box-shadow: var(--shadow-xs);
+      gap: 0;
+      background: #f1f5f9;
+      border-radius: 16px;
+      padding: 4px;
+      margin: 0 16px 20px;
     }
     .ppob-tab {
       flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 3px;
-      padding: 9px 6px;
+      gap: 4px;
+      padding: 10px 6px;
       border: none;
       background: transparent;
-      border-radius: 10px;
+      border-radius: 12px;
       font-family: 'DM Sans', sans-serif;
       font-size: 11px;
-      font-weight: 500;
-      color: var(--muted);
+      font-weight: 600;
+      color: #64748b;
       cursor: pointer;
-      transition: background .18s, color .18s;
+      transition: all .2s ease;
       -webkit-tap-highlight-color: transparent;
     }
-    .ppob-tab-icon { font-size: 18px; line-height: 1; }
+    .ppob-tab-icon { font-size: 20px; line-height: 1; }
     .ppob-tab.active {
-      background: linear-gradient(135deg, var(--hero-grad-start), var(--hero-grad-end));
-      color: #fff;
-      box-shadow: 0 2px 10px rgba(6,95,70,.28);
+      background: #fff;
+      color: #065F46;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.10);
     }
-    .ppob-tab:not(.active):hover { background: #f0fdf4; color: #065F46; }
+    .ppob-tab:not(.active):active { background: rgba(255,255,255,0.5); }
 
-    /* Card — sejajar dengan .card-box & .widget-card di halaman lain */
-    .ppob-card {
-      background: var(--surface);
-      border-radius: var(--radius);
-      padding: 18px 20px;
-      box-shadow: var(--shadow-sm);
-      margin: 0 16px 14px;
-    }
+    /* Panel animation */
     .ppob-panel { animation: ppob-fadein .22s ease; }
     @keyframes ppob-fadein {
-      from { opacity: 0; transform: translateY(6px); }
+      from { opacity: 0; transform: translateY(8px); }
       to   { opacity: 1; transform: none; }
     }
 
-    /* Input nomor HP + badge provider */
-    .ppob-input-row        { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
-    .ppob-phone-input      { flex: 1; }
+    /* Section label */
+    .ppob-section-label {
+      font-size: 11px; font-weight: 700; color: #94a3b8;
+      text-transform: uppercase; letter-spacing: 1px;
+      margin: 0 16px 8px;
+    }
+
+    /* Card */
+    .ppob-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+      margin: 0 16px 16px;
+    }
+    .ppob-card-title {
+      font-size: 13px; font-weight: 700; color: #1e293b;
+      margin-bottom: 14px;
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    /* Input nomor HP */
+    .ppob-input-wrap {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 4px 4px 4px 14px;
+      display: flex; align-items: center; gap: 10px;
+      transition: border-color .15s;
+    }
+    .ppob-input-wrap:focus-within {
+      border-color: #065F46;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(6,95,70,0.08);
+    }
+    .ppob-phone-input {
+      flex: 1;
+      border: none !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      padding: 10px 0 !important;
+      font-size: 15px !important;
+      font-weight: 600 !important;
+      color: #1e293b;
+      outline: none;
+    }
     .ppob-provider-badge {
-      min-width: 78px;
-      padding: 5px 10px;
-      border-radius: var(--radius-xs);
-      background: var(--bg-2);
-      color: var(--muted);
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: #e2e8f0;
+      color: #475569;
       font-size: 11px;
       font-weight: 700;
       text-align: center;
       letter-spacing: .2px;
+      flex-shrink: 0;
+      min-width: 80px;
+      transition: all .2s;
+    }
+    .ppob-provider-badge.detected {
+      background: #f0fdf4;
+      color: #065F46;
+      border: 1px solid #bbf7d0;
+    }
+
+    /* Nominal grid */
+    .ppob-nominal-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .ppob-nominal-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding: 12px 8px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 14px;
+      background: #f8fafc;
+      cursor: pointer;
+      transition: all .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .ppob-nominal-btn:hover   { border-color: #10B981; background: #f0fdf4; }
+    .ppob-nominal-btn.selected {
+      border-color: #065F46;
+      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+      box-shadow: 0 0 0 2.5px rgba(6,95,70,0.12);
+    }
+    .ppob-nominal-val   { font-size: 13px; font-weight: 800; color: #1e293b; }
+    .ppob-nominal-harga { font-size: 10px; color: #94a3b8; }
+    .ppob-nominal-kwh   { font-size: 10px; color: #065F46; font-weight: 700; }
+    .ppob-pln-btn       { padding: 14px 8px; }
+
+    /* Paket list */
+    .ppob-paket-list { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+    .ppob-paket-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 14px;
+      background: #f8fafc;
+      cursor: pointer;
+      transition: all .15s;
+      text-align: left;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .ppob-paket-item:hover    { border-color: #10B981; background: #f0fdf4; }
+    .ppob-paket-item.selected {
+      border-color: #065F46;
+      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+      box-shadow: 0 0 0 2.5px rgba(6,95,70,0.10);
+    }
+    .ppob-paket-left  { display: flex; flex-direction: column; gap: 3px; }
+    .ppob-paket-size  { font-size: 15px; font-weight: 800; color: #1e293b; }
+    .ppob-paket-masa  { font-size: 11px; color: #94a3b8; }
+    .ppob-paket-price {
+      font-size: 14px; font-weight: 800; color: #047857;
+      background: #dcfce7; padding: 5px 12px; border-radius: 8px;
+    }
+    .ppob-paket-item.selected .ppob-paket-price { background: #065F46; color: #fff; }
+
+    /* Info PLN card */
+    .pln-info-card {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-top: 12px;
+    }
+    .pln-info-row   { display: flex; justify-content: space-between; align-items: center; }
+    .pln-info-label { font-size: 12px; color: #64748b; }
+    .pln-info-val   { font-size: 13px; font-weight: 700; color: #1e293b; }
+
+    /* Token result */
+    .pln-token-result {
+      background: linear-gradient(135deg, #065F46, #047857);
+      border-radius: 18px;
+      padding: 24px 20px;
+      margin-top: 14px;
+      text-align: center;
+      animation: ppob-fadein .3s ease;
+      box-shadow: 0 8px 24px rgba(6,95,70,0.30);
+      position: relative;
+      overflow: hidden;
+    }
+    .pln-token-result::before {
+      content: '⚡';
+      position: absolute; top: -10px; right: 10px;
+      font-size: 80px; opacity: 0.06;
+    }
+    .pln-token-label {
+      font-size: 11px;
+      color: rgba(255,255,255,.7);
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .pln-token-code {
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: 4px;
+      margin-bottom: 8px;
+      font-variant-numeric: tabular-nums;
+      word-break: break-all;
+    }
+    .pln-token-hint { font-size: 11px; color: rgba(255,255,255,.6); }
+
+    /* Summary */
+    .ppob-summary {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin: 14px 0 0;
+      animation: ppob-fadein .18s ease;
+    }
+    .ppob-summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      padding: 5px 0;
+      color: #64748b;
+    }
+    .ppob-summary-row span:last-child { font-weight: 600; color: #1e293b; }
+    .ppob-summary-total {
+      border-top: 1px dashed #e2e8f0;
+      margin-top: 8px;
+      padding-top: 12px;
+    }
+    .ppob-summary-total span { font-weight: 800 !important; color: #065F46 !important; font-size: 16px !important; }
+
+    /* Tombol bayar */
+    .ppob-btn-bayar {
+      width: 100%;
+      padding: 15px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 14px;
+      margin-top: 14px;
+      transition: opacity .2s, transform .15s;
+      letter-spacing: .2px;
+    }
+    .ppob-btn-bayar:not(:disabled):hover { opacity: .88; transform: translateY(-1px); }
+    .ppob-btn-bayar:disabled {
+      background: #e2e8f0 !important;
+      color: #94a3b8 !important;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* Hint */
+    .ppob-hint {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 13px;
+      padding: 28px 0;
+    }
+
+    /* Riwayat */
+    .ppob-riwayat-wrap {
+      background: #fff;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+      margin: 0 16px 32px;
+    }
+    .ppob-riwayat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .ppob-riwayat-title  { font-size: 15px; font-weight: 800; color: #1e293b; }
+    .ppob-riwayat-count  {
+      font-size: 11px; color: #64748b;
+      background: #f1f5f9; padding: 4px 12px; border-radius: 20px; font-weight: 600;
+    }
+    .ppob-riwayat-list { display: flex; flex-direction: column; }
+    .ppob-trx-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 14px 0; border-bottom: 1px solid #f1f5f9;
+    }
+    .ppob-trx-item:last-child { border-bottom: none; }
+    .ppob-trx-icon {
+      font-size: 20px; width: 44px; height: 44px;
+      background: #f0fdf4; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .ppob-trx-info  { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .ppob-trx-label { font-size: 13px; font-weight: 700; color: #1e293b; }
+    .ppob-trx-meta  { font-size: 11px; color: #94a3b8; }
+    .ppob-trx-token { font-size: 11px; color: #065F46; font-weight: 600; letter-spacing: .6px; }
+    .ppob-trx-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+    .ppob-trx-harga { font-size: 14px; font-weight: 800; color: #1e293b; }
+
+    /* Empty state */
+    .ppob-empty-state { text-align: center; padding: 40px 0; color: #94a3b8; }
+    .ppob-empty-icon  { font-size: 44px; display: block; margin-bottom: 12px; opacity: .4; }
+    .ppob-empty-state p { font-size: 13px; font-weight: 500; }
+
+    /* Responsive */
+    @media (max-width: 380px) {
+      .ppob-nominal-grid { grid-template-columns: repeat(2, 1fr); }
+      .pln-token-code    { font-size: 17px; letter-spacing: 2px; }
+      .ppob-card         { padding: 16px; margin: 0 12px 14px; }
+      .ppob-tab-bar      { margin: 0 12px 16px; }
+      .ppob-riwayat-wrap { margin: 0 12px 24px; }
+      .ppob-hero         { margin: 0 12px 16px; }
+    }
       transition: background .25s, color .25s, transform .18s;
       white-space: nowrap;
     }
@@ -864,7 +1166,7 @@
             <form id="loanForm">
               <div class="field-grp">
                 <label>Nominal Pinjaman</label>
-                <div class="field-box"><span class="fi-text">Rp</span><input type="number" id="loanNominal" placeholder="Contoh: 5000000" min="500000" max="15000000" step="500000" oninput="updateSimulasi()" required /></div>
+                <div class="field-box"><span class="fi-text">Rp</span><input type="text" id="loanNominal" inputmode="numeric" placeholder="5.000.000" oninput="formatLoanNominal(this)" required /></div>
                 <div class="field-hint">Maksimum Rp 15.000.000 (2× total simpanan)</div>
               </div>
               <div class="field-grp">
@@ -976,7 +1278,19 @@
 
       <!-- ═══ KAR PPOB ═══ -->
       <section class="sec" id="kar-ppob" style="display:none">
-        <div class="sec-hd"><div><h2>Layanan PPOB</h2><p>Pulsa, Paket Data &amp; Token Listrik</p></div></div>
+        <div class="sec-hd"><div><h2>Layanan PPOB</h2><p>Bayar tagihan &amp; isi ulang dengan mudah</p></div></div>
+
+        <!-- Hero Banner -->
+        <div class="ppob-hero">
+          <div class="ppob-hero-text">
+            <h3>Pembayaran Digital</h3>
+            <p>Pulsa · Paket Data · Token PLN</p>
+          </div>
+          <div class="ppob-hero-icons">
+            <div class="ppob-hero-icon">📱</div>
+            <div class="ppob-hero-icon">⚡</div>
+          </div>
+        </div>
 
         <!-- Tab Bar -->
         <div class="ppob-tab-bar">
@@ -994,12 +1308,12 @@
         <!-- ── PANEL PULSA ── -->
         <div id="ppob-panel-pulsa" class="ppob-panel">
           <div class="ppob-card">
-            <label class="form-label">Nomor Handphone</label>
-            <div class="ppob-input-row">
+            <div class="ppob-card-title">📱 Nomor Handphone</div>
+            <div class="ppob-input-wrap">
               <div class="ppob-provider-badge" id="pulsa-provider-badge">–</div>
-              <input type="tel" id="pulsa-nomor" class="form-input ppob-phone-input" placeholder="08xx-xxxx-xxxx" maxlength="14" oninput="ppobDetectProvider(this.value,'pulsa')" />
+              <input type="tel" id="pulsa-nomor" class="ppob-phone-input" placeholder="08xx-xxxx-xxxx" maxlength="14" oninput="ppobDetectProvider(this.value,'pulsa')" />
             </div>
-            <label class="form-label" style="margin-top:12px">Pilih Nominal</label>
+            <div class="ppob-card-title" style="margin-top:18px">💰 Pilih Nominal</div>
             <div class="ppob-nominal-grid" id="pulsa-nominal-grid"></div>
             <div id="pulsa-summary" class="ppob-summary" style="display:none">
               <div class="ppob-summary-row"><span>Nomor Tujuan</span><span id="sum-pulsa-nomor">–</span></div>
@@ -1014,12 +1328,12 @@
         <!-- ── PANEL PAKET DATA ── -->
         <div id="ppob-panel-data" class="ppob-panel" style="display:none">
           <div class="ppob-card">
-            <label class="form-label">Nomor Handphone</label>
-            <div class="ppob-input-row">
+            <div class="ppob-card-title">🌐 Nomor Handphone</div>
+            <div class="ppob-input-wrap">
               <div class="ppob-provider-badge" id="data-provider-badge">–</div>
-              <input type="tel" id="data-nomor" class="form-input ppob-phone-input" placeholder="08xx-xxxx-xxxx" maxlength="14" oninput="ppobDetectProvider(this.value,'data')" />
+              <input type="tel" id="data-nomor" class="ppob-phone-input" placeholder="08xx-xxxx-xxxx" maxlength="14" oninput="ppobDetectProvider(this.value,'data')" />
             </div>
-            <label class="form-label" style="margin-top:12px">Pilih Paket</label>
+            <div class="ppob-card-title" style="margin-top:18px">📦 Pilih Paket</div>
             <div class="ppob-paket-list" id="data-paket-list">
               <p class="ppob-hint">Masukkan nomor untuk melihat paket tersedia</p>
             </div>
@@ -1036,13 +1350,15 @@
         <!-- ── PANEL TOKEN PLN ── -->
         <div id="ppob-panel-pln" class="ppob-panel" style="display:none">
           <div class="ppob-card">
-            <label class="form-label">Nomor Meter / ID Pelanggan</label>
-            <input type="text" id="pln-idpel" class="form-input" placeholder="Contoh: 521100000003" maxlength="13" oninput="ppobCheckPLN(this.value)" />
+            <div class="ppob-card-title">🔌 Nomor Meter / ID Pelanggan</div>
+            <div class="ppob-input-wrap">
+              <input type="text" id="pln-idpel" class="ppob-phone-input" placeholder="Contoh: 521100000003" maxlength="13" oninput="ppobCheckPLN(this.value)" style="font-size:15px;font-weight:600" />
+            </div>
             <div id="pln-info-card" class="pln-info-card" style="display:none">
               <div class="pln-info-row"><span class="pln-info-label">Nama</span><span class="pln-info-val" id="pln-nama">–</span></div>
               <div class="pln-info-row"><span class="pln-info-label">Tarif/Daya</span><span class="pln-info-val" id="pln-tarif">–</span></div>
             </div>
-            <label class="form-label" style="margin-top:12px">Pilih Nominal Token</label>
+            <div class="ppob-card-title" style="margin-top:18px">⚡ Pilih Nominal Token</div>
             <div class="ppob-nominal-grid" id="pln-nominal-grid"></div>
             <div id="pln-token-result" class="pln-token-result" style="display:none">
               <p class="pln-token-label">Token Listrik Anda</p>
@@ -1062,7 +1378,7 @@
         <!-- Riwayat Transaksi PPOB -->
         <div class="ppob-riwayat-wrap">
           <div class="ppob-riwayat-header">
-            <h3 class="ppob-riwayat-title">Riwayat Transaksi PPOB</h3>
+            <h3 class="ppob-riwayat-title">Riwayat Transaksi</h3>
             <span class="ppob-riwayat-count" id="ppob-trx-count">0 transaksi</span>
           </div>
           <div id="ppob-riwayat-list" class="ppob-riwayat-list">
@@ -1111,6 +1427,10 @@
           <button class="profil-menu-item" onclick="_showSec('kar-tentang')">
             <div class="pmi-left"><div class="pmi-ico pmi-ico--slate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div class="pmi-text"><div class="pmi-title">Tentang Koperasi</div><div class="pmi-desc">Profil &amp; informasi KopKar MES</div></div></div>
             <svg class="pmi-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <button class="profil-menu-item" onclick="bukaWABantuan()">
+            <div class="pmi-left"><div class="pmi-ico pmi-ico--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="pmi-text"><div class="pmi-title">Bantuan &amp; Dukungan</div><div class="pmi-desc">Chat Admin via WhatsApp</div></div></div>
+            <span style="background:#25D366;color:#fff;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;flex-shrink:0">WA</span>
           </button>
         </div>
         <div class="profil-menu-group">
@@ -1608,8 +1928,14 @@ function openNewsModal(id, listMode) {
 }
 
 function closeNewsModal(e) {
-  // Tutup jika: klik langsung di overlay (luar box), atau dipanggil tanpa event (tombol ✕)
-  if (e && e.target !== document.getElementById('newsModalOverlay')) return;
+  // Tutup jika: klik di overlay (luar box) — dipanggil dari overlay onclick
+  // Jika e ada dan target adalah newsModalBox atau turunannya, JANGAN tutup
+  // (agar scroll & klik dalam konten tetap berjalan)
+  // Hanya tutup jika klik langsung di overlay background (bukan di dalam box)
+  if (e) {
+    const box = document.getElementById('newsModalBox');
+    if (box && box.contains(e.target)) return; // klik di dalam box → jangan tutup
+  }
 
   const overlay = document.getElementById('newsModalOverlay');
   const box     = document.getElementById('newsModalBox');
@@ -1626,6 +1952,115 @@ function closeNewsModal(e) {
     if (newsSwiper) newsSwiper.autoplay.start();
   }, 200);
 }
+
+// ══════════════════════════════════════════════════
+//  LOAN NOMINAL — Auto-format dengan titik ribuan
+// ══════════════════════════════════════════════════
+function formatLoanNominal(input) {
+  // Ambil angka saja
+  let raw = input.value.replace(/\D/g, '');
+  // Batasi maksimum 15.000.000
+  if (parseInt(raw, 10) > 15000000) raw = '15000000';
+  // Format dengan titik ribuan
+  if (raw) {
+    input.value = parseInt(raw, 10).toLocaleString('id-ID');
+  } else {
+    input.value = '';
+  }
+  updateSimulasi();
+}
+
+// Override updateSimulasi agar baca nilai dari input terformat
+const _origUpdateSimulasi = typeof updateSimulasi === 'function' ? updateSimulasi : null;
+function getLoanNominalValue() {
+  const raw = (document.getElementById('loanNominal')?.value || '').replace(/\D/g, '');
+  return parseInt(raw, 10) || 0;
+}
+
+// ══════════════════════════════════════════════════
+//  BANTUAN — Buka WhatsApp Admin
+// ══════════════════════════════════════════════════
+function bukaWABantuan() {
+  const nomer = '6281383179209';
+  const teks  = encodeURIComponent('Halo Admin KopKar MES, saya membutuhkan bantuan. Mohon dibantu 🙏');
+  window.open(`https://wa.me/${nomer}?text=${teks}`, '_blank');
+}
+// ══════════════════════════════════════════════════
+(function() {
+  const wrap  = document.getElementById('simpCarouselWrap');
+  const track = document.getElementById('simpCarouselTrack');
+  if (!wrap || !track) return;
+
+  let isDragging  = false;
+  let startX      = 0;
+  let scrollLeft  = 0;
+  let animPaused  = false;
+
+  function getTranslateX(el) {
+    const st = window.getComputedStyle(el);
+    const mx = new WebKitCSSMatrix(st.transform);
+    return mx.m41;
+  }
+
+  function pauseAnim() {
+    if (!animPaused) {
+      // Capture current translateX before pausing
+      const cur = getTranslateX(track);
+      track.style.animationPlayState = 'paused';
+      track.style.transform = `translateX(${cur}px)`;
+      track.style.animation = 'none';
+      scrollLeft = -cur;
+      animPaused = true;
+    }
+  }
+
+  function onStart(x) {
+    pauseAnim();
+    isDragging = true;
+    startX = x;
+    wrap.classList.add('dragging');
+  }
+
+  function onMove(x) {
+    if (!isDragging) return;
+    const delta = startX - x;
+    const newScroll = scrollLeft + delta;
+    // Seamless loop: clamp within half of track
+    const halfW = track.scrollWidth / 2;
+    let adj = newScroll % halfW;
+    if (adj < 0) adj += halfW;
+    track.style.transform = `translateX(${-adj}px)`;
+  }
+
+  function onEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    wrap.classList.remove('dragging');
+    // Resume auto-scroll from current position
+    const cur = getTranslateX(track);
+    const halfW = track.scrollWidth / 2;
+    let pos = Math.abs(cur) % halfW;
+    track.style.cssText = '';
+    track.style.setProperty('--resume-x', `-${pos}px`);
+    // Restart animation from current offset using animation-delay trick
+    const duration = 18000; // ms
+    const pct = pos / halfW;
+    const delay = -(pct * duration);
+    track.style.animation = `simp-scroll 18s linear ${delay}ms infinite`;
+    animPaused = false;
+  }
+
+  // Mouse events
+  wrap.addEventListener('mousedown',  e => onStart(e.pageX));
+  wrap.addEventListener('mousemove',  e => onMove(e.pageX));
+  wrap.addEventListener('mouseup',    onEnd);
+  wrap.addEventListener('mouseleave', onEnd);
+
+  // Touch events
+  wrap.addEventListener('touchstart', e => onStart(e.touches[0].pageX), { passive: true });
+  wrap.addEventListener('touchmove',  e => onMove(e.touches[0].pageX),  { passive: true });
+  wrap.addEventListener('touchend',   onEnd);
+})();
 
 // ══════════════════════════════════════════════════
 //  INIT on load
