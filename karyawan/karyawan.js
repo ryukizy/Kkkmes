@@ -252,30 +252,71 @@ function renderPinjamanStatus() {
   if (!cont) return;
   const mine = PINJAMAN_DB.filter(p => p.nik === USER.nik);
   if (!mine.length) {
-    cont.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted)">Belum ada pengajuan pinjaman.</div>';
+    cont.innerHTML = `
+      <div style="text-align:center;padding:40px 20px;color:var(--muted)">
+        <div style="font-size:36px;margin-bottom:10px">📋</div>
+        <p>Belum ada pengajuan pinjaman.</p>
+        <button class="btn-prim" style="margin-top:14px" onclick="setKarPinTab(null,'kpt-ajukan')">Ajukan Sekarang</button>
+      </div>`;
     return;
   }
+
+  // Map kategori ke warna badge
+  const katColors = {
+    emergency: 'badge-err',
+    reguler  : 'badge-ok',
+    barang   : 'badge-blue',
+    mandiri  : 'badge-teal',
+    bank     : 'badge-warn',
+  };
+
   cont.innerHTML = mine.map(p => {
-    const sisa = p.nominal - (p.lunas * p.cicilan);
-    const pct  = Math.round((p.lunas / p.tenor) * 100);
-    const statusBadge = p.status === 'active' ? 'badge-warn' : p.status === 'pending' ? 'badge-pending' : p.status === 'approved' ? 'badge-ok' : 'badge-done';
-    const statusLabel = p.status === 'active' ? 'Aktif' : p.status === 'pending' ? 'Menunggu' : p.status === 'approved' ? 'Disetujui' : 'Lunas';
+    const sisa = Math.max(0, p.nominal - (p.lunas * p.cicilan));
+    const pct  = p.tenor > 0 ? Math.round((p.lunas / p.tenor) * 100) : 0;
+
+    const statusBadge = {
+      active  : 'badge-warn',
+      pending : 'badge-pending',
+      approved: 'badge-ok',
+      done    : 'badge-done',
+      rejected: 'badge-err',
+    }[p.status] || 'badge-muted';
+
+    const statusLabel = {
+      active  : 'Aktif',
+      pending : 'Menunggu',
+      approved: 'Disetujui',
+      done    : 'Lunas',
+      rejected: 'Ditolak',
+    }[p.status] || p.status;
+
+    const isLumpSum = p.tenor === 1 && p.kategori === 'emergency';
+    const katBadge  = katColors[p.kategori] || 'badge-muted';
+    const katCfg    = LOAN_CATEGORIES[p.kategori];
+    const katLabel  = katCfg ? katCfg.label : '';
+
     return `
       <div class="pcard">
         <div class="pcard-head">
           <div style="flex:1">
             <div class="pcard-id">${p.id}</div>
             <div class="pcard-tujuan">${p.tujuan}</div>
+            ${katLabel ? `<div style="margin-top:4px"><span class="badge ${katBadge}" style="font-size:10px">${katLabel}</span></div>` : ''}
           </div>
           <span class="badge ${statusBadge}">${statusLabel}</span>
         </div>
         <div class="pcard-body">
           <div class="pcard-row"><span>Nominal Pinjaman</span><strong>${rp(p.nominal)}</strong></div>
-          <div class="pcard-row"><span>Cicilan/bulan</span><strong>${rp(p.cicilan)}</strong></div>
-          <div class="pcard-row"><span>Tenor</span><strong>${p.tenor} bulan</strong></div>
-          ${p.status === 'active' || p.status === 'done' ? `<div class="pcard-row"><span>Sisa Hutang</span><strong style="color:var(--primary)">${rp(sisa)}</strong></div>` : ''}
+          <div class="pcard-row">
+            <span>${isLumpSum ? 'Metode Bayar' : 'Cicilan/bulan'}</span>
+            <strong>${isLumpSum ? 'Potong gaji 1×' : rp(p.cicilan)}</strong>
+          </div>
+          ${!isLumpSum ? `<div class="pcard-row"><span>Tenor</span><strong>${p.tenor} bulan</strong></div>` : ''}
+          ${(p.status === 'active' || p.status === 'done') && !isLumpSum
+            ? `<div class="pcard-row"><span>Sisa Hutang</span><strong style="color:var(--primary)">${rp(sisa)}</strong></div>`
+            : ''}
         </div>
-        ${p.status === 'active' || p.status === 'done' ? `
+        ${(p.status === 'active' || p.status === 'done') && !isLumpSum ? `
         <div class="pcard-prog">
           <div class="pprog-label"><span>Lunas ${p.lunas}/${p.tenor}</span><span>${pct}%</span></div>
           <div class="pprog-bar"><div class="pprog-fill" style="width:${pct}%"></div></div>
@@ -304,16 +345,18 @@ const LOAN_CATEGORIES = {
     label: '🚨 Pinjaman Emergency',
     color: 'cat--emergency',
     maxNominal: 750000,
-    hint: 'Maksimum Rp 750.000 · Hanya 1× per bulan',
-    tenors: null,       // tidak dicicil — potong gaji 1× di periode berjalan
-    lumpSum: true,      // lunas sekaligus saat gajian
-    bunga: 0,           // 0% (sosial/darurat)
+    minNominal: 50000,
+    hint: 'Maksimum Rp 750.000 · Hanya 1× per bulan · Tanpa bunga',
+    tenors: null,       // tidak dicicil — potong gaji 1× saat gajian
+    lumpSum: true,
+    bunga: 0,
     bankMode: false,
   },
   reguler: {
     label: '💳 Pinjaman Reguler',
     color: 'cat--reguler',
     maxNominal: 7500000,
+    minNominal: 500000,
     hint: 'Maksimum Rp 7.500.000 · Bunga 1%/bulan',
     tenors: [3, 6, 12, 18, 24],
     bunga: 0.01,
@@ -323,6 +366,7 @@ const LOAN_CATEGORIES = {
     label: '📦 Pinjaman Barang',
     color: 'cat--barang',
     maxNominal: 5000000,
+    minNominal: 500000,
     hint: 'Maksimum Rp 5.000.000 · Sertakan nota pembelian',
     tenors: [3, 6, 12],
     bunga: 0.01,
@@ -332,7 +376,8 @@ const LOAN_CATEGORIES = {
     label: '🏦 Dana Koperasi Mandiri',
     color: 'cat--mandiri',
     maxNominal: 50000000,
-    hint: 'Maksimum Rp 50.000.000 · Persetujuan pengurus diperlukan',
+    minNominal: 5000000,
+    hint: 'Maksimum Rp 50.000.000 · Persetujuan pengurus & RAT',
     tenors: [6, 12, 24, 36, 48, 60],
     bunga: 0.01,
     bankMode: false,
@@ -344,145 +389,248 @@ const LOAN_CATEGORIES = {
     minNominal: 50000000,
     hint: 'Rp 50.000.000 – Rp 200.000.000 · Syarat & bunga sesuai bank',
     tenors: [12, 24, 36, 60, 120],
-    bunga: null,        // mengikuti bank
+    bunga: null,        // mengikuti ketentuan bank masing-masing
     bankMode: true,
   },
 };
 
 let selectedLoanCategory = null;
-let selectedBank = '';
+let selectedBank         = '';
 
+// ─── Helper: baca nilai nominal dari input (strip titik pemisah ribuan) ───
+function getLoanNominalValue() {
+  const raw = (document.getElementById('loanNominal')?.value || '').replace(/\./g, '').trim();
+  const num = parseInt(raw, 10);
+  return isNaN(num) ? 0 : num;
+}
+
+// ─── Helper: format angka ribuan saat mengetik (123456 → "123.456") ───
+function formatLoanNominal(input) {
+  // Simpan posisi kursor
+  const pos = input.selectionStart;
+  const prevLen = input.value.length;
+
+  // Strip semua karakter non-digit
+  const raw = input.value.replace(/\D/g, '');
+  if (!raw) { input.value = ''; updateSimulasi(); return; }
+
+  // Format dengan titik sebagai pemisah ribuan (id-ID)
+  const formatted = parseInt(raw, 10).toLocaleString('id-ID');
+  input.value = formatted;
+
+  // Pertahankan posisi kursor setelah format
+  const newLen  = input.value.length;
+  const newPos  = pos + (newLen - prevLen);
+  try { input.setSelectionRange(newPos, newPos); } catch(_) {}
+
+  updateSimulasi();
+}
+
+// ─── Pilih kategori → tampilkan Step 2 ───
 function selectLoanCategory(cat) {
   selectedLoanCategory = cat;
   selectedBank = '';
+
   const cfg = LOAN_CATEGORIES[cat];
+  if (!cfg) return;
 
-  // Toggle step 1 → 2
-  document.getElementById('loan-step-1').hidden = true;
-  document.getElementById('loan-step-2').hidden = false;
+  // Transisi step 1 → step 2
+  const s1 = document.getElementById('loan-step-1');
+  const s2 = document.getElementById('loan-step-2');
+  if (s1) s1.hidden = true;
+  if (s2) s2.hidden = false;
 
-  // Title & sub
-  document.getElementById('loanFormTitle').textContent = cfg.label.replace(/^\S+\s/, '');
-  document.getElementById('loanFormSub').textContent   = cfg.hint;
+  // Title & subtitle
+  const titleEl = document.getElementById('loanFormTitle');
+  const subEl   = document.getElementById('loanFormSub');
+  // Hapus emoji di depan label untuk judul
+  if (titleEl) titleEl.textContent = cfg.label.replace(/^\S+\s/, '');
+  if (subEl)   subEl.textContent   = cfg.hint;
 
-  // Badge kategori
+  // Badge kategori terpilih
   const badge = document.getElementById('loanSelectedBadge');
-  badge.className = 'loan-selected-badge ' + cfg.color;
-  badge.innerHTML = cfg.label;
-
-  // Alerts
-  document.getElementById('loan-alert-emergency').hidden = (cat !== 'emergency');
-  document.getElementById('loan-alert-bank').hidden      = (cat !== 'bank');
-
-  // Bank selector
-  document.getElementById('fieldBankGroup').hidden = !cfg.bankMode;
-  document.getElementById('loanBank').value = '';
-  document.querySelectorAll('.bank-btn').forEach(b => b.classList.remove('selected'));
-
-  // Nominal hint
-  document.getElementById('loanNominalHint').textContent = cfg.hint;
-  document.getElementById('loanNominal').value = '';
-  document.getElementById('loanTujuan').value  = '';
-
-  // Set input placeholder
-  const nomEl = document.getElementById('loanNominal');
-  if (cat === 'bank') {
-    nomEl.placeholder = '50.000.000';
-  } else {
-    nomEl.placeholder = Math.floor(cfg.maxNominal / 2).toLocaleString('id-ID');
+  if (badge) {
+    badge.className = 'loan-selected-badge ' + cfg.color;
+    badge.innerHTML = cfg.label;
   }
 
-  // Tenor field — sembunyikan untuk emergency (lunas 1x potong gaji)
+  // Alert spesifik per jenis
+  const alertEm   = document.getElementById('loan-alert-emergency');
+  const alertBank = document.getElementById('loan-alert-bank');
+  if (alertEm)   alertEm.hidden   = (cat !== 'emergency');
+  if (alertBank) alertBank.hidden = (cat !== 'bank');
+
+  // Bank selector — hanya tampil untuk kategori bank
+  const bankGroup = document.getElementById('fieldBankGroup');
+  const loanBank  = document.getElementById('loanBank');
+  if (bankGroup) bankGroup.hidden = !cfg.bankMode;
+  if (loanBank)  loanBank.value   = '';
+  document.querySelectorAll('.bank-btn').forEach(b => b.classList.remove('selected'));
+  selectedBank = '';
+
+  // Reset nominal & tujuan
+  const nomEl  = document.getElementById('loanNominal');
+  const tujEl  = document.getElementById('loanTujuan');
+  if (nomEl) {
+    nomEl.value = '';
+    // Placeholder sesuai kategori
+    const midVal = cat === 'bank'
+      ? '50.000.000'
+      : Math.floor(cfg.maxNominal / 2).toLocaleString('id-ID');
+    nomEl.placeholder = midVal;
+  }
+  if (tujEl) tujEl.value = '';
+
+  // Hint batas nominal
+  const hintEl = document.getElementById('loanNominalHint');
+  if (hintEl) hintEl.textContent = cfg.hint;
+
+  // Emergency: sembunyikan tenor & simulasi, tampilkan info lump-sum
   const isLumpSum = !!cfg.lumpSum;
-  document.getElementById('fieldTenor').hidden  = isLumpSum;
-  document.getElementById('simResult').hidden   = isLumpSum;
-  document.getElementById('loanEmergencyInfo').hidden = !isLumpSum;
+  const fieldTenor  = document.getElementById('fieldTenor');
+  const simResult   = document.getElementById('simResult');
+  const emInfo      = document.getElementById('loanEmergencyInfo');
+  const warn40      = document.getElementById('sim40Warning');
+
+  if (fieldTenor)  fieldTenor.hidden  = isLumpSum;
+  if (simResult)   simResult.hidden   = isLumpSum;
+  if (emInfo)      emInfo.hidden      = !isLumpSum;
+  if (warn40)      warn40.hidden      = true;
 
   if (!isLumpSum) {
-    // Tenor buttons untuk kategori non-emergency
+    // Bangun tombol tenor sesuai kategori
     selectedTenor = cfg.tenors[0];
     const tenorWrap = document.getElementById('tenorOptions');
-    tenorWrap.innerHTML = cfg.tenors.map((t, i) =>
-      `<button type="button" class="tenor-btn${i === 0 ? ' active' : ''}" onclick="setTenor(this,${t})">${t} bln</button>`
-    ).join('');
-    // Reset simulasi & amort
+    if (tenorWrap) {
+      tenorWrap.innerHTML = cfg.tenors.map((t, i) =>
+        `<button type="button" class="tenor-btn${i === 0 ? ' active' : ''}" onclick="setTenor(this,${t})">${t} bln</button>`
+      ).join('');
+    }
+    // Reset simulasi & jadwal angsuran
     updateSimulasi();
     amortOpen = false;
     const at = document.getElementById('amortTable');
     if (at) { at.hidden = true; at.innerHTML = ''; }
   }
 
-  // Submit label
+  // Label tombol submit
   const sbtn = document.getElementById('loanSubmitBtn');
-  if (sbtn) sbtn.textContent = cat === 'bank' ? 'Kirim Permohonan' : 'Ajukan Pinjaman';
+  if (sbtn) sbtn.textContent = (cat === 'bank') ? 'Kirim Permohonan' : 'Ajukan Pinjaman';
 
-  document.getElementById('kpt-ajukan').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // Scroll ke form
+  const kptAjukan = document.getElementById('kpt-ajukan');
+  if (kptAjukan) kptAjukan.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+// ─── Kembali ke pilihan kategori ───
 function backToLoanCategories() {
-  document.getElementById('loan-step-1').hidden = false;
-  document.getElementById('loan-step-2').hidden = true;
+  const s1 = document.getElementById('loan-step-1');
+  const s2 = document.getElementById('loan-step-2');
+  if (s1) s1.hidden = false;
+  if (s2) s2.hidden = true;
+  selectedLoanCategory = null;
+  selectedBank = '';
 }
 
+// ─── Pilih bank mitra ───
 function selectBank(btn, bankName) {
   selectedBank = bankName;
-  document.getElementById('loanBank').value = bankName;
+  const loanBank = document.getElementById('loanBank');
+  if (loanBank) loanBank.value = bankName;
   document.querySelectorAll('.bank-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
 }
 
-// ─── LOAN SUBMISSION ───
+// ─── SUBMIT PINJAMAN ───
 function submitLoan(e) {
   e.preventDefault();
+
+  // Guard: pastikan kategori sudah dipilih
+  if (!selectedLoanCategory) {
+    showToast('⚠️ Pilih kategori pinjaman terlebih dahulu', 'toast-warn');
+    return;
+  }
+
   const cfg     = LOAN_CATEGORIES[selectedLoanCategory];
   const nominal = getLoanNominalValue();
-  const tujuan  = document.getElementById('loanTujuan').value.trim();
+  const tujuan  = (document.getElementById('loanTujuan')?.value || '').trim();
 
-  // Validasi kategori bank harus pilih bank
+  // Validasi: bank harus pilih bank mitra
   if (cfg.bankMode && !selectedBank) {
     showToast('⚠️ Pilih bank mitra terlebih dahulu', 'toast-warn');
+    document.getElementById('fieldBankGroup')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
   }
 
   // Validasi nominal
-  if (nominal <= 0) {
+  if (!nominal || nominal <= 0) {
     showToast('⚠️ Masukkan nominal pinjaman', 'toast-warn');
-    return;
-  }
-  if (nominal > cfg.maxNominal) {
-    showToast(`⚠️ Melebihi batas maksimum kategori ini`, 'toast-warn');
+    document.getElementById('loanNominal')?.focus();
     return;
   }
   if (cfg.minNominal && nominal < cfg.minNominal) {
-    showToast(`⚠️ Minimal Rp ${cfg.minNominal.toLocaleString('id-ID')} untuk kategori ini`, 'toast-warn');
+    showToast(`⚠️ Minimal ${rp(cfg.minNominal)} untuk kategori ini`, 'toast-warn');
+    return;
+  }
+  if (nominal > cfg.maxNominal) {
+    showToast(`⚠️ Melebihi batas maksimum ${rp(cfg.maxNominal)}`, 'toast-warn');
     return;
   }
 
-  const isLumpSum = !!cfg.lumpSum;
-  const tenor   = isLumpSum ? 1 : selectedTenor;
-  const bunga   = cfg.bunga ?? 0.009;
-  const cicilan = isLumpSum ? nominal : Math.round((nominal * (1 + bunga * tenor)) / tenor);
-  const newId   = 'LN-' + String(Math.floor(Math.random() * 9000) + 1000).padStart(4, '0');
-  const katLabel = cfg.bankMode ? `Bank ${selectedBank}` : cfg.label.replace(/^\S+\s/, '');
+  // Validasi tujuan
+  if (!tujuan) {
+    showToast('⚠️ Masukkan tujuan / keterangan pinjaman', 'toast-warn');
+    document.getElementById('loanTujuan')?.focus();
+    return;
+  }
 
+  // Hitung cicilan
+  const isLumpSum = !!cfg.lumpSum;
+  const tenor     = isLumpSum ? 1 : selectedTenor;
+  const bunga     = cfg.bunga ?? 0.009; // fallback 0.9%/bln jika null (bank)
+  const cicilan   = isLumpSum
+    ? nominal
+    : Math.round((nominal * (1 + bunga * tenor)) / tenor);
+
+  // Buat ID unik
+  const newId    = 'LN-' + String(Date.now()).slice(-4).padStart(4, '0') +
+                   String(Math.floor(Math.random() * 90) + 10);
+  const katLabel = cfg.bankMode
+    ? `Bank ${selectedBank}`
+    : cfg.label.replace(/^\S+\s/, '');
+
+  // Simpan ke DB lokal
   PINJAMAN_DB.push({
-    id: newId, nik: USER.nik, nama: USER.nama,
-    tujuan: `[${katLabel}] ${tujuan}`,
-    nominal, tenor, cicilan, lunas: 0,
-    status: 'pending', tgl: today(),
+    id      : newId,
+    nik     : USER.nik,
+    nama    : USER.nama,
+    tujuan  : `[${katLabel}] ${tujuan}`,
+    nominal,
+    tenor,
+    cicilan,
+    lunas   : 0,
+    status  : 'pending',
+    tgl     : today(),
     kategori: selectedLoanCategory,
   });
 
+  // UI feedback
   renderPinjamanStatus();
-  showToast(`✓ Pinjaman ${newId} berhasil diajukan!`, 'toast-ok');
-  document.getElementById('loanForm').reset();
+  renderKarPinjamanWidget();
+  showToast(`✓ ${katLabel} ${newId} berhasil diajukan!`, 'toast-ok');
+
+  // Reset form & kembali ke step 1
+  document.getElementById('loanForm')?.reset();
   backToLoanCategories();
-  setTimeout(() => setKarPinTab(
-    document.querySelector('.ptab'),
-    'kpt-status'
-  ), 800);
+
+  // Kembali ke tab Status setelah toast selesai
+  setTimeout(() => {
+    const statusTab = document.querySelector('.ptab[onclick*="kpt-status"]');
+    if (statusTab) setKarPinTab(statusTab, 'kpt-status');
+  }, 900);
 }
 
+// ─── Set tenor aktif ───
 function setTenor(btn, t) {
   selectedTenor = t;
   document.querySelectorAll('.tenor-btn').forEach(b => b.classList.remove('active'));
@@ -490,34 +638,49 @@ function setTenor(btn, t) {
   updateSimulasi();
 }
 
+// ─── Update simulasi cicilan real-time ───
 function updateSimulasi() {
+  // Jangan jalankan simulasi jika tidak ada kategori atau kategori lump-sum
+  if (!selectedLoanCategory) return;
+  const cfg = LOAN_CATEGORIES[selectedLoanCategory];
+  if (!cfg || cfg.lumpSum) return;
+
   const nominal = getLoanNominalValue() || 0;
-  const cfg     = selectedLoanCategory ? LOAN_CATEGORIES[selectedLoanCategory] : null;
-  const bunga   = cfg ? (cfg.bunga ?? 0.009) : 0.01;
-  const cicilan = nominal > 0 ? Math.round((nominal * (1 + bunga * selectedTenor)) / selectedTenor) : 0;
-  const total   = cicilan * selectedTenor;
+  const bunga   = cfg.bunga ?? 0.009;
+  const cicilan = nominal > 0
+    ? Math.round((nominal * (1 + bunga * selectedTenor)) / selectedTenor)
+    : 0;
+  const total = cicilan * selectedTenor;
+
   const setIfEl = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
   setIfEl('simNominal', rp(nominal));
   setIfEl('simTenor',   selectedTenor + ' bulan');
   setIfEl('simCicilan', rp(cicilan));
   setIfEl('simTotal',   rp(total));
 
-  // Warning 40% — pakai estimasi gaji dari simpanan wajib × 10 (dummy)
+  // Warning jika cicilan > 40% estimasi gaji
   const simp    = SIMPANAN_DB[USER.nik] || {};
-  const estGaji = (simp.wajib || 200000) * 10; // estimasi kasar
+  const estGaji = (simp.wajib || 200000) * 10;
   const warn40  = document.getElementById('sim40Warning');
   if (warn40) warn40.hidden = !(nominal > 0 && cicilan > estGaji * 0.4);
 }
 
+// ─── Toggle jadwal angsuran ───
 function toggleAmort() {
   amortOpen = !amortOpen;
   const el = document.getElementById('amortTable');
+  if (!el) return;
   el.hidden = !amortOpen;
+
   if (amortOpen) {
     const cfg     = selectedLoanCategory ? LOAN_CATEGORIES[selectedLoanCategory] : null;
-    const bunga   = cfg ? (cfg.bunga ?? 0.009) : 0.01;
+    if (!cfg || cfg.lumpSum) { el.hidden = true; amortOpen = false; return; }
+
+    const bunga   = cfg.bunga ?? 0.009;
     const nominal = getLoanNominalValue() || 0;
-    const cicilan = nominal > 0 ? Math.round((nominal * (1 + bunga * selectedTenor)) / selectedTenor) : 0;
+    if (nominal <= 0) { el.innerHTML = '<p style="text-align:center;color:var(--muted);padding:12px">Masukkan nominal terlebih dahulu</p>'; return; }
+
+    const cicilan = Math.round((nominal * (1 + bunga * selectedTenor)) / selectedTenor);
     let sisa = nominal;
     let html = '<table class="tbl"><thead><tr><th>Bln</th><th>Cicilan</th><th>Sisa</th></tr></thead><tbody>';
     for (let i = 1; i <= selectedTenor; i++) {
@@ -531,14 +694,30 @@ function toggleAmort() {
 
 // ─── PINJAMAN TAB ───
 function setKarPinTab(btn, tabId) {
+  // btn bisa null jika dipanggil programatis — cari tab yang sesuai sebagai fallback
+  if (!btn) btn = document.querySelector(`.ptab[onclick*="${tabId}"]`);
+  if (!btn) return;
+
   document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
+
   ['kpt-status', 'kpt-ajukan'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.hidden = true;
   });
-  const t = document.getElementById(tabId);
-  if (t) t.hidden = false;
+
+  const target = document.getElementById(tabId);
+  if (target) target.hidden = false;
+
+  // Saat pindah ke tab "Ajukan", pastikan mulai dari Step 1
+  if (tabId === 'kpt-ajukan') {
+    const s1 = document.getElementById('loan-step-1');
+    const s2 = document.getElementById('loan-step-2');
+    if (s1) s1.hidden = false;
+    if (s2) s2.hidden = true;
+    selectedLoanCategory = null;
+    selectedBank = '';
+  }
 }
 
 // ─── KATALOG ───
