@@ -298,26 +298,189 @@ function renderMutasi() {
   </tr>`).join('');
 }
 
+// ─── LOAN CATEGORIES CONFIG ───
+const LOAN_CATEGORIES = {
+  emergency: {
+    label: '🚨 Pinjaman Emergency',
+    color: 'cat--emergency',
+    maxNominal: 750000,
+    hint: 'Maksimum Rp 750.000 · Hanya 1× per bulan',
+    tenors: null,       // tidak dicicil — potong gaji 1× di periode berjalan
+    lumpSum: true,      // lunas sekaligus saat gajian
+    bunga: 0,           // 0% (sosial/darurat)
+    bankMode: false,
+  },
+  reguler: {
+    label: '💳 Pinjaman Reguler',
+    color: 'cat--reguler',
+    maxNominal: 7500000,
+    hint: 'Maksimum Rp 7.500.000 · Bunga 1%/bulan',
+    tenors: [3, 6, 12, 18, 24],
+    bunga: 0.01,
+    bankMode: false,
+  },
+  barang: {
+    label: '📦 Pinjaman Barang',
+    color: 'cat--barang',
+    maxNominal: 5000000,
+    hint: 'Maksimum Rp 5.000.000 · Sertakan nota pembelian',
+    tenors: [3, 6, 12],
+    bunga: 0.01,
+    bankMode: false,
+  },
+  mandiri: {
+    label: '🏦 Dana Koperasi Mandiri',
+    color: 'cat--mandiri',
+    maxNominal: 50000000,
+    hint: 'Maksimum Rp 50.000.000 · Persetujuan pengurus diperlukan',
+    tenors: [6, 12, 24, 36, 48, 60],
+    bunga: 0.01,
+    bankMode: false,
+  },
+  bank: {
+    label: '🏛️ Pinjaman Bank Luar',
+    color: 'cat--bank',
+    maxNominal: 200000000,
+    minNominal: 50000000,
+    hint: 'Rp 50.000.000 – Rp 200.000.000 · Syarat & bunga sesuai bank',
+    tenors: [12, 24, 36, 60, 120],
+    bunga: null,        // mengikuti bank
+    bankMode: true,
+  },
+};
+
+let selectedLoanCategory = null;
+let selectedBank = '';
+
+function selectLoanCategory(cat) {
+  selectedLoanCategory = cat;
+  selectedBank = '';
+  const cfg = LOAN_CATEGORIES[cat];
+
+  // Toggle step 1 → 2
+  document.getElementById('loan-step-1').hidden = true;
+  document.getElementById('loan-step-2').hidden = false;
+
+  // Title & sub
+  document.getElementById('loanFormTitle').textContent = cfg.label.replace(/^\S+\s/, '');
+  document.getElementById('loanFormSub').textContent   = cfg.hint;
+
+  // Badge kategori
+  const badge = document.getElementById('loanSelectedBadge');
+  badge.className = 'loan-selected-badge ' + cfg.color;
+  badge.innerHTML = cfg.label;
+
+  // Alerts
+  document.getElementById('loan-alert-emergency').hidden = (cat !== 'emergency');
+  document.getElementById('loan-alert-bank').hidden      = (cat !== 'bank');
+
+  // Bank selector
+  document.getElementById('fieldBankGroup').hidden = !cfg.bankMode;
+  document.getElementById('loanBank').value = '';
+  document.querySelectorAll('.bank-btn').forEach(b => b.classList.remove('selected'));
+
+  // Nominal hint
+  document.getElementById('loanNominalHint').textContent = cfg.hint;
+  document.getElementById('loanNominal').value = '';
+  document.getElementById('loanTujuan').value  = '';
+
+  // Set input placeholder
+  const nomEl = document.getElementById('loanNominal');
+  if (cat === 'bank') {
+    nomEl.placeholder = '50.000.000';
+  } else {
+    nomEl.placeholder = Math.floor(cfg.maxNominal / 2).toLocaleString('id-ID');
+  }
+
+  // Tenor field — sembunyikan untuk emergency (lunas 1x potong gaji)
+  const isLumpSum = !!cfg.lumpSum;
+  document.getElementById('fieldTenor').hidden  = isLumpSum;
+  document.getElementById('simResult').hidden   = isLumpSum;
+  document.getElementById('loanEmergencyInfo').hidden = !isLumpSum;
+
+  if (!isLumpSum) {
+    // Tenor buttons untuk kategori non-emergency
+    selectedTenor = cfg.tenors[0];
+    const tenorWrap = document.getElementById('tenorOptions');
+    tenorWrap.innerHTML = cfg.tenors.map((t, i) =>
+      `<button type="button" class="tenor-btn${i === 0 ? ' active' : ''}" onclick="setTenor(this,${t})">${t} bln</button>`
+    ).join('');
+    // Reset simulasi & amort
+    updateSimulasi();
+    amortOpen = false;
+    const at = document.getElementById('amortTable');
+    if (at) { at.hidden = true; at.innerHTML = ''; }
+  }
+
+  // Submit label
+  const sbtn = document.getElementById('loanSubmitBtn');
+  if (sbtn) sbtn.textContent = cat === 'bank' ? 'Kirim Permohonan' : 'Ajukan Pinjaman';
+
+  document.getElementById('kpt-ajukan').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function backToLoanCategories() {
+  document.getElementById('loan-step-1').hidden = false;
+  document.getElementById('loan-step-2').hidden = true;
+}
+
+function selectBank(btn, bankName) {
+  selectedBank = bankName;
+  document.getElementById('loanBank').value = bankName;
+  document.querySelectorAll('.bank-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
 // ─── LOAN SUBMISSION ───
 function submitLoan(e) {
   e.preventDefault();
+  const cfg     = LOAN_CATEGORIES[selectedLoanCategory];
   const nominal = getLoanNominalValue();
-  const tujuan  = document.getElementById('loanTujuan').value;
-  const tenor   = selectedTenor;
-  const bunga   = 0.01;
-  const cicilan = Math.round((nominal * (1 + bunga * tenor)) / tenor);
+  const tujuan  = document.getElementById('loanTujuan').value.trim();
+
+  // Validasi kategori bank harus pilih bank
+  if (cfg.bankMode && !selectedBank) {
+    showToast('⚠️ Pilih bank mitra terlebih dahulu', 'toast-warn');
+    return;
+  }
+
+  // Validasi nominal
+  if (nominal <= 0) {
+    showToast('⚠️ Masukkan nominal pinjaman', 'toast-warn');
+    return;
+  }
+  if (nominal > cfg.maxNominal) {
+    showToast(`⚠️ Melebihi batas maksimum kategori ini`, 'toast-warn');
+    return;
+  }
+  if (cfg.minNominal && nominal < cfg.minNominal) {
+    showToast(`⚠️ Minimal Rp ${cfg.minNominal.toLocaleString('id-ID')} untuk kategori ini`, 'toast-warn');
+    return;
+  }
+
+  const isLumpSum = !!cfg.lumpSum;
+  const tenor   = isLumpSum ? 1 : selectedTenor;
+  const bunga   = cfg.bunga ?? 0.009;
+  const cicilan = isLumpSum ? nominal : Math.round((nominal * (1 + bunga * tenor)) / tenor);
   const newId   = 'LN-' + String(Math.floor(Math.random() * 9000) + 1000).padStart(4, '0');
+  const katLabel = cfg.bankMode ? `Bank ${selectedBank}` : cfg.label.replace(/^\S+\s/, '');
 
   PINJAMAN_DB.push({
     id: newId, nik: USER.nik, nama: USER.nama,
-    tujuan, nominal, tenor, cicilan, lunas: 0,
-    status: 'pending', tgl: today()
+    tujuan: `[${katLabel}] ${tujuan}`,
+    nominal, tenor, cicilan, lunas: 0,
+    status: 'pending', tgl: today(),
+    kategori: selectedLoanCategory,
   });
 
   renderPinjamanStatus();
   showToast(`✓ Pinjaman ${newId} berhasil diajukan!`, 'toast-ok');
   document.getElementById('loanForm').reset();
-  setTimeout(() => _showSec('kar-pinjaman'), 1200);
+  backToLoanCategories();
+  setTimeout(() => setKarPinTab(
+    document.querySelector('.ptab'),
+    'kpt-status'
+  ), 800);
 }
 
 function setTenor(btn, t) {
@@ -329,7 +492,8 @@ function setTenor(btn, t) {
 
 function updateSimulasi() {
   const nominal = getLoanNominalValue() || 0;
-  const bunga   = 0.01;
+  const cfg     = selectedLoanCategory ? LOAN_CATEGORIES[selectedLoanCategory] : null;
+  const bunga   = cfg ? (cfg.bunga ?? 0.009) : 0.01;
   const cicilan = nominal > 0 ? Math.round((nominal * (1 + bunga * selectedTenor)) / selectedTenor) : 0;
   const total   = cicilan * selectedTenor;
   const setIfEl = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
@@ -337,6 +501,12 @@ function updateSimulasi() {
   setIfEl('simTenor',   selectedTenor + ' bulan');
   setIfEl('simCicilan', rp(cicilan));
   setIfEl('simTotal',   rp(total));
+
+  // Warning 40% — pakai estimasi gaji dari simpanan wajib × 10 (dummy)
+  const simp    = SIMPANAN_DB[USER.nik] || {};
+  const estGaji = (simp.wajib || 200000) * 10; // estimasi kasar
+  const warn40  = document.getElementById('sim40Warning');
+  if (warn40) warn40.hidden = !(nominal > 0 && cicilan > estGaji * 0.4);
 }
 
 function toggleAmort() {
@@ -344,8 +514,10 @@ function toggleAmort() {
   const el = document.getElementById('amortTable');
   el.hidden = !amortOpen;
   if (amortOpen) {
+    const cfg     = selectedLoanCategory ? LOAN_CATEGORIES[selectedLoanCategory] : null;
+    const bunga   = cfg ? (cfg.bunga ?? 0.009) : 0.01;
     const nominal = getLoanNominalValue() || 0;
-    const cicilan = nominal > 0 ? Math.round((nominal * (1 + 0.01 * selectedTenor)) / selectedTenor) : 0;
+    const cicilan = nominal > 0 ? Math.round((nominal * (1 + bunga * selectedTenor)) / selectedTenor) : 0;
     let sisa = nominal;
     let html = '<table class="tbl"><thead><tr><th>Bln</th><th>Cicilan</th><th>Sisa</th></tr></thead><tbody>';
     for (let i = 1; i <= selectedTenor; i++) {
