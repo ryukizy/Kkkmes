@@ -271,7 +271,143 @@
     .bn-item.active svg { stroke: var(--accent-mint); }
     .bn-item.active { color: var(--accent-mint); }
 
-    /* ── TOPBAR: FULLY REMOVED ── */
+    /* ── LOAN CATEGORY STYLES ─────────────────── */
+    .loan-step-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px 16px 10px;
+    }
+    .loan-step-num {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: linear-gradient(135deg, #065F46, #047857);
+      color: #fff; font-size: 14px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .loan-step-title { font-size: 15px; font-weight: 800; color: #1e293b; }
+    .loan-step-sub   { font-size: 11px; color: #94a3b8; margin-top: 1px; }
+    .loan-back-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #f1f5f9; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; color: #475569;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .loan-back-btn:active { background: #e2e8f0; }
+
+    /* Rule note 40% */
+    .loan-rule-note {
+      display: flex; align-items: flex-start; gap: 8px;
+      background: #fefce8; border: 1px solid #fde68a;
+      border-radius: 12px; padding: 12px 14px;
+      margin: 0 16px 14px; font-size: 12px; color: #713f12;
+      line-height: 1.5;
+    }
+
+    /* Alert boxes */
+    .loan-alert {
+      margin: 0 16px 12px; padding: 12px 14px;
+      border-radius: 12px; font-size: 12px; line-height: 1.6;
+    }
+    .loan-alert--red   { background: #fef2f2; border: 1px solid #fecaca; color: #7f1d1d; }
+    .loan-alert--amber { background: #fffbeb; border: 1px solid #fde68a; color: #78350f; }
+
+    /* Category grid */
+    .loan-cat-grid {
+      display: flex; flex-direction: column; gap: 10px;
+      padding: 0 16px 24px;
+    }
+    .loan-cat-card {
+      display: flex; align-items: flex-start; gap: 14px;
+      background: #fff; border: 1.5px solid #e2e8f0;
+      border-radius: 16px; padding: 16px;
+      cursor: pointer; text-align: left;
+      transition: all .18s ease;
+      -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+    }
+    .loan-cat-card:hover  { border-color: #10B981; background: #f0fdf4; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(6,95,70,0.10); }
+    .loan-cat-card:active { transform: scale(.98); }
+    .loan-cat-card--wide  { /* same, no extra style needed */ }
+
+    .lcc-icon {
+      width: 46px; height: 46px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+    .lcc-icon--red    { background: #fef2f2; }
+    .lcc-icon--green  { background: #f0fdf4; }
+    .lcc-icon--blue   { background: #eff6ff; }
+    .lcc-icon--teal   { background: #f0fdfa; }
+    .lcc-icon--amber  { background: #fffbeb; }
+
+    .lcc-body { flex: 1; min-width: 0; }
+    .lcc-name  { font-size: 14px; font-weight: 800; color: #1e293b; margin-bottom: 2px; }
+    .lcc-limit { font-size: 12px; color: #475569; margin-bottom: 6px; }
+    .lcc-limit strong { color: #065F46; }
+    .lcc-desc  { font-size: 11px; color: #94a3b8; line-height: 1.5; margin-top: 6px; }
+    .lcc-tags  { display: flex; flex-wrap: wrap; gap: 4px; }
+    .lcc-tag   {
+      font-size: 10px; font-weight: 600; padding: 2px 8px;
+      border-radius: 20px; background: #f1f5f9; color: #64748b;
+    }
+    .lcc-tag--red    { background: #fef2f2; color: #dc2626; }
+    .lcc-tag--green  { background: #dcfce7; color: #16a34a; }
+    .lcc-tag--blue   { background: #dbeafe; color: #2563eb; }
+    .lcc-tag--teal   { background: #ccfbf1; color: #0d9488; }
+    .lcc-tag--amber  { background: #fef3c7; color: #d97706; }
+    .lcc-arrow { width: 18px; height: 18px; color: #cbd5e1; flex-shrink: 0; margin-top: 4px; }
+
+    /* Selected badge */
+    .loan-selected-badge {
+      margin: 0 16px 12px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 12px; font-weight: 600;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .loan-selected-badge.cat--emergency { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    .loan-selected-badge.cat--reguler   { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+    .loan-selected-badge.cat--barang    { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+    .loan-selected-badge.cat--mandiri   { background: #f0fdfa; color: #0d9488; border: 1px solid #99f6e4; }
+    .loan-selected-badge.cat--bank      { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+
+    /* Bank selector */
+    .bank-selector { display: flex; gap: 8px; margin-top: 8px; }
+    .bank-btn {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;
+      padding: 12px 8px; border: 1.5px solid #e2e8f0; border-radius: 14px;
+      background: #f8fafc; cursor: pointer; font-size: 11px; font-weight: 600; color: #475569;
+      transition: all .15s; -webkit-tap-highlight-color: transparent;
+    }
+    .bank-btn:hover   { border-color: #10B981; background: #f0fdf4; color: #065F46; }
+    .bank-btn.selected { border-color: #065F46; background: #f0fdf4; color: #065F46; box-shadow: 0 0 0 2px rgba(6,95,70,0.12); }
+    .bank-logo {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 800; color: #fff;
+    }
+    .bank-logo--danamon  { background: #e4002b; }
+    .bank-logo--bsi      { background: #00693e; }
+    .bank-logo--muamalat { background: #003087; }
+
+    /* Emergency lump-sum info panel */
+    .loan-emergency-info {
+      display: flex; align-items: flex-start; gap: 12px;
+      background: linear-gradient(135deg, #fef2f2, #fff1f2);
+      border: 1.5px solid #fecaca; border-radius: 14px;
+      padding: 16px; margin-bottom: 14px;
+    }
+    .lei-icon { font-size: 28px; flex-shrink: 0; line-height: 1; }
+    .lei-body { flex: 1; }
+    .lei-title { font-size: 13px; font-weight: 800; color: #991b1b; margin-bottom: 4px; }
+    .lei-desc  { font-size: 12px; color: #7f1d1d; line-height: 1.6; }
+
+    /* 40% warning in simulasi */
+    .sim-40-warning {
+      background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px;
+      padding: 10px 12px; font-size: 12px; color: #7f1d1d;
+      margin: 8px 0; line-height: 1.5;
+    }
     .topbar { display: none !important; }
 
     /* Hero card bleeds flush to top — respects notch/safe-area */
@@ -1161,41 +1297,206 @@
         </div>
         <div id="kpt-status"><div id="myPinjamanCont"></div></div>
         <div id="kpt-ajukan" hidden>
-          <div class="card-box">
-            <h3 class="card-box__title">Formulir Pengajuan</h3>
-            <form id="loanForm">
-              <div class="field-grp">
-                <label>Nominal Pinjaman</label>
-                <div class="field-box"><span class="fi-text">Rp</span><input type="text" id="loanNominal" inputmode="numeric" placeholder="5.000.000" oninput="formatLoanNominal(this)" required /></div>
-                <div class="field-hint">Maksimum Rp 15.000.000 (2× total simpanan)</div>
+
+          <!-- STEP 1: Pilih Kategori -->
+          <div id="loan-step-1">
+            <div class="loan-step-header">
+              <div class="loan-step-num">1</div>
+              <div>
+                <div class="loan-step-title">Pilih Kategori Pinjaman</div>
+                <div class="loan-step-sub">Sesuaikan dengan kebutuhan Anda</div>
               </div>
-              <div class="field-grp">
-                <label>Tujuan Pinjaman</label>
-                <div class="field-box"><input type="text" id="loanTujuan" placeholder="Contoh: Renovasi Rumah" required /></div>
-              </div>
-              <div class="field-grp">
-                <label>Tenor (bulan)</label>
-                <div class="tenor-options">
-                  <button type="button" class="tenor-btn" onclick="setTenor(this,3)">3 bln</button>
-                  <button type="button" class="tenor-btn active" onclick="setTenor(this,6)">6 bln</button>
-                  <button type="button" class="tenor-btn" onclick="setTenor(this,12)">12 bln</button>
-                  <button type="button" class="tenor-btn" onclick="setTenor(this,18)">18 bln</button>
-                  <button type="button" class="tenor-btn" onclick="setTenor(this,24)">24 bln</button>
+            </div>
+
+            <!-- Note 40% -->
+            <div class="loan-rule-note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span><strong>Syarat umum:</strong> Total angsuran semua pinjaman <strong>tidak boleh melebihi 40% dari gaji</strong> per bulan. Pengajuan yang melampaui batas ini tidak dapat diproses.</span>
+            </div>
+
+            <div class="loan-cat-grid">
+              <!-- 1. Emergency -->
+              <button class="loan-cat-card" onclick="selectLoanCategory('emergency')">
+                <div class="lcc-icon lcc-icon--red">🚨</div>
+                <div class="lcc-body">
+                  <div class="lcc-name">Pinjaman Emergency</div>
+                  <div class="lcc-limit">Maks. <strong>Rp 750.000</strong></div>
+                  <div class="lcc-tags">
+                    <span class="lcc-tag lcc-tag--red">1× per bulan</span>
+                    <span class="lcc-tag">Cepat cair</span>
+                  </div>
+                  <div class="lcc-desc">Untuk kebutuhan mendesak mendadak. Hanya bisa diajukan satu kali dalam satu bulan kalender.</div>
                 </div>
-              </div>
-              <div class="sim-result">
-                <div class="sr-main"><div class="sr-label">Estimasi Cicilan / Bulan</div><div class="sr-val" id="simCicilan">Rp 0</div></div>
-                <div class="sr-grid">
-                  <div class="sr-item"><p>Nominal</p><strong id="simNominal">Rp 0</strong></div>
-                  <div class="sr-item"><p>Tenor</p><strong id="simTenor">6 bulan</strong></div>
-                  <div class="sr-item sr-item--full"><p>Total Bayar</p><strong id="simTotal">Rp 0</strong></div>
+                <svg class="lcc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+
+              <!-- 2. Reguler -->
+              <button class="loan-cat-card" onclick="selectLoanCategory('reguler')">
+                <div class="lcc-icon lcc-icon--green">💳</div>
+                <div class="lcc-body">
+                  <div class="lcc-name">Pinjaman Reguler</div>
+                  <div class="lcc-limit">Maks. <strong>Rp 7.500.000</strong></div>
+                  <div class="lcc-tags">
+                    <span class="lcc-tag lcc-tag--green">Koperasi</span>
+                    <span class="lcc-tag">Bunga 1%/bln</span>
+                  </div>
+                  <div class="lcc-desc">Pinjaman umum untuk berbagai kebutuhan. Dicicil langsung dari potongan gaji.</div>
                 </div>
-                <div class="sr-amort-toggle"><button type="button" class="btn-amort" onclick="toggleAmort()">Lihat Jadwal Angsuran ↓</button></div>
-                <div id="amortTable" hidden class="sr-amort-body"></div>
-              </div>
-              <button type="submit" class="btn-prim btn-full btn-mt">Ajukan Pinjaman</button>
-            </form>
+                <svg class="lcc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+
+              <!-- 3. Barang -->
+              <button class="loan-cat-card" onclick="selectLoanCategory('barang')">
+                <div class="lcc-icon lcc-icon--blue">📦</div>
+                <div class="lcc-body">
+                  <div class="lcc-name">Pinjaman Barang</div>
+                  <div class="lcc-limit">Maks. <strong>Rp 5.000.000</strong></div>
+                  <div class="lcc-tags">
+                    <span class="lcc-tag lcc-tag--blue">Koperasi</span>
+                    <span class="lcc-tag">Nota wajib</span>
+                  </div>
+                  <div class="lcc-desc">Untuk pembelian barang tertentu. Wajib menyertakan nota atau keterangan pembelian.</div>
+                </div>
+                <svg class="lcc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+
+              <!-- 4. Dana Mandiri -->
+              <button class="loan-cat-card" onclick="selectLoanCategory('mandiri')">
+                <div class="lcc-icon lcc-icon--teal">🏦</div>
+                <div class="lcc-body">
+                  <div class="lcc-name">Dana Koperasi Mandiri</div>
+                  <div class="lcc-limit">Maks. <strong>Rp 50.000.000</strong></div>
+                  <div class="lcc-tags">
+                    <span class="lcc-tag lcc-tag--teal">Koperasi</span>
+                    <span class="lcc-tag">Persetujuan RAT</span>
+                  </div>
+                  <div class="lcc-desc">Dana besar dari kas koperasi. Memerlukan persetujuan pengurus dan rapat anggota.</div>
+                </div>
+                <svg class="lcc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+
+              <!-- 5. Bank Luar -->
+              <button class="loan-cat-card loan-cat-card--wide" onclick="selectLoanCategory('bank')">
+                <div class="lcc-icon lcc-icon--amber">🏛️</div>
+                <div class="lcc-body">
+                  <div class="lcc-name">Pinjaman Bank Luar</div>
+                  <div class="lcc-limit"><strong>Rp 50.000.000 – Rp 200.000.000</strong></div>
+                  <div class="lcc-tags">
+                    <span class="lcc-tag lcc-tag--amber">Danamon</span>
+                    <span class="lcc-tag lcc-tag--amber">BSI</span>
+                    <span class="lcc-tag lcc-tag--amber">Muamalat</span>
+                    <span class="lcc-tag">Difasilitasi koperasi</span>
+                  </div>
+                  <div class="lcc-desc">Pinjaman besar melalui mitra bank. Koperasi membantu proses pengajuan. Syarat &amp; bunga mengikuti ketentuan bank masing-masing.</div>
+                </div>
+                <svg class="lcc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
           </div>
+
+          <!-- STEP 2: Formulir -->
+          <div id="loan-step-2" hidden>
+            <div class="loan-step-header">
+              <button class="loan-back-btn" onclick="backToLoanCategories()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <div>
+                <div class="loan-step-title" id="loanFormTitle">Formulir Pengajuan</div>
+                <div class="loan-step-sub" id="loanFormSub">Isi data dengan benar</div>
+              </div>
+            </div>
+
+            <!-- Badge kategori terpilih -->
+            <div class="loan-selected-badge" id="loanSelectedBadge"></div>
+
+            <!-- Alert emergency -->
+            <div id="loan-alert-emergency" class="loan-alert loan-alert--red" hidden>
+              🚨 <strong>Pinjaman Emergency</strong> hanya dapat diajukan <strong>1 kali per bulan</strong>. Nominal akan dipotong <strong>sekaligus dari gaji berikutnya</strong> tanpa bunga. Pastikan ini benar-benar kebutuhan mendesak.
+            </div>
+            <!-- Alert bank -->
+            <div id="loan-alert-bank" class="loan-alert loan-alert--amber" hidden>
+              🏛️ Pengajuan <strong>Pinjaman Bank Luar</strong> akan diteruskan ke tim koperasi untuk koordinasi dengan bank mitra. Tim akan menghubungi Anda dalam 1×3 hari kerja.
+            </div>
+
+            <div class="card-box">
+              <form id="loanForm">
+                <input type="hidden" id="loanKategori" value="" />
+
+                <!-- Bank selector (hanya muncul untuk bank luar) -->
+                <div class="field-grp" id="fieldBankGroup" hidden>
+                  <label>Pilih Bank Mitra</label>
+                  <div class="bank-selector">
+                    <button type="button" class="bank-btn" onclick="selectBank(this,'Danamon')">
+                      <span class="bank-logo bank-logo--danamon">D</span>Danamon
+                    </button>
+                    <button type="button" class="bank-btn" onclick="selectBank(this,'BSI')">
+                      <span class="bank-logo bank-logo--bsi">B</span>BSI
+                    </button>
+                    <button type="button" class="bank-btn" onclick="selectBank(this,'Muamalat')">
+                      <span class="bank-logo bank-logo--muamalat">M</span>Muamalat
+                    </button>
+                  </div>
+                  <input type="hidden" id="loanBank" value="" />
+                </div>
+
+                <div class="field-grp">
+                  <label>Nominal Pinjaman</label>
+                  <div class="field-box">
+                    <span class="fi-text">Rp</span>
+                    <input type="text" id="loanNominal" inputmode="numeric" placeholder="0" oninput="formatLoanNominal(this)" required />
+                  </div>
+                  <div class="field-hint" id="loanNominalHint"></div>
+                </div>
+
+                <div class="field-grp" id="fieldTujuan">
+                  <label>Tujuan / Keterangan</label>
+                  <div class="field-box"><input type="text" id="loanTujuan" placeholder="Contoh: Kebutuhan mendesak keluarga" required /></div>
+                </div>
+
+                <div class="field-grp" id="fieldTenor">
+                  <label>Tenor (bulan)</label>
+                  <div class="tenor-options" id="tenorOptions"></div>
+                </div>
+
+                <!-- Info khusus Emergency (lunas 1x gajian) -->
+                <div id="loanEmergencyInfo" class="loan-emergency-info" hidden>
+                  <div class="lei-icon">📅</div>
+                  <div class="lei-body">
+                    <div class="lei-title">Dipotong Langsung saat Gajian</div>
+                    <div class="lei-desc">Pinjaman emergency <strong>tidak dicicil</strong>. Seluruh nominal akan dipotong otomatis dari gaji pada periode penggajian berikutnya, tanpa bunga.</div>
+                  </div>
+                </div>
+
+                <!-- Simulasi -->
+                <div class="sim-result" id="simResult">
+                  <div class="sr-main">
+                    <div class="sr-label">Estimasi Cicilan / Bulan</div>
+                    <div class="sr-val" id="simCicilan">Rp 0</div>
+                  </div>
+                  <!-- Warning 40% -->
+                  <div id="sim40Warning" class="sim-40-warning" hidden>
+                    ⚠️ Cicilan ini melebihi <strong>40% gaji</strong>. Pengajuan berisiko ditolak.
+                  </div>
+                  <div class="sr-grid">
+                    <div class="sr-item"><p>Nominal</p><strong id="simNominal">Rp 0</strong></div>
+                    <div class="sr-item"><p>Tenor</p><strong id="simTenor">-</strong></div>
+                    <div class="sr-item sr-item--full"><p>Total Bayar</p><strong id="simTotal">Rp 0</strong></div>
+                  </div>
+                  <div class="sr-amort-toggle"><button type="button" class="btn-amort" onclick="toggleAmort()">Lihat Jadwal Angsuran ↓</button></div>
+                  <div id="amortTable" hidden class="sr-amort-body"></div>
+                </div>
+
+                <!-- Note 40% -->
+                <div class="loan-rule-note" style="margin-bottom:12px">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  <span>Angsuran tidak boleh melebihi <strong>40% dari gaji bulanan</strong>. Dengan mengajukan, Anda menyatakan telah memahami ketentuan ini.</span>
+                </div>
+
+                <button type="submit" class="btn-prim btn-full btn-mt" id="loanSubmitBtn">Ajukan Pinjaman</button>
+              </form>
+            </div>
+          </div>
+
         </div>
       </section>
 
