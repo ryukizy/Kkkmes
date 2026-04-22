@@ -301,6 +301,125 @@
     /* Status pinjaman spacing */
     .card-section { padding: 0 16px; margin-top: 20px; }
     .card-section:last-child { margin-bottom: 24px; }
+    /* ── PPOB STYLES ──────────────────────────── */
+    .ppob-tab-bar {
+      display: flex; gap: 8px;
+      background: var(--surface);
+      border-radius: 14px; padding: 6px;
+      margin: 0 16px 16px; margin-top: 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,.07);
+    }
+    .ppob-tab {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; gap: 4px; padding: 10px 8px;
+      border: none; background: transparent; border-radius: 10px;
+      font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500;
+      color: var(--text-muted-slate); cursor: pointer; transition: all .2s;
+    }
+    .ppob-tab-icon { font-size: 20px; line-height: 1; }
+    .ppob-tab.active {
+      background: linear-gradient(135deg, var(--hero-grad-start), var(--hero-grad-end));
+      color: #fff; box-shadow: 0 2px 8px rgba(6,95,70,.3);
+    }
+    .ppob-tab:not(.active):hover { background: #f0fdf4; color: #065F46; }
+    .ppob-card {
+      background: var(--surface); border-radius: 16px;
+      padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07);
+      margin: 0 16px 16px;
+    }
+    .ppob-panel { animation: ppob-fadein .22s ease; }
+    @keyframes ppob-fadein { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+    .ppob-input-row { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+    .ppob-phone-input { flex: 1; }
+    .ppob-provider-badge {
+      min-width: 80px; padding: 6px 10px; border-radius: 8px;
+      background: #f1f5f9; color: var(--text-muted-slate);
+      font-size: 11px; font-weight: 700; text-align: center;
+      letter-spacing: .3px; transition: all .3s; white-space: nowrap;
+    }
+    .ppob-provider-badge.detected { transform: scale(1.04); }
+    .ppob-nominal-grid {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 8px;
+    }
+    .ppob-nominal-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      padding: 10px 6px; border: 1.5px solid #e2e8f0; border-radius: 12px;
+      background: #fff; cursor: pointer; transition: all .18s;
+    }
+    .ppob-nominal-btn:hover { border-color: var(--accent-mint); background: #f0fdf4; }
+    .ppob-nominal-btn.selected {
+      border-color: #065F46; background: #f0fdf4;
+      box-shadow: 0 0 0 2px rgba(6,95,70,.15);
+    }
+    .ppob-nominal-val { font-size: 13px; font-weight: 700; color: var(--text-slate); }
+    .ppob-nominal-harga { font-size: 10px; color: var(--text-muted-slate); }
+    .ppob-nominal-kwh  { font-size: 10px; color: #065F46; font-weight: 600; }
+    .ppob-pln-btn { padding: 12px 6px; }
+    .ppob-paket-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+    .ppob-paket-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: 12px;
+      background: #fff; cursor: pointer; transition: all .18s; text-align: left;
+    }
+    .ppob-paket-item:hover { border-color: var(--accent-mint); background: #f0fdf4; }
+    .ppob-paket-item.selected {
+      border-color: #065F46; background: #f0fdf4;
+      box-shadow: 0 0 0 2px rgba(6,95,70,.12);
+    }
+    .ppob-paket-left { display: flex; flex-direction: column; gap: 2px; }
+    .ppob-paket-size  { font-size: 14px; font-weight: 700; color: var(--text-slate); }
+    .ppob-paket-masa  { font-size: 11px; color: var(--text-muted-slate); }
+    .ppob-paket-price { font-size: 13px; font-weight: 700; color: #065F46; }
+    .pln-info-card {
+      display: flex; flex-direction: column; gap: 4px;
+      background: #f0fdf4; border: 1px solid #bbf7d0;
+      border-radius: 12px; padding: 12px 14px; margin-top: 12px;
+    }
+    .pln-info-row { display: flex; justify-content: space-between; align-items: center; }
+    .pln-info-label { font-size: 12px; color: var(--text-muted-slate); }
+    .pln-info-val   { font-size: 13px; font-weight: 600; color: var(--text-slate); }
+    .pln-token-result {
+      background: linear-gradient(135deg, #065F46, #047857);
+      border-radius: 14px; padding: 20px; margin-top: 14px;
+      text-align: center; animation: ppob-fadein .3s ease;
+    }
+    .pln-token-label { font-size: 11px; color: rgba(255,255,255,.7); margin-bottom: 8px; letter-spacing: .5px; text-transform: uppercase; }
+    .pln-token-code  { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: 3px; margin-bottom: 8px; font-variant-numeric: tabular-nums; }
+    .pln-token-hint  { font-size: 11px; color: rgba(255,255,255,.6); }
+    .ppob-summary {
+      background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
+      padding: 14px; margin: 14px 0; animation: ppob-fadein .2s ease;
+    }
+    .ppob-summary-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; color: var(--text-muted-slate); }
+    .ppob-summary-row span:last-child { font-weight: 600; color: var(--text-slate); }
+    .ppob-summary-total { border-top: 1px solid #e2e8f0; margin-top: 6px; padding-top: 10px; }
+    .ppob-summary-total span { font-weight: 700 !important; color: #065F46 !important; font-size: 15px !important; }
+    .ppob-btn-bayar { width: 100%; padding: 14px; font-size: 15px; font-weight: 700; border-radius: 12px; margin-top: 4px; }
+    .ppob-btn-bayar:disabled { background: #cbd5e1 !important; cursor: not-allowed; box-shadow: none; transform: none; }
+    .ppob-hint { text-align: center; color: var(--text-muted-slate); font-size: 13px; padding: 20px 0; }
+    .ppob-riwayat-wrap {
+      background: var(--surface); border-radius: 16px; padding: 16px 20px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.07); margin: 0 16px 24px;
+    }
+    .ppob-riwayat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .ppob-riwayat-title  { font-size: 15px; font-weight: 700; color: var(--text-slate); }
+    .ppob-riwayat-count  { font-size: 12px; color: var(--text-muted-slate); background: #f1f5f9; padding: 3px 10px; border-radius: 20px; }
+    .ppob-riwayat-list   { display: flex; flex-direction: column; gap: 10px; }
+    .ppob-trx-item       { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+    .ppob-trx-item:last-child { border-bottom: none; }
+    .ppob-trx-icon { font-size: 22px; width: 40px; height: 40px; background: #f0fdf4; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .ppob-trx-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .ppob-trx-label { font-size: 13px; font-weight: 600; color: var(--text-slate); }
+    .ppob-trx-meta  { font-size: 11px; color: var(--text-muted-slate); }
+    .ppob-trx-token { font-size: 11px; color: #065F46; font-weight: 600; letter-spacing: .5px; }
+    .ppob-trx-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+    .ppob-trx-harga { font-size: 13px; font-weight: 700; color: var(--text-slate); }
+    .ppob-empty-state { text-align: center; padding: 32px 0; color: var(--text-muted-slate); }
+    .ppob-empty-icon  { font-size: 36px; display: block; margin-bottom: 8px; opacity: .5; }
+    @media (max-width: 380px) {
+      .ppob-nominal-grid { grid-template-columns: repeat(2,1fr); }
+      .pln-token-code    { font-size: 16px; letter-spacing: 2px; }
+    }
   </style>
 </head>
 <body>
@@ -363,6 +482,9 @@
       </a>
       <a class="nav-link" data-sec="kar-riwayat">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>Riwayat
+      </a>
+      <a class="nav-link" data-sec="kar-ppob">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>PPOB
       </a>
       <div class="nav-grp-lbl">Akun</div>
       <a class="nav-link" data-sec="kar-profil">
@@ -694,6 +816,106 @@
         </div>
       </section>
 
+      <!-- ═══ KAR PPOB ═══ -->
+      <section class="sec" id="kar-ppob" style="display:none">
+        <div class="sec-hd"><div><h2>Layanan PPOB</h2><p>Pulsa, Paket Data &amp; Token Listrik</p></div></div>
+
+        <!-- Tab Bar -->
+        <div class="ppob-tab-bar">
+          <button class="ppob-tab active" data-tab="pulsa" onclick="ppobSwitchTab('pulsa')">
+            <span class="ppob-tab-icon">📱</span><span>Pulsa</span>
+          </button>
+          <button class="ppob-tab" data-tab="data" onclick="ppobSwitchTab('data')">
+            <span class="ppob-tab-icon">🌐</span><span>Paket Data</span>
+          </button>
+          <button class="ppob-tab" data-tab="pln" onclick="ppobSwitchTab('pln')">
+            <span class="ppob-tab-icon">⚡</span><span>Token PLN</span>
+          </button>
+        </div>
+
+        <!-- ── PANEL PULSA ── -->
+        <div id="ppob-panel-pulsa" class="ppob-panel">
+          <div class="ppob-card">
+            <label class="form-label">Nomor Handphone</label>
+            <div class="ppob-input-row">
+              <div class="ppob-provider-badge" id="pulsa-provider-badge">–</div>
+              <input type="tel" id="pulsa-nomor" class="form-input ppob-phone-input" placeholder="08xx-xxxx-xxxx" maxlength="14" oninput="ppobDetectProvider(this.value,'pulsa')" />
+            </div>
+            <label class="form-label" style="margin-top:12px">Pilih Nominal</label>
+            <div class="ppob-nominal-grid" id="pulsa-nominal-grid"></div>
+            <div id="pulsa-summary" class="ppob-summary" style="display:none">
+              <div class="ppob-summary-row"><span>Nomor Tujuan</span><span id="sum-pulsa-nomor">–</span></div>
+              <div class="ppob-summary-row"><span>Provider</span><span id="sum-pulsa-provider">–</span></div>
+              <div class="ppob-summary-row"><span>Nominal</span><span id="sum-pulsa-nominal">–</span></div>
+              <div class="ppob-summary-row ppob-summary-total"><span>Total Bayar</span><span id="sum-pulsa-total">–</span></div>
+            </div>
+            <button class="btn-prim ppob-btn-bayar" id="btn-pulsa-bayar" onclick="ppobBayar('pulsa')" disabled>Bayar Sekarang</button>
+          </div>
+        </div>
+
+        <!-- ── PANEL PAKET DATA ── -->
+        <div id="ppob-panel-data" class="ppob-panel" style="display:none">
+          <div class="ppob-card">
+            <label class="form-label">Nomor Handphone</label>
+            <div class="ppob-input-row">
+              <div class="ppob-provider-badge" id="data-provider-badge">–</div>
+              <input type="tel" id="data-nomor" class="form-input ppob-phone-input" placeholder="08xx-xxxx-xxxx" maxlength="14" oninput="ppobDetectProvider(this.value,'data')" />
+            </div>
+            <label class="form-label" style="margin-top:12px">Pilih Paket</label>
+            <div class="ppob-paket-list" id="data-paket-list">
+              <p class="ppob-hint">Masukkan nomor untuk melihat paket tersedia</p>
+            </div>
+            <div id="data-summary" class="ppob-summary" style="display:none">
+              <div class="ppob-summary-row"><span>Nomor Tujuan</span><span id="sum-data-nomor">–</span></div>
+              <div class="ppob-summary-row"><span>Provider</span><span id="sum-data-provider">–</span></div>
+              <div class="ppob-summary-row"><span>Paket</span><span id="sum-data-paket">–</span></div>
+              <div class="ppob-summary-row ppob-summary-total"><span>Total Bayar</span><span id="sum-data-total">–</span></div>
+            </div>
+            <button class="btn-prim ppob-btn-bayar" id="btn-data-bayar" onclick="ppobBayar('data')" disabled>Bayar Sekarang</button>
+          </div>
+        </div>
+
+        <!-- ── PANEL TOKEN PLN ── -->
+        <div id="ppob-panel-pln" class="ppob-panel" style="display:none">
+          <div class="ppob-card">
+            <label class="form-label">Nomor Meter / ID Pelanggan</label>
+            <input type="text" id="pln-idpel" class="form-input" placeholder="Contoh: 521100000003" maxlength="13" oninput="ppobCheckPLN(this.value)" />
+            <div id="pln-info-card" class="pln-info-card" style="display:none">
+              <div class="pln-info-row"><span class="pln-info-label">Nama</span><span class="pln-info-val" id="pln-nama">–</span></div>
+              <div class="pln-info-row"><span class="pln-info-label">Tarif/Daya</span><span class="pln-info-val" id="pln-tarif">–</span></div>
+            </div>
+            <label class="form-label" style="margin-top:12px">Pilih Nominal Token</label>
+            <div class="ppob-nominal-grid" id="pln-nominal-grid"></div>
+            <div id="pln-token-result" class="pln-token-result" style="display:none">
+              <p class="pln-token-label">Token Listrik Anda</p>
+              <div class="pln-token-code" id="pln-token-code">0000-0000-0000-0000-0000</div>
+              <p class="pln-token-hint">Masukkan kode di atas ke meteran listrik Anda</p>
+            </div>
+            <div id="pln-summary" class="ppob-summary" style="display:none">
+              <div class="ppob-summary-row"><span>ID Pelanggan</span><span id="sum-pln-idpel">–</span></div>
+              <div class="ppob-summary-row"><span>Nama</span><span id="sum-pln-nama">–</span></div>
+              <div class="ppob-summary-row"><span>Nominal</span><span id="sum-pln-nominal">–</span></div>
+              <div class="ppob-summary-row ppob-summary-total"><span>Total Bayar</span><span id="sum-pln-total">–</span></div>
+            </div>
+            <button class="btn-prim ppob-btn-bayar" id="btn-pln-bayar" onclick="ppobBayar('pln')" disabled>Beli Token</button>
+          </div>
+        </div>
+
+        <!-- Riwayat Transaksi PPOB -->
+        <div class="ppob-riwayat-wrap">
+          <div class="ppob-riwayat-header">
+            <h3 class="ppob-riwayat-title">Riwayat Transaksi PPOB</h3>
+            <span class="ppob-riwayat-count" id="ppob-trx-count">0 transaksi</span>
+          </div>
+          <div id="ppob-riwayat-list" class="ppob-riwayat-list">
+            <div class="ppob-empty-state">
+              <span class="ppob-empty-icon">🧾</span>
+              <p>Belum ada transaksi PPOB</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- ═══ KAR PROFIL ═══ -->
       <section class="sec" id="kar-profil" style="display:none">
         <div class="profil-hero">
@@ -806,6 +1028,10 @@
         Belanja
         <span class="bn-badge" id="bnCartBadge" hidden>0</span>
       </button>
+      <button class="bn-item" data-sec="kar-ppob" onclick="_showSec('kar-ppob')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        PPOB
+      </button>
       <button class="bn-item" data-sec="kar-profil" onclick="_showSec('kar-profil')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         Profil
@@ -837,6 +1063,258 @@
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script src="../js/shared.js"></script>
 <script src="karyawan.js"></script>
+
+<script>
+// ══════════════════════════════════════════════════
+//  PPOB — Full Mock
+// ══════════════════════════════════════════════════
+const PPOB_PROVIDERS = {
+  telkomsel: { label:'Telkomsel', color:'#e4002b', prefixes:['0811','0812','0813','0821','0822','0823','0851','0852','0853'] },
+  indosat:   { label:'Indosat',   color:'#f7941d', prefixes:['0814','0815','0816','0855','0856','0857','0858'] },
+  xl:        { label:'XL',        color:'#0050a0', prefixes:['0817','0818','0819','0859','0877','0878'] },
+  tri:       { label:'Tri (3)',   color:'#8b1f8b', prefixes:['0895','0896','0897','0898','0899'] },
+  smartfren: { label:'Smartfren', color:'#e2001a', prefixes:['0881','0882','0883','0884','0885','0886','0887','0888','0889'] },
+};
+const PPOB_PULSA_NOMINAL = [
+  {nominal:5000,harga:6000},{nominal:10000,harga:11500},{nominal:20000,harga:21500},
+  {nominal:25000,harga:26500},{nominal:50000,harga:52000},{nominal:100000,harga:102500},
+];
+const PPOB_PAKET_DATA = {
+  telkomsel:[{id:'tsel-1gb',label:'1 GB',masa:'7 hari',harga:15000},{id:'tsel-3gb',label:'3 GB',masa:'30 hari',harga:35000},{id:'tsel-6gb',label:'6 GB',masa:'30 hari',harga:60000},{id:'tsel-12gb',label:'12 GB',masa:'30 hari',harga:100000},{id:'tsel-25gb',label:'25 GB',masa:'30 hari',harga:175000}],
+  indosat:  [{id:'im3-2gb',label:'2 GB',masa:'30 hari',harga:20000},{id:'im3-5gb',label:'5 GB',masa:'30 hari',harga:45000},{id:'im3-10gb',label:'10 GB',masa:'30 hari',harga:80000},{id:'im3-20gb',label:'20 GB',masa:'30 hari',harga:130000}],
+  xl:       [{id:'xl-1gb',label:'1.3 GB',masa:'7 hari',harga:13000},{id:'xl-5gb',label:'5 GB',masa:'30 hari',harga:50000},{id:'xl-10gb',label:'10 GB',masa:'30 hari',harga:90000}],
+  tri:      [{id:'tri-2gb',label:'2 GB',masa:'30 hari',harga:18000},{id:'tri-6gb',label:'6 GB',masa:'30 hari',harga:45000},{id:'tri-14gb',label:'14 GB',masa:'30 hari',harga:80000}],
+  smartfren:[{id:'sf-3gb',label:'3 GB',masa:'30 hari',harga:25000},{id:'sf-8gb',label:'8 GB',masa:'30 hari',harga:55000}],
+};
+const PPOB_PLN_DB = {
+  '521100000001':{nama:'AGUS SUSANTO',tarif:'R1/900VA',daya:'900 VA'},
+  '521100000002':{nama:'RINA MARLINA',tarif:'R1/1300VA',daya:'1300 VA'},
+  '521100000003':{nama:'RISKI HARIYANTO',tarif:'R2/2200VA',daya:'2200 VA'},
+  '521100000004':{nama:'SITI RAHAYU',tarif:'R1/900VA',daya:'900 VA'},
+  '521100000005':{nama:'AHMAD FAUZI',tarif:'R1/1300VA',daya:'1300 VA'},
+};
+const PPOB_PLN_NOMINAL = [
+  {nominal:20000,kwh:'~5.8 kWh',harga:22500},{nominal:50000,kwh:'~14.5 kWh',harga:52500},
+  {nominal:100000,kwh:'~29 kWh',harga:102500},{nominal:200000,kwh:'~58 kWh',harga:202500},
+  {nominal:500000,kwh:'~145 kWh',harga:502500},
+];
+const PPOB_STATE = {
+  activeTab:'pulsa',
+  pulsa:{nomor:'',provider:null,selectedNominal:null},
+  data: {nomor:'',provider:null,selectedPaket:null},
+  pln:  {idpel:'',pelanggan:null,selectedNominal:null},
+};
+if (!window.PPOB_TRANSACTIONS) window.PPOB_TRANSACTIONS = [];
+
+function initPPOB() {
+  ppobRenderPulsaNominal();
+  ppobRenderPLNNominal();
+  ppobRenderRiwayat();
+}
+
+function ppobSwitchTab(tab) {
+  PPOB_STATE.activeTab = tab;
+  document.querySelectorAll('.ppob-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  ['pulsa','data','pln'].forEach(t => {
+    const p = document.getElementById('ppob-panel-'+t);
+    if (p) p.style.display = t===tab ? 'block' : 'none';
+  });
+  if (tab==='data' && PPOB_STATE.data.provider) ppobRenderPaketData(PPOB_STATE.data.provider);
+}
+
+function ppobDetectProvider(value, tab) {
+  const cleaned = value.replace(/\D/g,'').slice(0,12);
+  const state = PPOB_STATE[tab];
+  state.nomor = cleaned;
+  let key = null;
+  if (cleaned.length >= 4) {
+    const p4 = cleaned.slice(0,4);
+    for (const [k,prov] of Object.entries(PPOB_PROVIDERS)) {
+      if (prov.prefixes.includes(p4)) { key=k; break; }
+    }
+  }
+  state.provider = key;
+  const badge = document.getElementById(tab+'-provider-badge');
+  if (badge) {
+    if (key) {
+      badge.textContent = PPOB_PROVIDERS[key].label;
+      badge.style.background = PPOB_PROVIDERS[key].color;
+      badge.style.color = '#fff'; badge.classList.add('detected');
+    } else {
+      badge.textContent='–'; badge.style.background=''; badge.style.color=''; badge.classList.remove('detected');
+    }
+  }
+  if (tab==='pulsa') { state.selectedNominal=null; ppobRenderPulsaNominal(); ppobUpdatePulsaSummary(); }
+  if (tab==='data')  {
+    state.selectedPaket=null;
+    if (key) ppobRenderPaketData(key);
+    else { const l=document.getElementById('data-paket-list'); if(l) l.innerHTML='<p class="ppob-hint">Masukkan nomor untuk melihat paket tersedia</p>'; }
+    ppobUpdateDataSummary();
+  }
+}
+
+function ppobRenderPulsaNominal() {
+  const g = document.getElementById('pulsa-nominal-grid'); if(!g) return;
+  g.innerHTML = PPOB_PULSA_NOMINAL.map(i=>`
+    <button class="ppob-nominal-btn${PPOB_STATE.pulsa.selectedNominal?.nominal===i.nominal?' selected':''}" onclick="ppobSelectPulsaNominal(${i.nominal},${i.harga})">
+      <span class="ppob-nominal-val">${rp(i.nominal)}</span>
+      <span class="ppob-nominal-harga">${rp(i.harga)}</span>
+    </button>`).join('');
+}
+function ppobSelectPulsaNominal(nominal,harga) {
+  PPOB_STATE.pulsa.selectedNominal={nominal,harga};
+  ppobRenderPulsaNominal(); ppobUpdatePulsaSummary();
+}
+function ppobUpdatePulsaSummary() {
+  const s=PPOB_STATE.pulsa, ok=s.nomor.length>=10&&s.provider&&s.selectedNominal;
+  const sum=document.getElementById('pulsa-summary'), btn=document.getElementById('btn-pulsa-bayar');
+  if(sum) { sum.style.display=ok?'block':'none';
+    if(ok){ document.getElementById('sum-pulsa-nomor').textContent=ppobFmtPhone(s.nomor);
+      document.getElementById('sum-pulsa-provider').textContent=PPOB_PROVIDERS[s.provider].label;
+      document.getElementById('sum-pulsa-nominal').textContent=rp(s.selectedNominal.nominal);
+      document.getElementById('sum-pulsa-total').textContent=rp(s.selectedNominal.harga); } }
+  if(btn) btn.disabled=!ok;
+}
+
+function ppobRenderPaketData(provKey) {
+  const l=document.getElementById('data-paket-list'); if(!l) return;
+  const pakets=PPOB_PAKET_DATA[provKey];
+  if(!pakets){l.innerHTML='<p class="ppob-hint">Paket tidak tersedia</p>';return;}
+  l.innerHTML=pakets.map(p=>`
+    <button class="ppob-paket-item${PPOB_STATE.data.selectedPaket?.id===p.id?' selected':''}" onclick='ppobSelectPaket(${JSON.stringify(p)})'>
+      <div class="ppob-paket-left"><span class="ppob-paket-size">${p.label}</span><span class="ppob-paket-masa">${p.masa}</span></div>
+      <span class="ppob-paket-price">${rp(p.harga)}</span>
+    </button>`).join('');
+}
+function ppobSelectPaket(paket) {
+  PPOB_STATE.data.selectedPaket=paket;
+  ppobRenderPaketData(PPOB_STATE.data.provider); ppobUpdateDataSummary();
+}
+function ppobUpdateDataSummary() {
+  const s=PPOB_STATE.data, ok=s.nomor.length>=10&&s.provider&&s.selectedPaket;
+  const sum=document.getElementById('data-summary'), btn=document.getElementById('btn-data-bayar');
+  if(sum){ sum.style.display=ok?'block':'none';
+    if(ok){ document.getElementById('sum-data-nomor').textContent=ppobFmtPhone(s.nomor);
+      document.getElementById('sum-data-provider').textContent=PPOB_PROVIDERS[s.provider].label;
+      document.getElementById('sum-data-paket').textContent=s.selectedPaket.label+' / '+s.selectedPaket.masa;
+      document.getElementById('sum-data-total').textContent=rp(s.selectedPaket.harga); } }
+  if(btn) btn.disabled=!ok;
+}
+
+let _plnTO=null;
+function ppobCheckPLN(value) {
+  const cleaned=value.replace(/\D/g,'').slice(0,13);
+  PPOB_STATE.pln.idpel=cleaned; PPOB_STATE.pln.pelanggan=null;
+  const ic=document.getElementById('pln-info-card'); if(ic) ic.style.display='none';
+  clearTimeout(_plnTO);
+  if(cleaned.length<11){ ppobUpdatePLNSummary(); return; }
+  _plnTO=setTimeout(()=>{
+    const pel=PPOB_PLN_DB[cleaned];
+    if(pel){ PPOB_STATE.pln.pelanggan=pel;
+      document.getElementById('pln-nama').textContent=pel.nama;
+      document.getElementById('pln-tarif').textContent=pel.tarif+' / '+pel.daya;
+      if(ic) ic.style.display='flex';
+      showToast('✅ Pelanggan: '+pel.nama,'toast-ok');
+    } else { showToast('ID Pelanggan tidak ditemukan','toast-err'); }
+    ppobUpdatePLNSummary();
+  },500);
+}
+function ppobRenderPLNNominal() {
+  const g=document.getElementById('pln-nominal-grid'); if(!g) return;
+  g.innerHTML=PPOB_PLN_NOMINAL.map(i=>`
+    <button class="ppob-nominal-btn ppob-pln-btn${PPOB_STATE.pln.selectedNominal?.nominal===i.nominal?' selected':''}" onclick="ppobSelectPLNNominal(${i.nominal},'${i.kwh}',${i.harga})">
+      <span class="ppob-nominal-val">${rp(i.nominal)}</span>
+      <span class="ppob-nominal-kwh">${i.kwh}</span>
+      <span class="ppob-nominal-harga">${rp(i.harga)}</span>
+    </button>`).join('');
+}
+function ppobSelectPLNNominal(nominal,kwh,harga) {
+  PPOB_STATE.pln.selectedNominal={nominal,kwh,harga};
+  ppobRenderPLNNominal(); ppobUpdatePLNSummary();
+}
+function ppobUpdatePLNSummary() {
+  const s=PPOB_STATE.pln, ok=s.idpel.length>=11&&s.pelanggan&&s.selectedNominal;
+  const sum=document.getElementById('pln-summary'), btn=document.getElementById('btn-pln-bayar');
+  if(sum){ sum.style.display=ok?'block':'none';
+    if(ok){ document.getElementById('sum-pln-idpel').textContent=s.idpel;
+      document.getElementById('sum-pln-nama').textContent=s.pelanggan.nama;
+      document.getElementById('sum-pln-nominal').textContent=rp(s.selectedNominal.nominal)+' ('+s.selectedNominal.kwh+')';
+      document.getElementById('sum-pln-total').textContent=rp(s.selectedNominal.harga); } }
+  if(btn) btn.disabled=!ok;
+}
+
+function ppobBayar(tab) {
+  const btn=document.getElementById('btn-'+tab+'-bayar');
+  if(btn){ btn.disabled=true; btn.textContent='Memproses…'; }
+  setTimeout(()=>{
+    const trx=ppobBuildTrx(tab);
+    if(trx){
+      window.PPOB_TRANSACTIONS.unshift(trx); ppobRenderRiwayat();
+      if(tab==='pln'){ ppobShowToken(trx.token); showToast('🎉 Token berhasil dibeli!','toast-ok'); }
+      else { showToast('✅ '+trx.label+' → '+ppobFmtPhone(trx.nomor),'toast-ok'); ppobResetForm(tab); }
+    } else { showToast('Transaksi gagal. Coba lagi.','toast-err'); }
+    if(btn){ btn.disabled=false; btn.textContent=tab==='pln'?'Beli Token':'Bayar Sekarang'; }
+  }, 1000+Math.random()*800);
+}
+function ppobBuildTrx(tab) {
+  const now=new Date(), id='PPOB-'+Date.now().toString().slice(-6);
+  const tgl=now.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'})+' '+now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  if(tab==='pulsa'){ const s=PPOB_STATE.pulsa; if(!s.selectedNominal||!s.provider) return null;
+    return {id,tab,tgl,icon:'📱',label:'Pulsa '+PPOB_PROVIDERS[s.provider].label+' '+rp(s.selectedNominal.nominal),nomor:s.nomor,harga:s.selectedNominal.harga,status:'sukses'}; }
+  if(tab==='data') { const s=PPOB_STATE.data; if(!s.selectedPaket||!s.provider) return null;
+    return {id,tab,tgl,icon:'🌐',label:'Paket Data '+PPOB_PROVIDERS[s.provider].label+' '+s.selectedPaket.label,nomor:s.nomor,harga:s.selectedPaket.harga,status:'sukses'}; }
+  if(tab==='pln')  { const s=PPOB_STATE.pln; if(!s.selectedNominal||!s.pelanggan) return null;
+    return {id,tab,tgl,icon:'⚡',label:'Token PLN '+rp(s.selectedNominal.nominal),nomor:s.idpel,nama:s.pelanggan.nama,harga:s.selectedNominal.harga,kwh:s.selectedNominal.kwh,token:ppobGenToken(),status:'sukses'}; }
+  return null;
+}
+function ppobGenToken() {
+  const s=()=>Math.floor(1000+Math.random()*9000); return `${s()}-${s()}-${s()}-${s()}-${s()}`;
+}
+function ppobShowToken(token) {
+  const w=document.getElementById('pln-token-result'),c=document.getElementById('pln-token-code');
+  if(w&&c){ c.textContent=token; w.style.display='block'; w.scrollIntoView({behavior:'smooth',block:'center'}); }
+}
+function ppobResetForm(tab) {
+  if(tab==='pulsa'){ PPOB_STATE.pulsa={nomor:'',provider:null,selectedNominal:null};
+    const i=document.getElementById('pulsa-nomor'); if(i) i.value='';
+    ppobDetectProvider('','pulsa'); ppobRenderPulsaNominal(); ppobUpdatePulsaSummary(); }
+  if(tab==='data') { PPOB_STATE.data={nomor:'',provider:null,selectedPaket:null};
+    const i=document.getElementById('data-nomor'); if(i) i.value='';
+    ppobDetectProvider('','data'); ppobUpdateDataSummary();
+    const l=document.getElementById('data-paket-list'); if(l) l.innerHTML='<p class="ppob-hint">Masukkan nomor untuk melihat paket tersedia</p>'; }
+  if(tab==='pln')  { PPOB_STATE.pln={idpel:'',pelanggan:null,selectedNominal:null};
+    const i=document.getElementById('pln-idpel'); if(i) i.value='';
+    const ic=document.getElementById('pln-info-card'); if(ic) ic.style.display='none';
+    ppobRenderPLNNominal(); ppobUpdatePLNSummary();
+    setTimeout(()=>{ const tr=document.getElementById('pln-token-result'); if(tr) tr.style.display='none'; },5000); }
+}
+function ppobRenderRiwayat() {
+  const list=document.getElementById('ppob-riwayat-list'), cnt=document.getElementById('ppob-trx-count');
+  if(!list) return;
+  const trxs=window.PPOB_TRANSACTIONS;
+  if(cnt) cnt.textContent=trxs.length+' transaksi';
+  if(!trxs.length){ list.innerHTML='<div class="ppob-empty-state"><span class="ppob-empty-icon">🧾</span><p>Belum ada transaksi PPOB</p></div>'; return; }
+  list.innerHTML=trxs.map(t=>`
+    <div class="ppob-trx-item">
+      <span class="ppob-trx-icon">${t.icon}</span>
+      <div class="ppob-trx-info">
+        <span class="ppob-trx-label">${t.label}</span>
+        <span class="ppob-trx-meta">${t.nama?t.nama+' · ':''}${t.tab==='pln'?t.nomor:ppobFmtPhone(t.nomor)} · ${t.tgl}</span>
+        ${t.token?`<span class="ppob-trx-token">Token: ${t.token}</span>`:''}
+      </div>
+      <div class="ppob-trx-right">
+        <span class="ppob-trx-harga">${rp(t.harga)}</span>
+        <span class="badge-ok">${t.status}</span>
+      </div>
+    </div>`).join('');
+}
+function ppobFmtPhone(n) {
+  const d=n.replace(/\D/g,'');
+  if(d.length<=4) return d;
+  if(d.length<=8) return d.slice(0,4)+'-'+d.slice(4);
+  return d.slice(0,4)+'-'+d.slice(4,8)+'-'+d.slice(8);
+}
+</script>
 
 <script>
 // ══════════════════════════════════════════════════
@@ -984,7 +1462,7 @@ function closeNewsModal(e) {
 // ══════════════════════════════════════════════════
 window.addEventListener('load', () => {
   renderNewsSwiper();
-  // No topbar syncing needed — topbar is removed
+  initPPOB();
 });
 </script>
 </body>
