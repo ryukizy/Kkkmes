@@ -35,6 +35,7 @@ const SEC_TITLES = {
   'kar-katalog':   'Katalog Belanja',
   'kar-keranjang': 'Keranjang',
   'kar-riwayat':   'Riwayat',
+  'kar-ppob':      'Layanan PPOB',
   'kar-profil':    'Profil & Akun',
   'kar-tentang':   'Tentang Koperasi',
 };
@@ -424,17 +425,28 @@ function updateCartUI() {
   const amt   = cart.reduce((s, c) => s + c.harga * c.qty, 0);
   const cntEl = document.getElementById('cartCnt');
   if (cntEl) cntEl.textContent = total;
+
   const fab = document.getElementById('cartFab');
   if (fab) {
-    fab.hidden = total === 0;
-    const fabTxt = document.getElementById('cartFabTxt');
-    const fabAmt = document.getElementById('cartFabAmt');
-    if (fabTxt) fabTxt.textContent = total + ' item';
-    if (fabAmt) fabAmt.textContent = rp(amt);
+    const wasHidden = fab.hidden;
+    fab.hidden = (total === 0); // sembunyikan sepenuhnya jika keranjang kosong
+    if (!fab.hidden) {
+      // Trigger ulang animasi masuk saat FAB pertama muncul (ada item baru)
+      if (wasHidden) {
+        fab.classList.remove('cart-fab--pop');
+        void fab.offsetWidth; // reflow trick
+        fab.classList.add('cart-fab--pop');
+      }
+      const fabTxt = document.getElementById('cartFabTxt');
+      const fabAmt = document.getElementById('cartFabAmt');
+      if (fabTxt) fabTxt.textContent = total + ' item';
+      if (fabAmt) fabAmt.textContent = rp(amt);
+    }
   }
-  // Sync bottom nav badge
+
+  // Sync badge di bottom nav
   const bb = document.getElementById('bnCartBadge');
-  if (bb) { bb.textContent = total; bb.hidden = total === 0; }
+  if (bb) { bb.textContent = total; bb.hidden = (total === 0); }
 }
 
 function renderCart() {
@@ -561,95 +573,95 @@ function initSimpananCarousel() {
   const track = document.getElementById('simpCarouselTrack');
   if (!wrap || !track) return;
 
-  // Kecepatan auto-scroll (px/frame pada 60fps → ~40px/s)
-  const SPEED = 0.55;
+  // Kecepatan scroll px/frame (60fps ≈ 36px/detik). Naikkan untuk lebih cepat.
+  const SPEED = 0.6;
 
-  let offset      = 0;       // posisi scroll saat ini (px)
-  let halfWidth   = 0;       // lebar 4 kartu real (setengah dari total)
-  let rafId       = null;
-  let isPaused    = false;
-
-  // ── Hitung halfWidth setelah layout selesai ──
-  function calcHalf() {
-    const cards = track.querySelectorAll('.simp-carousel-card');
-    let w = 0;
-    // Lebar 4 kartu pertama (real) = setengah track
-    for (let i = 0; i < Math.min(4, cards.length); i++) {
-      const rect = cards[i].getBoundingClientRect();
-      w += rect.width;
-    }
-    // Tambah gap (CSS gap = 12px × 3 antar 4 kartu)
-    const style = getComputedStyle(track);
-    const gap = parseFloat(style.gap || style.columnGap || '12');
-    halfWidth = w + gap * Math.min(4, cards.length);
-  }
-
-  // ── Auto-scroll loop ──
-  function tick() {
-    if (!isPaused) {
-      offset += SPEED;
-      if (halfWidth > 0 && offset >= halfWidth) {
-        offset -= halfWidth;   // seamless jump back
-      }
-      track.style.transform = `translateX(${-offset}px)`;
-    }
-    rafId = requestAnimationFrame(tick);
-  }
-
-  // Init setelah satu frame (DOM settled)
-  requestAnimationFrame(() => {
-    calcHalf();
-    rafId = requestAnimationFrame(tick);
-  });
-
-  // Pause on hover (desktop)
-  wrap.addEventListener('mouseenter', () => { isPaused = true; });
-  wrap.addEventListener('mouseleave', () => { isPaused = false; });
-
-  // ── Swipe / drag (touch & mouse) ──
+  let offset    = 0;    // posisi translateX saat ini (selalu positif)
+  let halfWidth = 0;    // lebar satu set (4 kartu real) → titik wrap seamless
+  let isPaused  = false;
+  let isDragging   = false;
   let dragStartX   = 0;
   let dragStartOff = 0;
-  let isDragging   = false;
 
+  // ── 1. Hitung lebar satu set (4 kartu real, bukan clone) ────────────
+  function calcHalf() {
+    // Ambil hanya kartu REAL (tidak aria-hidden) untuk pengukuran akurat
+    const realCards = Array.from(
+      track.querySelectorAll('.simp-carousel-card:not([aria-hidden])')
+    );
+    if (!realCards.length) return;
+
+    const gap = parseFloat(getComputedStyle(track).columnGap ||
+                           getComputedStyle(track).gap || '10');
+    let w = 0;
+    realCards.forEach(c => { w += c.getBoundingClientRect().width; });
+    // total lebar = jumlah lebar kartu + gap di ANTARA kartu + 1 gap setelah kartu terakhir
+    // (kartu terakhir set real langsung bertemu kartu pertama clone, jadi butuh 1 gap ekstra)
+    halfWidth = w + gap * realCards.length;
+  }
+
+  // ── 2. Loop RAF — auto-scroll + seamless wrap ────────────────────────
+  function tick() {
+    if (!isPaused && !isDragging && halfWidth > 0) {
+      offset += SPEED;
+      if (offset >= halfWidth) offset -= halfWidth; // lompat seamless
+      track.style.transform = `translateX(${-offset}px)`;
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // ── 3. Drag / swipe handlers ─────────────────────────────────────────
   function onDragStart(clientX) {
-    isDragging   = true;
-    isPaused     = true;
-    dragStartX   = clientX;
-    dragStartOff = offset;
+    isDragging        = true;
+    isPaused          = true;
+    dragStartX        = clientX;
+    dragStartOff      = offset;
     track.style.transition = 'none';
+    wrap.style.cursor      = 'grabbing';
   }
 
   function onDragMove(clientX) {
     if (!isDragging) return;
-    const delta = dragStartX - clientX;
-    offset = dragStartOff + delta;
-    // Clamp & wrap untuk infinite feel
+    let next = dragStartOff + (dragStartX - clientX);
+    // Wrap infinitely agar swipe mundur juga terasa mulus
     if (halfWidth > 0) {
-      if (offset < 0)          offset += halfWidth;
-      if (offset >= halfWidth) offset -= halfWidth;
+      next = ((next % halfWidth) + halfWidth) % halfWidth;
     }
+    offset = next;
     track.style.transform = `translateX(${-offset}px)`;
   }
 
   function onDragEnd() {
-    isDragging = false;
-    isPaused   = false;
+    if (!isDragging) return;
+    isDragging        = false;
+    isPaused          = false;
+    wrap.style.cursor = 'grab';
   }
 
-  // Touch events
+  // Touch (mobile swipe)
   wrap.addEventListener('touchstart',  e => onDragStart(e.touches[0].clientX), { passive: true });
   wrap.addEventListener('touchmove',   e => onDragMove(e.touches[0].clientX),  { passive: true });
   wrap.addEventListener('touchend',    onDragEnd);
+  wrap.addEventListener('touchcancel', onDragEnd);
 
-  // Mouse events (desktop drag)
-  wrap.addEventListener('mousedown',   e => { e.preventDefault(); onDragStart(e.clientX); });
-  document.addEventListener('mousemove', e => onDragMove(e.clientX));
-  document.addEventListener('mouseup',   onDragEnd);
+  // Mouse drag (desktop)
+  wrap.addEventListener('mousedown', e => { e.preventDefault(); onDragStart(e.clientX); });
+  window.addEventListener('mousemove', e => { if (isDragging) onDragMove(e.clientX); });
+  window.addEventListener('mouseup',   onDragEnd);
 
-  // Recalc on resize
-  window.addEventListener('resize', () => {
-    requestAnimationFrame(calcHalf);
-  });
+  // Pause on hover saat TIDAK sedang drag (desktop UX)
+  wrap.addEventListener('mouseenter', () => { if (!isDragging) isPaused = true;  });
+  wrap.addEventListener('mouseleave', () => { if (!isDragging) isPaused = false; });
+
+  // Recalc saat resize (orientasi HP berubah, dll.)
+  window.addEventListener('resize', () => requestAnimationFrame(calcHalf));
+
+  // Mulai setelah 2 frame agar layout sudah terhitung
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    calcHalf();
+    wrap.style.cursor = 'grab';
+    requestAnimationFrame(tick);
+  }));
 }
 
 // ─── PWA Install ───
