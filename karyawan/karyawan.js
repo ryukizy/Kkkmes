@@ -301,7 +301,7 @@ function renderMutasi() {
 // ─── LOAN SUBMISSION ───
 function submitLoan(e) {
   e.preventDefault();
-  const nominal = parseInt(document.getElementById('loanNominal').value);
+  const nominal = getLoanNominalValue();
   const tujuan  = document.getElementById('loanTujuan').value;
   const tenor   = selectedTenor;
   const bunga   = 0.01;
@@ -328,7 +328,7 @@ function setTenor(btn, t) {
 }
 
 function updateSimulasi() {
-  const nominal = parseInt(document.getElementById('loanNominal').value) || 0;
+  const nominal = getLoanNominalValue() || 0;
   const bunga   = 0.01;
   const cicilan = nominal > 0 ? Math.round((nominal * (1 + bunga * selectedTenor)) / selectedTenor) : 0;
   const total   = cicilan * selectedTenor;
@@ -344,7 +344,7 @@ function toggleAmort() {
   const el = document.getElementById('amortTable');
   el.hidden = !amortOpen;
   if (amortOpen) {
-    const nominal = parseInt(document.getElementById('loanNominal').value) || 0;
+    const nominal = getLoanNominalValue() || 0;
     const cicilan = nominal > 0 ? Math.round((nominal * (1 + 0.01 * selectedTenor)) / selectedTenor) : 0;
     let sisa = nominal;
     let html = '<table class="tbl"><thead><tr><th>Bln</th><th>Cicilan</th><th>Sisa</th></tr></thead><tbody>';
