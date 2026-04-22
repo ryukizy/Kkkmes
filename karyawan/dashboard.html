@@ -402,7 +402,12 @@
     .lei-title { font-size: 13px; font-weight: 800; color: #991b1b; margin-bottom: 4px; }
     .lei-desc  { font-size: 12px; color: #7f1d1d; line-height: 1.6; }
 
-    /* 40% warning in simulasi */
+    /* ── Badge tambahan untuk kategori pinjaman ── */
+    .badge-blue   { background: #eff6ff; color: #2563eb; }
+    .badge-teal   { background: #f0fdfa; color: #0d9488; }
+    .badge-err    { background: #fef2f2; color: #dc2626; }
+
+    /* ── 40% warning in simulasi ── */
     .sim-40-warning {
       background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px;
       padding: 10px 12px; font-size: 12px; color: #7f1d1d;
@@ -2252,30 +2257,6 @@ function closeNewsModal(e) {
     document.body.style.overflow = '';
     if (newsSwiper) newsSwiper.autoplay.start();
   }, 200);
-}
-
-// ══════════════════════════════════════════════════
-//  LOAN NOMINAL — Auto-format dengan titik ribuan
-// ══════════════════════════════════════════════════
-function formatLoanNominal(input) {
-  // Ambil angka saja
-  let raw = input.value.replace(/\D/g, '');
-  // Batasi maksimum 15.000.000
-  if (parseInt(raw, 10) > 15000000) raw = '15000000';
-  // Format dengan titik ribuan
-  if (raw) {
-    input.value = parseInt(raw, 10).toLocaleString('id-ID');
-  } else {
-    input.value = '';
-  }
-  updateSimulasi();
-}
-
-// Override updateSimulasi agar baca nilai dari input terformat
-const _origUpdateSimulasi = typeof updateSimulasi === 'function' ? updateSimulasi : null;
-function getLoanNominalValue() {
-  const raw = (document.getElementById('loanNominal')?.value || '').replace(/\D/g, '');
-  return parseInt(raw, 10) || 0;
 }
 
 // ══════════════════════════════════════════════════
