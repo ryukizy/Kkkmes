@@ -1054,3 +1054,55 @@ function initPWA() {
 // ─── START ───
 init();
 registerSW('../sw.js');
+
+// ══════════════════════════════════════════════════
+//  MODAL LAYANAN — Buka/Tutup Bottom Sheet
+// ══════════════════════════════════════════════════
+
+/**
+ * Buka bottom sheet modal pilihan layanan.
+ * Dipanggil oleh tombol "Layanan" di bottom nav.
+ */
+function bukaModalLayanan() {
+  const overlay = document.getElementById('layananOverlay');
+  if (!overlay) return;
+  overlay.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+/**
+ * Tutup modal layanan.
+ * Dipanggil langsung (tombol ✕) atau via klik overlay.
+ * Parameter `e` opsional — jika ada, hanya tutup jika klik di luar sheet.
+ */
+function tutupModalLayanan(e) {
+  const overlay = document.getElementById('layananOverlay');
+  const sheet   = document.getElementById('layananSheet');
+  if (!overlay) return;
+
+  // Jika dipanggil dari klik overlay, pastikan bukan klik di dalam sheet
+  if (e && sheet && sheet.contains(e.target)) return;
+
+  // Animasi keluar
+  overlay.style.animation = 'layanan-bg-out .2s ease both';
+  if (sheet) sheet.style.animation = 'sheet-down .24s cubic-bezier(.55,0,.45,1) both';
+
+  setTimeout(() => {
+    overlay.classList.remove('show');
+    overlay.style.animation = '';
+    if (sheet) sheet.style.animation = '';
+    document.body.style.overflow = '';
+  }, 220);
+}
+
+/**
+ * Dipanggil saat user memilih salah satu kartu layanan.
+ * Tutup modal lalu navigasi ke section yang dipilih.
+ * @param {string} secId — 'kar-katalog' atau 'kar-ppob'
+ */
+function pilihLayanan(secId) {
+  tutupModalLayanan();          // animasi tutup
+  setTimeout(() => {
+    _showSec(secId);            // pindah section setelah animasi selesai
+  }, 240);
+}
