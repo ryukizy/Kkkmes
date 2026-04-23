@@ -1939,14 +1939,17 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
         Pinjaman
       </button>
-      <button class="bn-item" data-sec="kar-katalog" onclick="_showSec('kar-katalog')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-        Belanja
+      <!-- Tombol Layanan — membuka modal pilihan Belanja / PPOB -->
+      <button class="bn-item" id="bnLayanan" onclick="bukaModalLayanan()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+          <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+          <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+          <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+          <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+        </svg>
+        Layanan
+        <!-- Badge cart tetap muncul saat ada item di keranjang -->
         <span class="bn-badge" id="bnCartBadge" hidden>0</span>
-      </button>
-      <button class="bn-item" data-sec="kar-ppob" onclick="_showSec('kar-ppob')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        PPOB
       </button>
       <button class="bn-item" data-sec="kar-profil" onclick="_showSec('kar-profil')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -1973,6 +1976,209 @@
 </div>
 
 <div id="toast" class="toast"></div>
+
+<!-- ══ MODAL LAYANAN ══ -->
+<div class="layanan-overlay" id="layananOverlay" onclick="tutupModalLayanan(event)">
+  <div class="layanan-sheet" id="layananSheet">
+
+    <!-- Drag handle -->
+    <div class="layanan-handle"></div>
+
+    <!-- Header -->
+    <div class="layanan-head">
+      <div class="layanan-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+          <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+          <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+          <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+          <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+        </svg>
+        Pilih Layanan
+      </div>
+      <button class="layanan-close" onclick="tutupModalLayanan()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Kartu pilihan -->
+    <div class="layanan-cards">
+
+      <!-- Katalog Belanja -->
+      <button class="layanan-card" onclick="pilihLayanan('kar-katalog')">
+        <div class="lc-icon lc-icon--green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="28" height="28">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 01-8 0"/>
+          </svg>
+        </div>
+        <div class="lc-body">
+          <div class="lc-name">Katalog Belanja</div>
+          <div class="lc-desc">Produk kebutuhan dengan harga spesial anggota koperasi</div>
+        </div>
+        <svg class="lc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+
+      <!-- Layanan PPOB -->
+      <button class="layanan-card" onclick="pilihLayanan('kar-ppob')">
+        <div class="lc-icon lc-icon--amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="28" height="28">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
+        </div>
+        <div class="lc-body">
+          <div class="lc-name">Layanan PPOB</div>
+          <div class="lc-desc">Bayar tagihan listrik, pulsa, air, dan top-up e-wallet</div>
+        </div>
+        <svg class="lc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+
+    </div><!-- /layanan-cards -->
+
+  </div><!-- /layanan-sheet -->
+</div><!-- /layanan-overlay -->
+
+<style>
+/* ══════════════════════════════════════════════
+   MODAL LAYANAN — Bottom Sheet
+   ══════════════════════════════════════════════ */
+.layanan-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9200;
+  background: rgba(0,0,0,0.48);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  align-items: flex-end;
+  justify-content: center;
+}
+.layanan-overlay.show {
+  display: flex;
+  animation: layanan-bg-in .22s ease both;
+}
+@keyframes layanan-bg-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes layanan-bg-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes sheet-up   { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes sheet-down { from { transform: translateY(0); }    to { transform: translateY(110%); } }
+
+.layanan-sheet {
+  width: 100%;
+  max-width: 480px;
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  padding: 0 0 max(24px, env(safe-area-inset-bottom, 24px));
+  animation: sheet-up .32s cubic-bezier(.34,1.56,.64,1) both;
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.16);
+}
+
+.layanan-handle {
+  width: 40px; height: 4px;
+  background: #e2e8f0;
+  border-radius: 99px;
+  margin: 12px auto 0;
+}
+
+.layanan-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px 12px;
+}
+.layanan-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #1e293b;
+}
+.layanan-title svg { color: #065F46; }
+.layanan-close {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: #64748b;
+  transition: background .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.layanan-close:hover { background: #e2e8f0; }
+
+/* Kartu-kartu pilihan */
+.layanan-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 16px 8px;
+}
+
+.layanan-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 16px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 18px;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+  transition: all .18s cubic-bezier(.22,1,.36,1);
+  -webkit-tap-highlight-color: transparent;
+}
+.layanan-card:hover {
+  border-color: #10b981;
+  background: #f0fdf4;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(6,95,70,0.10);
+}
+.layanan-card:active { transform: scale(.98); }
+
+/* Ikon besar di kiri */
+.lc-icon {
+  width: 58px; height: 58px;
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: transform .18s;
+}
+.layanan-card:hover .lc-icon { transform: scale(1.06); }
+.lc-icon--green { background: #dcfce7; color: #15803d; }
+.lc-icon--amber { background: #fef3c7; color: #b45309; }
+
+/* Teks */
+.lc-body { flex: 1; min-width: 0; }
+.lc-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+.lc-desc {
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* Panah kanan */
+.lc-arrow {
+  color: #cbd5e1;
+  flex-shrink: 0;
+  transition: color .18s, transform .18s;
+}
+.layanan-card:hover .lc-arrow {
+  color: #10b981;
+  transform: translateX(3px);
+}
+</style>
 
 <!-- ══ SCRIPTS ══ -->
 <!-- Swiper.js -->
