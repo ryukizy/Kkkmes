@@ -254,7 +254,7 @@ function renderPinjamanStatus() {
   if (!mine.length) {
     cont.innerHTML = `
       <div style="text-align:center;padding:40px 20px;color:var(--muted)">
-        <div style="font-size:36px;margin-bottom:10px">📋</div>
+        <div style="margin-bottom:12px;opacity:.35"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" width="48" height="48"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
         <p>Belum ada pengajuan pinjaman.</p>
         <button class="btn-prim" style="margin-top:14px" onclick="setKarPinTab(null,'kpt-ajukan')">Ajukan Sekarang</button>
       </div>`;
@@ -447,6 +447,13 @@ function selectLoanCategory(cat) {
   if (titleEl) titleEl.textContent = cfg.label.replace(/^\S+\s/, '');
   if (subEl)   subEl.textContent   = cfg.hint;
 
+  // Badge kategori terpilih
+  const badge = document.getElementById('loanSelectedBadge');
+  if (badge) {
+    badge.className = 'loan-selected-badge ' + cfg.color;
+    badge.innerHTML = cfg.label;
+  }
+
   // Alert spesifik per jenis
   const alertEm   = document.getElementById('loan-alert-emergency');
   const alertBank = document.getElementById('loan-alert-bank');
@@ -478,14 +485,16 @@ function selectLoanCategory(cat) {
   const hintEl = document.getElementById('loanNominalHint');
   if (hintEl) hintEl.textContent = cfg.hint;
 
-  // Emergency: sembunyikan tenor & simulasi
+  // Emergency: sembunyikan tenor & simulasi, tampilkan info lump-sum
   const isLumpSum = !!cfg.lumpSum;
   const fieldTenor  = document.getElementById('fieldTenor');
   const simResult   = document.getElementById('simResult');
+  const emInfo      = document.getElementById('loanEmergencyInfo');
   const warn40      = document.getElementById('sim40Warning');
 
   if (fieldTenor)  fieldTenor.hidden  = isLumpSum;
   if (simResult)   simResult.hidden   = isLumpSum;
+  if (emInfo)      emInfo.hidden      = !isLumpSum;
   if (warn40)      warn40.hidden      = true;
 
   if (!isLumpSum) {
