@@ -59,7 +59,7 @@
      kiri/kanan di seluruh aplikasi.
      Ubah satu nilai ini → semua section ikut berubah.
   ─────────────────────────────────────────────── */
-  --page-x: 16px;   /* jarak tepi horizontal (mobile) */
+  --page-x: 16px;   /* standar mobile UI: 16px (tetap di semua ukuran mobile) */
 
   /* Design Tokens */
   --radius-xs: 8px;
@@ -129,6 +129,19 @@
   width: 100%;
 }
 
+/* ── Pastikan semua kartu di dalam section mengisi lebar penuh ── */
+.section-container *,
+#kar-home *,
+#kar-simpanan *,
+#kar-pinjaman *,
+#kar-katalog *,
+#kar-ppob *,
+#kar-riwayat *,
+#kar-profil *,
+#kar-tentang * {
+  box-sizing: border-box;
+}
+
 /* ── Target langsung semua ID section karyawan ─────────
    Pastikan tidak ada override inline style yang merusak.
    Menggunakan !important HANYA untuk padding horizontal agar
@@ -138,9 +151,30 @@
 #kar-simpanan,
 #kar-pinjaman,
 #kar-katalog,
-#kar-ppob {
+#kar-keranjang,
+#kar-riwayat,
+#kar-ppob,
+#kar-profil,
+#kar-tentang {
   padding-left:  var(--page-x) !important;
   padding-right: var(--page-x) !important;
+  box-sizing: border-box;
+}
+
+/* ── Kartu & widget dalam section: selalu full-width ──── */
+#kar-home      .widget-card,
+#kar-home      .card-box,
+#kar-home      .card-section,
+#kar-simpanan  .saldo-card,
+#kar-simpanan  .card-box,
+#kar-pinjaman  .loan-cat-card,
+#kar-pinjaman  .loan-rule-note,
+#kar-pinjaman  .card-box,
+#kar-katalog   .prod-card,
+#kar-riwayat   .tx-item,
+#kar-ppob      .ppob-card,
+#kar-profil    .profil-menu-group {
+  width: 100%;
   box-sizing: border-box;
 }
 
@@ -152,11 +186,22 @@
 #kar-simpanan > .full-bleed,
 #kar-pinjaman > .full-bleed,
 #kar-katalog  > .full-bleed,
+#kar-keranjang > .full-bleed,
+#kar-riwayat  > .full-bleed,
 #kar-ppob     > .full-bleed,
+#kar-profil   > .full-bleed,
+#kar-tentang  > .full-bleed,
 .section-container > .full-bleed {
   margin-left:  calc(-1 * var(--page-x));
   margin-right: calc(-1 * var(--page-x));
   width: calc(100% + 2 * var(--page-x));
+}
+
+/* ── Bottom nav & topbar: selalu full-width, tidak terpengaruh --page-x ── */
+.bottom-nav,
+.topbar {
+  padding-left:  0 !important;
+  padding-right: 0 !important;
 }
 
 html { font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
@@ -1243,8 +1288,8 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 
 /* Tablet */
 @media (min-width: 640px) {
-  /* Perlebar --page-x di tablet agar konten lebih bernafas */
-  :root { --page-x: 24px; }
+  /* Tablet: sedikit lebih longgar tapi tetap proporsional */
+  :root { --page-x: 20px; }
   .prod-grid { grid-template-columns: repeat(3,1fr); }
   .kpi-grid  { grid-template-columns: repeat(4,1fr); }
   .saldo-cards { grid-template-columns: repeat(2,1fr); }
@@ -1255,7 +1300,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 
 /* Desktop */
 @media (min-width: 900px) {
-  :root { --page-x: 28px; }
+  :root { --page-x: 24px; }
   .login-left { display: flex; }
   .login-right { width: 480px; flex-shrink: 0; }
   .prod-grid { grid-template-columns: repeat(4,1fr); }
