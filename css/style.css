@@ -1155,6 +1155,50 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 .dtable tr:last-child td { border-bottom: none; }
 .dtable tbody tr:hover td { background: var(--green-50); }
 
+/* ── RIWAYAT TRANSAKSI — Pertegas tipografi header tabel ──────
+   Override khusus #kar-riwayat agar header kolom (#Tanggal,
+   Keterangan, Nominal, Status) lebih tebal, tegas, dan mudah
+   dibaca sesuai tema korporat aplikasi.
+──────────────────────────────────────────────────────────────── */
+#kar-riwayat .dtable th {
+  font-size: 0.72rem;          /* sedikit lebih besar dari 0.68rem global */
+  font-weight: 600;            /* medium-bold — lebih tegas dari sekadar 500 */
+  color: var(--text-2);        /* abu-abu gelap (#374151), bukan muted (#6b7280) */
+  letter-spacing: 0.04em;      /* sedikit lebih rapat agar lebih readable */
+  background: #F1F5F9;         /* latar sedikit lebih gelap untuk kontras */
+  border-bottom: 1.5px solid var(--border); /* garis pemisah lebih tegas */
+}
+
+/* Header tabel amortisasi/cicilan di dalam #kar-riwayat */
+#kar-riwayat .tbl th {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-2);
+  background: #F1F5F9;
+}
+
+/* Tab riwayat — label yang lebih tegas */
+#kar-riwayat .riwayat-tabs .rtab {
+  font-weight: 600;
+  color: var(--text-2);
+}
+#kar-riwayat .riwayat-tabs .rtab.active {
+  color: white;                /* tetap putih saat aktif */
+}
+
+/* Section label / card-section heading di riwayat */
+#kar-riwayat .cs-head h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);          /* hitam penuh, bukan muted */
+}
+
+/* Badge status di kolom Status — pastikan mudah terbaca */
+#kar-riwayat .badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
 /* STATUS BADGES */
 .badge { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 0.68rem; font-weight: 700; }
 .badge-ok      { background: var(--green-50); color: var(--primary); }
