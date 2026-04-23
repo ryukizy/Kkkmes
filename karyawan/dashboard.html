@@ -306,13 +306,20 @@
     .loan-step-title { font-size: 15px; font-weight: 800; color: #1e293b; }
     .loan-step-sub   { font-size: 11px; color: #94a3b8; margin-top: 1px; }
     .loan-back-btn {
-      width: 36px; height: 36px; border-radius: 50%;
-      background: #f1f5f9; border: none; cursor: pointer;
+      width: 40px; height: 40px; border-radius: 50%;
+      background: #f1f5f9; border: 1.5px solid #e2e8f0; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; color: #475569;
+      flex-shrink: 0; color: #065F46;
       -webkit-tap-highlight-color: transparent;
+      /* Perluas area sentuh lebih lebar dari ukuran visual */
+      padding: 0;
+      /* Pastikan svg icon lebih tebal dan jelas */
     }
-    .loan-back-btn:active { background: #e2e8f0; }
+    .loan-back-btn svg {
+      width: 22px; height: 22px;
+      stroke-width: 3;
+    }
+    .loan-back-btn:active { background: #dcfce7; border-color: #10B981; }
 
     /* Rule note 40% */
     .loan-rule-note {
@@ -1453,12 +1460,11 @@
                 <div class="lcc-icon lcc-icon--red">🚨</div>
                 <div class="lcc-body">
                   <div class="lcc-name">Pinjaman Emergency</div>
-                  <div class="lcc-limit">Maks. <strong>Rp 750.000</strong></div>
+                  <div class="lcc-limit">Maks. <strong>Rp 750.000</strong> · Lunas 1× gajian</div>
                   <div class="lcc-tags">
                     <span class="lcc-tag lcc-tag--red">1× per bulan</span>
-                    <span class="lcc-tag">Cepat cair</span>
+                    <span class="lcc-tag">Tanpa bunga</span>
                   </div>
-                  <div class="lcc-desc">Cair cepat untuk kebutuhan mendesak mendadak.</div>
                 </div>
                 <svg class="lcc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
               </button>
@@ -1531,7 +1537,7 @@
           <div id="loan-step-2" hidden>
             <div class="loan-step-header">
               <button class="loan-back-btn" onclick="backToLoanCategories()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><polyline points="15 18 9 12 15 6"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="22" height="22"><polyline points="15 18 9 12 15 6"/></svg>
               </button>
               <div>
                 <div class="loan-step-title" id="loanFormTitle">Formulir Pengajuan</div>
@@ -1542,10 +1548,6 @@
             <!-- Badge kategori terpilih -->
             <div class="loan-selected-badge" id="loanSelectedBadge"></div>
 
-            <!-- Alert emergency -->
-            <div id="loan-alert-emergency" class="loan-alert loan-alert--red" hidden>
-              🚨 <strong>Pinjaman Emergency</strong> hanya dapat diajukan <strong>1 kali per bulan</strong>. Nominal akan dipotong <strong>sekaligus dari gaji berikutnya</strong> tanpa bunga. Pastikan ini benar-benar kebutuhan mendesak.
-            </div>
             <!-- Alert bank -->
             <div id="loan-alert-bank" class="loan-alert loan-alert--amber" hidden>
               🏛️ Pengajuan <strong>Pinjaman Bank Luar</strong> akan diteruskan ke tim koperasi untuk koordinasi dengan bank mitra. Tim akan menghubungi Anda dalam 1×3 hari kerja.
