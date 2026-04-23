@@ -43,26 +43,13 @@
 
     /* ── UNIFIED HERO CARD ──────────────────────── */
     .hero-unified {
-      /* === BACKGROUND FOTO + OVERLAY DARK EMERALD/NAVY ===
-         Ganti path di bawah dengan foto asli koperasi Anda.
-         Overlay gradient memastikan teks putih tetap kontras
-         meski foto memiliki area terang.                     */
-      background-image:
-        linear-gradient(
-          160deg,
-          rgba(2, 44, 34, 0.82) 0%,
-          rgba(4, 55, 45, 0.70) 40%,
-          rgba(3, 35, 60, 0.78) 100%
-        ),
-        url('../img/foto-koperasi.jpg');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
+      background: linear-gradient(135deg, var(--hero-grad-start) 0%, var(--hero-grad-end) 100%);
       border-radius: 0 0 28px 28px;
       padding: 20px 20px 24px;
       position: relative;
       overflow: hidden;
       margin-bottom: 0;
+      /* subtle texture overlay */
       box-shadow: 0 8px 32px rgba(6,95,70,0.28);
     }
     .hero-unified::before {
@@ -204,45 +191,14 @@
 
     .nb-img {
       width: 100%; height: 120px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px;
       position: relative;
-      overflow: hidden;
-      /* border-radius diwariskan dari .news-banner overflow:hidden */
     }
-
-    /* Foto kegiatan menggunakan <img> dengan object-fit: cover */
-    .nb-img img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      object-position: center;
-      display: block;
-    }
-
-    /* Fallback: jika masih pakai background-image (tanpa <img>) */
-    .nb-img--photo {
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
-
-    /* Overlay gradient halus di atas foto agar tag label tetap terbaca */
-    .nb-img::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        180deg,
-        rgba(0,0,0,0.18) 0%,
-        rgba(0,0,0,0.04) 60%,
-        rgba(0,0,0,0.00) 100%
-      );
-      pointer-events: none;
-    }
-
-    /* Warna gradient lama — tetap ada sebagai fallback jika foto belum tersedia */
-    .nb-img--emerald { background: linear-gradient(135deg, #065F46, #047857); display: flex; align-items: center; justify-content: center; font-size: 36px; }
-    .nb-img--blue    { background: linear-gradient(135deg, #1e3a8a, #2563eb); display: flex; align-items: center; justify-content: center; font-size: 36px; }
-    .nb-img--amber   { background: linear-gradient(135deg, #92400e, #d97706); display: flex; align-items: center; justify-content: center; font-size: 36px; }
-    .nb-img--teal    { background: linear-gradient(135deg, #134e4a, #0d9488); display: flex; align-items: center; justify-content: center; font-size: 36px; }
+    .nb-img--emerald { background: linear-gradient(135deg, #065F46, #047857); }
+    .nb-img--blue    { background: linear-gradient(135deg, #1e3a8a, #2563eb); }
+    .nb-img--amber   { background: linear-gradient(135deg, #92400e, #d97706); }
+    .nb-img--teal    { background: linear-gradient(135deg, #134e4a, #0d9488); }
 
     .nb-tag {
       position: absolute; top: 10px; left: 10px;
@@ -1212,18 +1168,9 @@
   <!-- ══ SIDEBAR ══ -->
   <aside id="sidebar" class="sidebar">
     <div class="sb-head">
-      <div class="sb-logo brand-hex">
-        <svg viewBox="0 0 56 64" fill="none">
-          <path d="M28 2L54 16.5V47.5L28 62L2 47.5V16.5L28 2Z" fill="url(#sbGK)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-          <circle cx="28" cy="33" r="9" fill="rgba(255,255,255,0.15)"/>
-          <circle cx="28" cy="33" r="5" fill="white" opacity="0.9"/>
-          <path d="M22 24l6-7 6 7" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" fill="none"/>
-          <defs>
-            <linearGradient id="sbGK" x1="2" y1="2" x2="54" y2="62" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#065F46"/><stop offset="100%" stop-color="#047857"/>
-            </linearGradient>
-          </defs>
-        </svg>
+      <div class="sb-logo">
+        <img src="../img/logo-koperasi.png" alt="Logo KopKar MES"
+             style="width:44px;height:44px;object-fit:contain;filter:brightness(0) invert(1);" />
       </div>
       <div class="sb-brand">
         <span class="sb-name">KopKar MES</span>
@@ -2292,7 +2239,6 @@ function ppobFmtPhone(n) {
 const NEWS_DATA = [
   {
     id: 1, tag: 'Pengumuman', tagClass: 'emerald', emoji: '🎉', bg: 'emerald',
-    photo: '../img/foto-kegiatan-1.jpg',   /* ← ganti dengan path foto asli */
     title: 'THR Lebaran 2025 Sudah Dapat Diambil',
     desc: 'Tunjangan Hari Raya (THR) Idul Fitri 1446 H telah ditransfer ke rekening simpanan masing-masing anggota.',
     date: '22 Mar 2025',
@@ -2300,7 +2246,6 @@ const NEWS_DATA = [
   },
   {
     id: 2, tag: 'RAT', tagClass: 'blue', emoji: '📋', bg: 'blue',
-    photo: '../img/foto-kegiatan-2.jpg',   /* ← ganti dengan path foto asli */
     title: 'Rapat Anggota Tahunan (RAT) 2025',
     desc: 'RAT KopKar MES 2025 dijadwalkan pada 15 April 2025 pukul 09.00 WIB di Aula Perusahaan.',
     date: '10 Mar 2025',
@@ -2308,7 +2253,6 @@ const NEWS_DATA = [
   },
   {
     id: 3, tag: 'Promo', tagClass: 'amber', emoji: '🛒', bg: 'amber',
-    photo: '../img/foto-kegiatan-3.jpg',   /* ← ganti dengan path foto asli */
     title: 'Promo Belanja: Diskon Tambahan 3%',
     desc: 'Khusus bulan April, nikmati diskon tambahan 3% untuk semua produk sembako di toko koperasi.',
     date: '01 Apr 2025',
@@ -2316,7 +2260,6 @@ const NEWS_DATA = [
   },
   {
     id: 4, tag: 'Info', tagClass: 'teal', emoji: '💡', bg: 'teal',
-    photo: '../img/foto-kegiatan-4.jpg',   /* ← ganti dengan path foto asli */
     title: 'Layanan Pinjaman Darurat Tersedia',
     desc: 'KopKar MES kini menyediakan fasilitas pinjaman darurat dengan proses persetujuan 1×24 jam.',
     date: '05 Apr 2025',
@@ -2334,33 +2277,21 @@ function renderNewsSwiper() {
   if (!wrapper) return;
 
   // Inject slides (doubled for Swiper loop mode)
-  wrapper.innerHTML = NEWS_DATA.map(n => {
-    // Buat area gambar: pakai <img> + object-fit:cover jika ada field `photo`,
-    // fallback ke gradient + emoji jika foto belum tersedia
-    const imgArea = n.photo
-      ? `<div class="nb-img nb-img--photo">
-           <img src="${n.photo}" alt="${n.title}" loading="lazy"
-                onerror="this.parentElement.classList.add('nb-img--${n.bg}');
-                         this.outerHTML='<span style=\\'font-size:36px;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.3))\\'>${n.emoji}</span>';" />
-           <span class="nb-tag">${n.tag}</span>
-         </div>`
-      : `<div class="nb-img nb-img--${n.bg}">
-           <span class="nb-tag">${n.tag}</span>
-           <span style="font-size:36px;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.3))">${n.emoji}</span>
-         </div>`;
-
-    return `
+  wrapper.innerHTML = NEWS_DATA.map(n => `
     <div class="swiper-slide">
       <div class="news-banner" onclick="openNewsModal(${n.id})">
-        ${imgArea}
+        <div class="nb-img nb-img--${n.bg}">
+          <span class="nb-tag">${n.tag}</span>
+          <span style="font-size:36px;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.3))">${n.emoji}</span>
+        </div>
         <div class="nb-body">
           <div class="nb-title">${n.title}</div>
           <div class="nb-desc">${n.desc}</div>
           <div class="nb-date">📅 ${n.date}</div>
         </div>
       </div>
-    </div>`;
-  }).join('');
+    </div>
+  `).join('');
 
   // Destroy existing instance if reinitialising
   if (newsSwiper) { newsSwiper.destroy(true, true); newsSwiper = null; }
@@ -2425,20 +2356,8 @@ function openNewsModal(id, listMode) {
 
   const n = NEWS_DATA.find(x => x.id === id);
   if (!n) return;
-
-  // Hero modal: pakai foto jika ada, fallback ke gradient + emoji
-  const nmHero = document.getElementById('nmHero');
-  if (n.photo) {
-    nmHero.className = 'nm-hero nb-img--photo';
-    nmHero.innerHTML = `<img src="${n.photo}" alt="${n.title}"
-      style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;"
-      onerror="this.parentElement.className='nm-hero nb-img--${n.bg}';
-               this.outerHTML='<span style=\\'font-size:52px;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.3))\\'>${n.emoji}</span>';" />`;
-  } else {
-    nmHero.className     = `nm-hero nb-img--${n.bg}`;
-    nmHero.innerHTML     = `<span style="font-size:52px;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.3))">${n.emoji}</span>`;
-  }
-
+  document.getElementById('nmHero').className     = `nm-hero nb-img--${n.bg}`;
+  document.getElementById('nmHero').innerHTML     = `<span style="font-size:52px;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.3))">${n.emoji}</span>`;
   document.getElementById('nmTag').textContent    = n.tag;
   document.getElementById('nmTag').className      = `nm-tag nm-tag--${n.tagClass}`;
   document.getElementById('nmTitle').textContent  = n.title;
