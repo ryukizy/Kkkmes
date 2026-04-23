@@ -570,9 +570,10 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
   border-top: 1px solid rgba(0,0,0,0.05);
   z-index: 150;
   box-shadow: 0 -8px 32px rgba(0,0,0,0.09), 0 -2px 8px rgba(0,0,0,0.04);
-  padding: 0 4px;
+  padding: 0;
   align-items: center;
-  justify-content: space-around;
+  /* 5 item terbagi rata — setiap item flex:1 */
+  justify-content: stretch;
   padding-bottom: max(8px, env(safe-area-inset-bottom));
 }
 
@@ -582,7 +583,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
   align-items: center;
   justify-content: center;
   gap: 3px;
-  padding: 6px 12px;
+  padding: 6px 8px;
   border: none;
   background: transparent;
   cursor: pointer;
@@ -592,9 +593,10 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
   font-weight: 600;
   border-radius: 12px;
   transition: all 0.2s cubic-bezier(.22,1,.36,1);
-  min-width: 52px;
+  /* flex:1 memastikan setiap item mendapat lebar yang sama rata */
+  flex: 1;
+  min-width: 0;
   position: relative;
-  width: auto;
   margin: 0;
 }
 .bn-item svg { width: 22px; height: 22px; stroke-width: 1.7; transition: all 0.2s; }
@@ -1217,11 +1219,11 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
   /* Cart FAB sudah menggunakan calc(var(--bnav-h) + 16px) di rule utama */
   .toast { bottom: calc(var(--bnav-h) + 12px); }
 
-  /* 6-item bottom nav: pastikan semua item muat dengan font lebih kecil */
+  /* 5-item bottom nav: item lebih lebar, label sedikit lebih besar */
   .bn-item {
     min-width: 0;
-    padding: 6px 4px;
-    font-size: 0.58rem;
+    padding: 6px 6px;
+    font-size: 0.60rem;
   }
   .bn-item svg { width: 20px; height: 20px; }
 }
