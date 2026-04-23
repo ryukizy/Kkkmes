@@ -126,7 +126,7 @@
     .simp-carousel-wrap.dragging { cursor: grabbing; }
     .simp-carousel-track {
       display: flex; gap: 10px;
-      padding: 0 16px;
+      padding: 0 var(--page-x);
       animation: simp-scroll 18s linear infinite;
       width: max-content;
       will-change: transform;
@@ -164,12 +164,12 @@
 
     /* ── NEWS BANNER — Swiper.js carousel ──────────── */
     .news-section      { padding: 0; margin-top: 20px; }
-    .news-section-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 16px; }
+    .news-section-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 0 var(--page-x); }
     .news-section-head h3 { font-size: 14px; font-weight: 700; color: var(--text-slate); }
     .news-see-all { font-size: 12px; font-weight: 600; color: var(--accent-mint); background: none; border: none; cursor: pointer; padding: 0; }
 
     /* Swiper overrides */
-    .news-swiper { padding: 0 16px 24px !important; overflow: visible !important; }
+    .news-swiper { padding: 0 var(--page-x) 24px !important; overflow: visible !important; }
     .news-swiper .swiper-wrapper { align-items: stretch; }
     .news-swiper .swiper-slide  { width: 284px !important; height: auto; }
 
@@ -211,50 +211,70 @@
 
     .nb-body { background: var(--surface); padding: 12px 14px; }
     .nb-title { font-size: 13px; font-weight: 700; color: var(--text-slate); margin-bottom: 3px; line-height: 1.3; }
-    .nb-desc  { font-size: 11px; color: var(--text-muted-slate); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .nb-desc  { font-size: 11px; color: var(--text-muted-slate); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .nb-date  { font-size: 10px; color: #94a3b8; margin-top: 6px; }
 
     /* ── NEWS DETAIL MODAL ───────────────────────── */
     .news-modal-overlay {
       display: none; position: fixed; inset: 0; z-index: 9000;
       background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
-      align-items: flex-end; justify-content: center;
-      /* cursor pointer pada area overlay (luar box) memberi sinyal visual bisa diklik */
+      align-items: center; justify-content: center;
+      padding: 16px;
+      padding-top: max(16px, env(safe-area-inset-top, 16px));
+      padding-bottom: 16px;
       cursor: pointer;
     }
     .news-modal-overlay.show { display: flex; animation: modal-in .25s ease; }
     @keyframes modal-in   { from { opacity: 0; } to   { opacity: 1; } }
     @keyframes modal-out  { from { opacity: 1; } to   { opacity: 0; } }
     .news-modal-box {
-      background: var(--surface); border-radius: 24px 24px 0 0;
-      width: 100%; max-width: 480px; max-height: 85vh;
-      overflow-y: auto; padding: 0 0 40px;
-      animation: sheet-up .3s cubic-bezier(.34,1.56,.64,1);
-      /* penting: cursor normal di dalam box agar tidak terasa aneh */
+      background: var(--surface); border-radius: 24px;
+      width: 100%; max-width: 480px;
+      max-height: calc(100vh - 64px);
+      overflow-y: auto; padding: 0 0 32px;
+      animation: modal-center-in .3s cubic-bezier(.34,1.56,.64,1);
       cursor: default;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.25);
     }
-    @keyframes sheet-up   { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    @keyframes sheet-down { from { transform: translateY(0);    opacity: 1; } to { transform: translateY(60px); opacity: 0; } }
+    @keyframes modal-center-in { from { transform: scale(0.93); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    /* Drag handle visual hint — isyarat bisa di-tap untuk tutup */
+    .news-modal-box::before {
+      content: '';
+      display: block;
+      width: 36px; height: 4px;
+      background: #e2e8f0; border-radius: 99px;
+      margin: 12px auto 0;
+    }
+
     .nm-hero {
-      height: 180px; display: flex; align-items: center;
-      justify-content: center; font-size: 52px;
-      position: relative; border-radius: 24px 24px 0 0; overflow: hidden;
+      height: 140px; display: flex; align-items: center;
+      justify-content: center; font-size: 44px;
+      position: relative; border-radius: 0; overflow: hidden;
+      pointer-events: none; /* klik di hero tetap menutup lewat box */
     }
     .nm-close {
-      position: absolute; top: 14px; right: 14px;
-      background: rgba(0,0,0,0.3); border: none; border-radius: 50%;
-      width: 32px; height: 32px; color: #fff; cursor: pointer;
-      font-size: 16px; display: flex; align-items: center; justify-content: center;
+      position: absolute; top: 10px; right: 10px;
+      background: rgba(0,0,0,0.28); border: none; border-radius: 50%;
+      width: 28px; height: 28px; color: #fff; cursor: pointer;
+      font-size: 13px; display: flex; align-items: center; justify-content: center;
     }
-    .nm-body { padding: 20px 20px 0; }
-    .nm-tag  { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; }
+    .nm-body { padding: 14px 20px 0; pointer-events: none; }
+    .nm-tag  { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; margin-bottom: 8px; }
     .nm-tag--emerald { background: #dcfce7; color: #065F46; }
     .nm-tag--blue    { background: #dbeafe; color: #1e40af; }
     .nm-tag--amber   { background: #fef3c7; color: #92400e; }
     .nm-tag--teal    { background: #ccfbf1; color: #134e4a; }
-    .nm-title  { font-size: 18px; font-weight: 800; color: var(--text-slate); line-height: 1.3; margin-bottom: 6px; }
-    .nm-date   { font-size: 11px; color: #94a3b8; margin-bottom: 14px; }
-    .nm-content{ font-size: 14px; color: #475569; line-height: 1.7; }
+    .nm-title  { font-size: 16px; font-weight: 800; color: var(--text-slate); line-height: 1.3; margin-bottom: 5px; }
+    .nm-date   { font-size: 11px; color: #94a3b8; margin-bottom: 12px; }
+    .nm-content{ font-size: 13px; color: #475569; line-height: 1.7; }
+
+    /* Hint "Ketuk untuk tutup" di bagian bawah modal */
+    .nm-tap-hint {
+      text-align: center; font-size: 11px; color: #cbd5e1;
+      padding: 14px 0 0;
+      pointer-events: none;
+    }
 
     /* ── UPGRADE: Premium card shadows & text ────── */
     .card-section .cs-head h3 { color: var(--text-slate); font-size: 15px; }
@@ -274,7 +294,7 @@
     /* ── LOAN CATEGORY STYLES ─────────────────── */
     .loan-step-header {
       display: flex; align-items: center; gap: 12px;
-      padding: 16px 16px 10px;
+      padding: 16px var(--page-x) 10px;
     }
     .loan-step-num {
       width: 32px; height: 32px; border-radius: 50%;
@@ -299,13 +319,13 @@
       display: flex; align-items: flex-start; gap: 8px;
       background: #fefce8; border: 1px solid #fde68a;
       border-radius: 12px; padding: 12px 14px;
-      margin: 0 16px 14px; font-size: 12px; color: #713f12;
+      margin: 0 0 14px; font-size: 12px; color: #713f12;
       line-height: 1.5;
     }
 
     /* Alert boxes */
     .loan-alert {
-      margin: 0 16px 12px; padding: 12px 14px;
+      margin: 0 0 12px; padding: 12px 14px;
       border-radius: 12px; font-size: 12px; line-height: 1.6;
     }
     .loan-alert--red   { background: #fef2f2; border: 1px solid #fecaca; color: #7f1d1d; }
@@ -314,7 +334,7 @@
     /* Category grid */
     .loan-cat-grid {
       display: flex; flex-direction: column; gap: 10px;
-      padding: 0 16px 24px;
+      padding: 0 0 24px;
     }
     .loan-cat-card {
       display: flex; align-items: flex-start; gap: 14px;
@@ -327,7 +347,6 @@
     }
     .loan-cat-card:hover  { border-color: #10B981; background: #f0fdf4; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(6,95,70,0.10); }
     .loan-cat-card:active { transform: scale(.98); }
-    .loan-cat-card--wide  { /* same, no extra style needed */ }
 
     .lcc-icon {
       width: 46px; height: 46px; border-radius: 14px;
@@ -359,7 +378,7 @@
 
     /* Selected badge */
     .loan-selected-badge {
-      margin: 0 16px 12px;
+      margin: 0 var(--page-x) 12px;
       padding: 10px 14px;
       border-radius: 12px;
       font-size: 12px; font-weight: 600;
@@ -452,7 +471,7 @@
     .sec:not(#kar-home) { padding-top: calc(env(safe-area-inset-top, 0px) + 12px); }
 
     /* Status pinjaman spacing */
-    .card-section { padding: 0 16px; margin-top: 20px; }
+    .card-section { margin-top: 20px; }
     .card-section:last-child { margin-bottom: 24px; }
     /* ── PPOB STYLES v2 — Premium Redesign ── */
     #kar-ppob {
@@ -465,7 +484,7 @@
     /* Hero banner PPOB */
     .ppob-hero {
       background: linear-gradient(135deg, #065F46 0%, #047857 60%, #059669 100%);
-      margin: 0 16px 20px;
+      margin: 0 0 20px;
       border-radius: 20px;
       padding: 20px;
       display: flex;
@@ -512,7 +531,7 @@
       background: #f1f5f9;
       border-radius: 16px;
       padding: 4px;
-      margin: 0 16px 20px;
+      margin: 0 0 20px;
     }
     .ppob-tab {
       flex: 1;
@@ -551,7 +570,7 @@
     .ppob-section-label {
       font-size: 11px; font-weight: 700; color: #94a3b8;
       text-transform: uppercase; letter-spacing: 1px;
-      margin: 0 16px 8px;
+      margin: 0 var(--page-x) 8px;
     }
 
     /* Card */
@@ -560,7 +579,7 @@
       border-radius: 18px;
       padding: 20px;
       box-shadow: 0 2px 16px rgba(0,0,0,0.06);
-      margin: 0 16px 16px;
+      margin: 0 0 16px;
     }
     .ppob-card-title {
       font-size: 13px; font-weight: 700; color: #1e293b;
@@ -782,7 +801,7 @@
       border-radius: 18px;
       padding: 20px;
       box-shadow: 0 2px 16px rgba(0,0,0,0.06);
-      margin: 0 16px 32px;
+      margin: 0 0 32px;
     }
     .ppob-riwayat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
     .ppob-riwayat-title  { font-size: 15px; font-weight: 800; color: #1e293b; }
@@ -817,13 +836,6 @@
     @media (max-width: 380px) {
       .ppob-nominal-grid { grid-template-columns: repeat(2, 1fr); }
       .pln-token-code    { font-size: 17px; letter-spacing: 2px; }
-      .ppob-card         { padding: 16px; margin: 0 12px 14px; }
-      .ppob-tab-bar      { margin: 0 12px 16px; }
-      .ppob-riwayat-wrap { margin: 0 12px 24px; }
-      .ppob-hero         { margin: 0 12px 16px; }
-    }
-      transition: background .25s, color .25s, transform .18s;
-      white-space: nowrap;
     }
     .ppob-provider-badge.detected { transform: scale(1.05); }
 
@@ -983,7 +995,7 @@
       border-radius: var(--radius);
       padding: 16px 20px;
       box-shadow: var(--shadow-sm);
-      margin: 0 16px 24px;
+      margin: 0 0 24px;
     }
     .ppob-riwayat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
     .ppob-riwayat-title  { font-size: 15px; font-weight: 700; color: var(--text-slate); }
@@ -1017,10 +1029,135 @@
     @media (max-width: 380px) {
       .ppob-nominal-grid { grid-template-columns: repeat(2, 1fr); }
       .pln-token-code    { font-size: 16px; letter-spacing: 1.5px; }
-      .ppob-card         { padding: 14px; margin: 0 10px 12px; }
-      .ppob-tab-bar      { margin: 0 10px 12px; }
-      .ppob-riwayat-wrap { margin: 0 10px 20px; }
+      /* margin mengikuti --page-x global, tidak di-override di sini */
     }
+    /* ── MASUKAN MODAL ───────────────────────────── */
+    .masukan-overlay {
+      display: none; position: fixed; inset: 0; z-index: 9100;
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+      align-items: flex-end; justify-content: center;
+    }
+    .masukan-overlay.show { display: flex; animation: modal-in .25s ease; }
+    .masukan-sheet {
+      background: #fff; border-radius: 24px 24px 0 0;
+      width: 100%; max-width: 480px;
+      padding: 0 0 max(24px, env(safe-area-inset-bottom));
+      animation: sheet-up .3s cubic-bezier(.34,1.56,.64,1);
+    }
+    .masukan-sheet::before {
+      content: '';
+      display: block; width: 36px; height: 4px;
+      background: #e2e8f0; border-radius: 99px;
+      margin: 12px auto 0;
+    }
+    .masukan-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px 10px;
+    }
+    .masukan-title { font-size: 15px; font-weight: 800; color: #1e293b; }
+    .masukan-close {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: #f1f5f9; border: none; cursor: pointer;
+      font-size: 14px; color: #64748b;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .masukan-body { padding: 0 20px 16px; }
+
+    /* Rating bintang */
+    .masukan-rating-row {
+      display: flex; justify-content: center; gap: 8px;
+      margin-bottom: 16px;
+    }
+    .masukan-star {
+      font-size: 30px; cursor: pointer; opacity: .35;
+      transition: opacity .15s, transform .15s;
+      background: none; border: none; padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .masukan-star.active, .masukan-star:hover { opacity: 1; transform: scale(1.2); }
+
+    /* Kategori chip */
+    .masukan-cat-row {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin-bottom: 14px;
+    }
+    .masukan-cat-btn {
+      padding: 6px 12px; border-radius: 20px;
+      border: 1.5px solid #e2e8f0; background: #f8fafc;
+      font-size: 12px; font-weight: 600; color: #64748b;
+      cursor: pointer; font-family: inherit;
+      transition: all .15s; -webkit-tap-highlight-color: transparent;
+    }
+    .masukan-cat-btn.active {
+      background: #f0fdf4; border-color: #065F46; color: #065F46;
+    }
+
+    /* Textarea */
+    .masukan-textarea {
+      width: 100%; min-height: 96px; resize: none;
+      border: 1.5px solid #e2e8f0; border-radius: 14px;
+      padding: 12px 14px; font-family: inherit;
+      font-size: 13px; color: #1e293b; background: #f8fafc;
+      outline: none; transition: border-color .15s;
+      margin-bottom: 14px;
+      box-sizing: border-box;
+    }
+    .masukan-textarea:focus { border-color: #065F46; background: #fff; }
+    .masukan-char { font-size: 11px; color: #94a3b8; text-align: right; margin-top: -10px; margin-bottom: 14px; }
+
+    /* Anonim toggle */
+    .masukan-anon-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px; padding: 10px 14px;
+      background: #f8fafc; border-radius: 12px;
+    }
+    .masukan-anon-label { font-size: 13px; font-weight: 600; color: #475569; }
+    .masukan-anon-sub   { font-size: 11px; color: #94a3b8; }
+    /* Toggle switch */
+    .toggle-wrap { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+    .toggle-wrap input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0; border-radius: 99px;
+      background: #e2e8f0; cursor: pointer; transition: .2s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: #fff; top: 2px; left: 2px;
+      transition: .2s; box-shadow: 0 1px 4px rgba(0,0,0,.15);
+    }
+    .toggle-wrap input:checked + .toggle-slider { background: #065F46; }
+    .toggle-wrap input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+    /* Submit */
+    .masukan-submit {
+      width: 100%; padding: 14px; border-radius: 14px; border: none;
+      background: linear-gradient(135deg, #065F46, #047857);
+      color: #fff; font-size: 15px; font-weight: 700;
+      cursor: pointer; font-family: inherit;
+      box-shadow: 0 4px 16px rgba(6,95,70,0.25);
+      transition: opacity .2s, transform .15s;
+    }
+    .masukan-submit:hover { opacity: .9; transform: translateY(-1px); }
+    .masukan-submit:disabled { background: #e2e8f0; color: #94a3b8; box-shadow: none; cursor: not-allowed; transform: none; }
+
+    /* ═══════════════════════════════════════════════════
+       GLOBAL SPACING — CATATAN DEVELOPER
+       ═══════════════════════════════════════════════════
+       Seluruh jarak tepi kiri/kanan aplikasi dikendalikan
+       oleh satu CSS variable: --page-x (didefinisikan di
+       style.css :root).
+
+       Nilai per breakpoint:
+         Mobile  (<640px) : --page-x = 16px
+         Tablet  (≥640px) : --page-x = 24px
+         Desktop (≥900px) : --page-x = 28px
+
+       Aturan penggunaan:
+         • Elemen yang perlu margin tepi → margin: 0 var(--page-x) [bottom]
+         • Elemen full-width (hero, carousel) → biarkan tanpa margin horizontal
+         • JANGAN gunakan angka hardcoded 14px/16px/20px untuk margin horizontal
+       ═══════════════════════════════════════════════════ */
   </style>
 </head>
 <body>
@@ -1738,6 +1875,10 @@
             <div class="pmi-left"><div class="pmi-ico pmi-ico--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div class="pmi-text"><div class="pmi-title">Bantuan &amp; Dukungan</div><div class="pmi-desc">Chat Admin via WhatsApp</div></div></div>
             <span style="background:#25D366;color:#fff;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;flex-shrink:0">WA</span>
           </button>
+          <button class="profil-menu-item" onclick="bukaModalMasukan()">
+            <div class="pmi-left"><div class="pmi-ico" style="background:#f0f9ff;color:#0284c7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5"/><path d="M17.5 2.5a2.121 2.121 0 013 3L12 14l-4 1 1-4 8.5-8.5z"/></svg></div><div class="pmi-text"><div class="pmi-title">Beri Masukan</div><div class="pmi-desc">Saran &amp; kritik untuk admin koperasi</div></div></div>
+            <svg class="pmi-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
         </div>
         <div class="profil-menu-group">
           <div class="profil-group-label">Akun</div>
@@ -1827,15 +1968,15 @@
 </div><!-- /dash-page -->
 
 <!-- ══ NEWS DETAIL MODAL ══ -->
-<div class="news-modal-overlay" id="newsModalOverlay" onclick="closeNewsModal(event)">
+<div class="news-modal-overlay" id="newsModalOverlay" onclick="closeNewsModal()">
   <div class="news-modal-box" id="newsModalBox">
-    <div class="nm-hero nb-img--emerald" id="nmHero" style="font-size:52px">📢</div>
-    <button class="nm-close" onclick="closeNewsModal()">✕</button>
+    <div class="nm-hero nb-img--emerald" id="nmHero" style="font-size:44px">📢</div>
     <div class="nm-body">
       <span class="nm-tag nm-tag--emerald" id="nmTag">Pengumuman</span>
       <div class="nm-title"  id="nmTitle">—</div>
       <div class="nm-date"   id="nmDate">—</div>
       <div class="nm-content" id="nmContent">—</div>
+      <div class="nm-tap-hint">👆 Ketuk di mana saja untuk menutup</div>
     </div>
   </div>
 </div>
@@ -2233,20 +2374,10 @@ function openNewsModal(id, listMode) {
   document.getElementById('nmContent').innerHTML  = n.content.replace(/\n/g, '<br>');
 }
 
-function closeNewsModal(e) {
-  // Tutup jika: klik di overlay (luar box) — dipanggil dari overlay onclick
-  // Jika e ada dan target adalah newsModalBox atau turunannya, JANGAN tutup
-  // (agar scroll & klik dalam konten tetap berjalan)
-  // Hanya tutup jika klik langsung di overlay background (bukan di dalam box)
-  if (e) {
-    const box = document.getElementById('newsModalBox');
-    if (box && box.contains(e.target)) return; // klik di dalam box → jangan tutup
-  }
-
+function closeNewsModal() {
   const overlay = document.getElementById('newsModalOverlay');
   const box     = document.getElementById('newsModalBox');
 
-  // Jalankan animasi keluar, lalu sembunyikan
   overlay.style.animation = 'modal-out .2s ease forwards';
   if (box) box.style.animation = 'sheet-down .22s ease forwards';
 
@@ -2352,5 +2483,143 @@ window.addEventListener('load', () => {
   initPPOB();
 });
 </script>
+<!-- ══ MASUKAN MODAL ══ -->
+<div class="masukan-overlay" id="masukanOverlay" onclick="tutupMasukan(event)">
+  <div class="masukan-sheet" id="masukanSheet">
+
+    <div class="masukan-head">
+      <div class="masukan-title">✍️ Beri Masukan</div>
+      <button class="masukan-close" onclick="tutupMasukan()">✕</button>
+    </div>
+
+    <div class="masukan-body">
+      <!-- Rating bintang -->
+      <p style="font-size:12px;color:#64748b;text-align:center;margin-bottom:8px;font-weight:500">Seberapa puas Anda dengan layanan koperasi?</p>
+      <div class="masukan-rating-row" id="masukanStars">
+        <button class="masukan-star" onclick="setMasukanRating(1)">⭐</button>
+        <button class="masukan-star" onclick="setMasukanRating(2)">⭐</button>
+        <button class="masukan-star" onclick="setMasukanRating(3)">⭐</button>
+        <button class="masukan-star" onclick="setMasukanRating(4)">⭐</button>
+        <button class="masukan-star" onclick="setMasukanRating(5)">⭐</button>
+      </div>
+
+      <!-- Kategori -->
+      <p style="font-size:12px;color:#64748b;margin-bottom:8px;font-weight:600">Topik masukan</p>
+      <div class="masukan-cat-row" id="masukanCatRow">
+        <button class="masukan-cat-btn" onclick="toggleMasukanCat(this)">💳 Simpanan</button>
+        <button class="masukan-cat-btn" onclick="toggleMasukanCat(this)">📋 Pinjaman</button>
+        <button class="masukan-cat-btn" onclick="toggleMasukanCat(this)">🛒 Belanja</button>
+        <button class="masukan-cat-btn" onclick="toggleMasukanCat(this)">⚡ PPOB</button>
+        <button class="masukan-cat-btn" onclick="toggleMasukanCat(this)">📱 Aplikasi</button>
+        <button class="masukan-cat-btn" onclick="toggleMasukanCat(this)">💡 Saran Umum</button>
+      </div>
+
+      <!-- Pesan -->
+      <textarea class="masukan-textarea" id="masukanText"
+        placeholder="Tulis saran, kritik, atau apresiasi Anda di sini…"
+        maxlength="500"
+        oninput="updateMasukanChar(this)"></textarea>
+      <div class="masukan-char"><span id="masukanCharCount">0</span>/500</div>
+
+      <!-- Anonim toggle -->
+      <div class="masukan-anon-row">
+        <div>
+          <div class="masukan-anon-label">Kirim secara anonim</div>
+          <div class="masukan-anon-sub">Identitas Anda tidak akan ditampilkan</div>
+        </div>
+        <label class="toggle-wrap">
+          <input type="checkbox" id="masukanAnonToggle" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <button class="masukan-submit" id="masukanSubmitBtn" onclick="kirimMasukan()">
+        Kirim Masukan
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════
+//  MASUKAN / FEEDBACK
+// ══════════════════════════════════════════════════
+let masukanRating   = 0;
+let masukanCats     = [];
+
+function bukaModalMasukan() {
+  // Reset state
+  masukanRating = 0;
+  masukanCats   = [];
+  document.getElementById('masukanText').value = '';
+  document.getElementById('masukanCharCount').textContent = '0';
+  document.getElementById('masukanAnonToggle').checked = false;
+  document.querySelectorAll('.masukan-star').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.masukan-cat-btn').forEach(b => b.classList.remove('active'));
+
+  const ov = document.getElementById('masukanOverlay');
+  ov.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function tutupMasukan(e) {
+  if (e) {
+    // Hanya tutup jika klik langsung di overlay (bukan di dalam sheet)
+    const sheet = document.getElementById('masukanSheet');
+    if (sheet && sheet.contains(e.target)) return;
+  }
+  const ov = document.getElementById('masukanOverlay');
+  ov.style.animation = 'modal-out .2s ease forwards';
+  setTimeout(() => {
+    ov.classList.remove('show');
+    ov.style.animation = '';
+    document.body.style.overflow = '';
+  }, 180);
+}
+
+function setMasukanRating(n) {
+  masukanRating = n;
+  document.querySelectorAll('.masukan-star').forEach((s, i) => {
+    s.classList.toggle('active', i < n);
+  });
+}
+
+function toggleMasukanCat(btn) {
+  btn.classList.toggle('active');
+  const label = btn.textContent.replace(/^\S+\s/, '').trim();
+  if (btn.classList.contains('active')) {
+    if (!masukanCats.includes(label)) masukanCats.push(label);
+  } else {
+    masukanCats = masukanCats.filter(c => c !== label);
+  }
+}
+
+function updateMasukanChar(el) {
+  document.getElementById('masukanCharCount').textContent = el.value.length;
+}
+
+function kirimMasukan() {
+  const teks  = document.getElementById('masukanText').value.trim();
+  const anonim = document.getElementById('masukanAnonToggle').checked;
+
+  if (!teks && masukanRating === 0) {
+    showToast('⚠️ Isi rating atau tulis masukan terlebih dahulu', 'toast-warn');
+    return;
+  }
+
+  // Simulasi kirim (mock — di produksi ini dikirim ke backend/admin)
+  const dari  = anonim ? 'Anonim' : (typeof USER !== 'undefined' ? USER.nama : 'Karyawan');
+  const topik = masukanCats.length ? masukanCats.join(', ') : 'Umum';
+  const bintang = '⭐'.repeat(masukanRating) || '(tidak diisi)';
+
+  console.log('[MASUKAN]', { dari, rating: masukanRating, topik, pesan: teks, anonim });
+
+  tutupMasukan();
+  setTimeout(() => {
+    showToast('✅ Masukan berhasil dikirim, terima kasih!', 'toast-ok', 3200);
+  }, 250);
+}
+</script>
+
 </body>
 </html>
