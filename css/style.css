@@ -54,6 +54,13 @@
   /* Bottom Nav */
   --bnav-h:   68px;
 
+  /* ── GLOBAL SPACING SYSTEM ──────────────────────
+     Satu-satunya sumber kebenaran untuk jarak tepi
+     kiri/kanan di seluruh aplikasi.
+     Ubah satu nilai ini → semua section ikut berubah.
+  ─────────────────────────────────────────────── */
+  --page-x: 16px;   /* jarak tepi horizontal (mobile) */
+
   /* Design Tokens */
   --radius-xs: 8px;
   --radius-sm: 12px;
@@ -70,6 +77,86 @@
   --shadow-lg:  0 16px 48px rgba(0,0,0,0.12), 0 6px 16px rgba(0,0,0,0.06);
   --shadow-green: 0 8px 24px rgba(22,163,74,0.28), 0 3px 8px rgba(22,163,74,0.14);
   --shadow-green-sm: 0 4px 12px rgba(22,163,74,0.20);
+}
+
+/* ══════════════════════════════════════════════════════
+   GLOBAL SPACING SYSTEM
+   ══════════════════════════════════════════════════════
+   Satu-satunya cara mengatur jarak tepi kiri/kanan:
+
+     padding: 0 var(--page-x);
+
+   JANGAN pernah hardcode 14px / 16px / 20px / 24px
+   untuk padding/margin horizontal elemen konten.
+
+   Nilai otomatis per breakpoint (diatur di @media):
+     Mobile  < 640px : 16px
+     Tablet  ≥ 640px : 24px
+     Desktop ≥ 900px : 28px
+
+   Elemen FULL-BLEED (tidak pakai --page-x):
+     ✓ .hero-unified, .hero-ppob, .simp-carousel-wrap
+     ✓ .bottom-nav, .topbar
+     ✓ Elemen yang memang harus mepet ke tepi layar
+══════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════════
+   SECTION CONTAINER — STANDARDISASI SPACING HORIZONTAL
+   ══════════════════════════════════════════════════════════
+
+   Gunakan class .section-container ATAU target langsung ID
+   section (#kar-home, #kar-simpanan, dll.) untuk memastikan
+   margin/padding horizontal IDENTIK di semua halaman.
+
+   CARA PAKAI di HTML:
+     <section id="kar-home" class="sec section-container"> ... </section>
+
+   Nilai otomatis (ikuti var(--page-x) yang sudah responsif):
+     Mobile  < 640px : 16px
+     Tablet  ≥ 640px : 24px
+     Desktop ≥ 900px : 28px
+
+   Elemen FULL-BLEED di dalam section tetap bisa mepet tepi
+   dengan menambahkan class .full-bleed (sudah didefinisikan
+   di atas).
+══════════════════════════════════════════════════════════ */
+
+/* ── Class utama: bisa ditambahkan ke elemen apapun ───── */
+.section-container {
+  padding-left:  var(--page-x);
+  padding-right: var(--page-x);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* ── Target langsung semua ID section karyawan ─────────
+   Pastikan tidak ada override inline style yang merusak.
+   Menggunakan !important HANYA untuk padding horizontal agar
+   tidak bersaing dengan padding-top/bottom per section.
+────────────────────────────────────────────────────────── */
+#kar-home,
+#kar-simpanan,
+#kar-pinjaman,
+#kar-katalog,
+#kar-ppob {
+  padding-left:  var(--page-x) !important;
+  padding-right: var(--page-x) !important;
+  box-sizing: border-box;
+}
+
+/* ── Elemen FULL-BLEED di dalam section: reset ke tepi ──
+   Hero card, carousel, dan banner yang harus mepet tepi
+   WAJIB memakai class .full-bleed agar tidak terpotong.
+────────────────────────────────────────────────────────── */
+#kar-home     > .full-bleed,
+#kar-simpanan > .full-bleed,
+#kar-pinjaman > .full-bleed,
+#kar-katalog  > .full-bleed,
+#kar-ppob     > .full-bleed,
+.section-container > .full-bleed {
+  margin-left:  calc(-1 * var(--page-x));
+  margin-right: calc(-1 * var(--page-x));
+  width: calc(100% + 2 * var(--page-x));
 }
 
 html { font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
@@ -426,7 +513,35 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 .tb-avatar { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, var(--primary), var(--green-400)); display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; font-size: 0.84rem; cursor: pointer; box-shadow: var(--shadow-green-sm); }
 
 /* CONTENT */
-.content { padding: 20px 16px 100px; flex: 1; max-width: 1100px; width: 100%; overflow-x: hidden; }
+/* CONTENT — wrapper utama semua halaman */
+.content {
+  padding: 20px var(--page-x) 100px;
+  flex: 1;
+  max-width: 1100px;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* ── GLOBAL CONTAINER SYSTEM ────────────────────────────────
+   .page-inner  → konten dalam section, ikut --page-x
+   .full-bleed  → elemen yang harus mepet penuh ke tepi layar
+                  (hero card, carousel, news banner)
+   .page-pad    → utility: tambah padding horizontal --page-x
+                  pada elemen yang berada di luar .content
+──────────────────────────────────────────────────────────── */
+.page-inner {
+  padding-left:  var(--page-x);
+  padding-right: var(--page-x);
+}
+.full-bleed {
+  margin-left:  calc(-1 * var(--page-x));
+  margin-right: calc(-1 * var(--page-x));
+  width: calc(100% + 2 * var(--page-x));
+}
+.page-pad {
+  padding-left:  var(--page-x);
+  padding-right: var(--page-x);
+}
 .sec { animation: secIn 0.3s cubic-bezier(.22,1,.36,1) both; }
 @keyframes secIn { from{ opacity:0; transform:translateY(12px);} to{ opacity:1; transform:none;} }
 
@@ -753,7 +868,6 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 }
 .saldo-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.08); transform: translateY(-1px); }
 .sc-icon { font-size: 1.6rem; }
-.sc-info { }
 .sc-name { font-size: 0.8rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
 .sc-desc { font-size: 0.68rem; color: var(--muted); }
 .sc-amount { font-size: 1.05rem; font-weight: 800; color: var(--text); }
@@ -1093,7 +1207,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
   .main-wrap { margin-left: 0; }
   .ham-btn { display: flex; }
 
-  .content { padding: 16px 14px calc(76px + env(safe-area-inset-bottom, 0px)); }
+  .content { padding: 16px var(--page-x) calc(76px + env(safe-area-inset-bottom, 0px)); }
   
   .kpi-grid { grid-template-columns: repeat(2,1fr); }
   .home-quick-grid { grid-template-columns: repeat(4,1fr); }
@@ -1127,29 +1241,34 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 
 /* Tablet */
 @media (min-width: 640px) {
+  /* Perlebar --page-x di tablet agar konten lebih bernafas */
+  :root { --page-x: 24px; }
   .prod-grid { grid-template-columns: repeat(3,1fr); }
   .kpi-grid  { grid-template-columns: repeat(4,1fr); }
   .saldo-cards { grid-template-columns: repeat(2,1fr); }
   .cart-layout { grid-template-columns: 1fr 300px; }
-  .content { padding: 22px 24px 96px; }
+  .content { padding: 22px var(--page-x) 96px; }
   .login-card { padding: 40px 36px 32px; }
 }
 
 /* Desktop */
 @media (min-width: 900px) {
+  :root { --page-x: 28px; }
   .login-left { display: flex; }
   .login-right { width: 480px; flex-shrink: 0; }
   .prod-grid { grid-template-columns: repeat(4,1fr); }
   .saldo-cards { grid-template-columns: repeat(4,1fr); }
   .home-quick-grid { grid-template-columns: repeat(4,1fr); }
   .modal-overlay { align-items: center; }
-  .modal-box { border-radius: var(--radius-xl); }
+  /* news-modal-overlay sudah center by default, tapi pastikan padding lebih longgar di desktop */
+  .news-modal-overlay { padding: 32px; }
+  .news-modal-box { border-radius: 24px; }
   @keyframes modalUp { from{transform:scale(0.96) translateY(14px);opacity:0} to{transform:none;opacity:1} }
   
   /* Desktop: sidebar margin + no bottom nav */
   .main-wrap { margin-left: var(--sb-w); }
   .bottom-nav { display: none !important; }
-  .content { padding: 24px 28px 48px; }
+  .content { padding: 24px var(--page-x) 48px; }
   .toast { bottom: 28px; }
   /* Desktop tidak ada bottom-nav, FAB cukup 28px dari bawah */
   .cart-fab { bottom: 28px; }
