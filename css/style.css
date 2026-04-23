@@ -156,8 +156,11 @@
 #kar-ppob,
 #kar-profil,
 #kar-tentang {
-  padding-left:  var(--page-x) !important;
-  padding-right: var(--page-x) !important;
+  /* Padding horizontal ditangani oleh .content (parent).
+     Section tidak perlu padding horizontal tambahan agar
+     kartu-kartu bisa melebar penuh tanpa double margin. */
+  padding-left:  0 !important;
+  padding-right: 0 !important;
   box-sizing: border-box;
 }
 
