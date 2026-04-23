@@ -447,13 +447,6 @@ function selectLoanCategory(cat) {
   if (titleEl) titleEl.textContent = cfg.label.replace(/^\S+\s/, '');
   if (subEl)   subEl.textContent   = cfg.hint;
 
-  // Badge kategori terpilih
-  const badge = document.getElementById('loanSelectedBadge');
-  if (badge) {
-    badge.className = 'loan-selected-badge ' + cfg.color;
-    badge.innerHTML = cfg.label;
-  }
-
   // Alert spesifik per jenis
   const alertEm   = document.getElementById('loan-alert-emergency');
   const alertBank = document.getElementById('loan-alert-bank');
@@ -485,16 +478,14 @@ function selectLoanCategory(cat) {
   const hintEl = document.getElementById('loanNominalHint');
   if (hintEl) hintEl.textContent = cfg.hint;
 
-  // Emergency: sembunyikan tenor & simulasi, tampilkan info lump-sum
+  // Emergency: sembunyikan tenor & simulasi
   const isLumpSum = !!cfg.lumpSum;
   const fieldTenor  = document.getElementById('fieldTenor');
   const simResult   = document.getElementById('simResult');
-  const emInfo      = document.getElementById('loanEmergencyInfo');
   const warn40      = document.getElementById('sim40Warning');
 
   if (fieldTenor)  fieldTenor.hidden  = isLumpSum;
   if (simResult)   simResult.hidden   = isLumpSum;
-  if (emInfo)      emInfo.hidden      = !isLumpSum;
   if (warn40)      warn40.hidden      = true;
 
   if (!isLumpSum) {
