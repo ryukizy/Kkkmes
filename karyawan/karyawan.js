@@ -295,6 +295,29 @@ function renderPinjamanStatus() {
     const katCfg    = LOAN_CATEGORIES[p.kategori];
     const katLabel  = katCfg ? katCfg.label : '';
 
+    // ── Detail panel: hanya tampil saat accordion dibuka ──
+    const detailRows = `
+      <div class="pcard-body">
+        <div class="pcard-row"><span>Nominal Pinjaman</span><strong>${rp(p.nominal)}</strong></div>
+        <div class="pcard-row">
+          <span>${isLumpSum ? 'Metode Bayar' : 'Cicilan/bulan'}</span>
+          <strong>${isLumpSum ? 'Potong gaji 1×' : rp(p.cicilan)}</strong>
+        </div>
+        ${!isLumpSum ? `<div class="pcard-row"><span>Tenor</span><strong>${p.tenor} bulan</strong></div>` : ''}
+        ${(p.status === 'active' || p.status === 'done') && !isLumpSum
+          ? `<div class="pcard-row"><span>Sisa Hutang</span><strong style="color:var(--primary)">${rp(sisa)}</strong></div>`
+          : ''}
+      </div>
+      ${(p.status === 'active' || p.status === 'done') && !isLumpSum ? `
+      <div class="pcard-prog">
+        <div class="pprog-label"><span>Lunas ${p.lunas}/${p.tenor}</span><span>${pct}%</span></div>
+        <div class="pprog-bar"><div class="pprog-fill" style="width:${pct}%"></div></div>
+      </div>` : ''}
+    `;
+
+    // Ikon chevron untuk tombol toggle
+    const chevronSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>`;
+
     return `
       <div class="pcard">
         <div class="pcard-head">
@@ -302,28 +325,38 @@ function renderPinjamanStatus() {
             <div class="pcard-id">${p.id}</div>
             <div class="pcard-tujuan">${p.tujuan}</div>
             ${katLabel ? `<div style="margin-top:4px"><span class="badge ${katBadge}" style="font-size:10px">${katLabel}</span></div>` : ''}
+            <button
+              class="pcard-toggle"
+              aria-expanded="false"
+              onclick="togglePcardDetail(this)"
+            >
+              Lihat Detail ${chevronSvg}
+            </button>
           </div>
           <span class="badge ${statusBadge}">${statusLabel}</span>
         </div>
-        <div class="pcard-body">
-          <div class="pcard-row"><span>Nominal Pinjaman</span><strong>${rp(p.nominal)}</strong></div>
-          <div class="pcard-row">
-            <span>${isLumpSum ? 'Metode Bayar' : 'Cicilan/bulan'}</span>
-            <strong>${isLumpSum ? 'Potong gaji 1×' : rp(p.cicilan)}</strong>
-          </div>
-          ${!isLumpSum ? `<div class="pcard-row"><span>Tenor</span><strong>${p.tenor} bulan</strong></div>` : ''}
-          ${(p.status === 'active' || p.status === 'done') && !isLumpSum
-            ? `<div class="pcard-row"><span>Sisa Hutang</span><strong style="color:var(--primary)">${rp(sisa)}</strong></div>`
-            : ''}
+        <div class="pcard-detail">
+          ${detailRows}
         </div>
-        ${(p.status === 'active' || p.status === 'done') && !isLumpSum ? `
-        <div class="pcard-prog">
-          <div class="pprog-label"><span>Lunas ${p.lunas}/${p.tenor}</span><span>${pct}%</span></div>
-          <div class="pprog-bar"><div class="pprog-fill" style="width:${pct}%"></div></div>
-        </div>` : ''}
       </div>
     `;
   }).join('');
+}
+
+// ─── Toggle accordion detail pinjaman ───
+function togglePcardDetail(btn) {
+  const detail = btn.closest('.pcard').querySelector('.pcard-detail');
+  if (!detail) return;
+  const isOpen = detail.classList.contains('open');
+  if (isOpen) {
+    detail.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.innerHTML = `Lihat Detail <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>`;
+  } else {
+    detail.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+    btn.innerHTML = `Tutup <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>`;
+  }
 }
 
 // ─── MUTASI ───
@@ -404,24 +437,47 @@ function getLoanNominalValue() {
   return isNaN(num) ? 0 : num;
 }
 
-// ─── Helper: format angka ribuan saat mengetik (123456 → "123.456") ───
+// ─── Helper: format angka ribuan saat mengetik — TANPA kursor lompat ───
 function formatLoanNominal(input) {
-  // Simpan posisi kursor
-  const pos = input.selectionStart;
-  const prevLen = input.value.length;
+  // 1. Catat posisi kursor SEBELUM format
+  const cursorPos  = input.selectionStart;
+  const prevValue  = input.value;
 
-  // Strip semua karakter non-digit
-  const raw = input.value.replace(/\D/g, '');
-  if (!raw) { input.value = ''; updateSimulasi(); return; }
+  // 2. Hitung berapa titik ada SEBELUM kursor di nilai lama
+  //    (setiap titik menambah 1 karakter yg tidak bisa kita ketik)
+  const dotsBeforeCursor = (prevValue.slice(0, cursorPos).match(/\./g) || []).length;
 
-  // Format dengan titik sebagai pemisah ribuan (id-ID)
-  const formatted = parseInt(raw, 10).toLocaleString('id-ID');
+  // 3. Strip semua non-digit → dapatkan digit murni
+  const rawDigits = prevValue.replace(/\D/g, '');
+  if (!rawDigits) { input.value = ''; updateSimulasi(); return; }
+
+  // 4. Format ulang
+  const formatted  = parseInt(rawDigits, 10).toLocaleString('id-ID');
   input.value = formatted;
 
-  // Pertahankan posisi kursor setelah format
-  const newLen  = input.value.length;
-  const newPos  = pos + (newLen - prevLen);
-  try { input.setSelectionRange(newPos, newPos); } catch(_) {}
+  // 5. Hitung berapa digit murni ada sebelum kursor lama
+  //    (digit = semua karakter SELAIN titik di prefix lama)
+  const digitsBeforeCursor = cursorPos - dotsBeforeCursor;
+
+  // 6. Di string terformat baru, temukan posisi setelah digit ke-N
+  let digitCount = 0;
+  let newCursor  = formatted.length; // fallback: akhir string
+  for (let i = 0; i < formatted.length; i++) {
+    if (formatted[i] !== '.') {
+      digitCount++;
+      if (digitCount === digitsBeforeCursor) {
+        newCursor = i + 1;
+        break;
+      }
+    }
+    // Jika belum mencapai target digit, teruskan (kursor setelah titik pun benar)
+    if (digitCount >= digitsBeforeCursor && formatted[i] === '.') continue;
+  }
+  // Edge-case: tidak ada digit sebelum kursor → taruh di awal
+  if (digitsBeforeCursor <= 0) newCursor = 0;
+
+  // 7. Kembalikan kursor ke posisi yang tepat
+  try { input.setSelectionRange(newCursor, newCursor); } catch(_) {}
 
   updateSimulasi();
 }
@@ -636,6 +692,40 @@ function setTenor(btn, t) {
   document.querySelectorAll('.tenor-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   updateSimulasi();
+
+  // ── FIX: Jika jadwal angsuran sedang terbuka, render ulang otomatis ──
+  if (amortOpen) renderAmortTable();
+}
+
+// ─── Render tabel amortisasi (bisa dipanggil kapan saja) ───
+function renderAmortTable() {
+  const el = document.getElementById('amortTable');
+  if (!el) return;
+
+  const cfg = selectedLoanCategory ? LOAN_CATEGORIES[selectedLoanCategory] : null;
+  if (!cfg || cfg.lumpSum) {
+    el.innerHTML = '';
+    el.hidden = true;
+    amortOpen = false;
+    return;
+  }
+
+  const nominal = getLoanNominalValue() || 0;
+  if (nominal <= 0) {
+    el.innerHTML = '<p style="text-align:center;color:var(--muted);padding:12px">Masukkan nominal terlebih dahulu</p>';
+    return;
+  }
+
+  const bunga   = cfg.bunga ?? 0.009;
+  const cicilan = Math.round((nominal * (1 + bunga * selectedTenor)) / selectedTenor);
+  let sisa = nominal;
+  let html = '<table class="tbl"><thead><tr><th>Bln</th><th>Cicilan</th><th>Sisa</th></tr></thead><tbody>';
+  for (let i = 1; i <= selectedTenor; i++) {
+    sisa = Math.max(0, sisa - cicilan);
+    html += `<tr><td>${i}</td><td>${rp(cicilan)}</td><td>${rp(sisa)}</td></tr>`;
+  }
+  html += '</tbody></table>';
+  el.innerHTML = html;
 }
 
 // ─── Update simulasi cicilan real-time ───
@@ -672,24 +762,8 @@ function toggleAmort() {
   if (!el) return;
   el.hidden = !amortOpen;
 
-  if (amortOpen) {
-    const cfg     = selectedLoanCategory ? LOAN_CATEGORIES[selectedLoanCategory] : null;
-    if (!cfg || cfg.lumpSum) { el.hidden = true; amortOpen = false; return; }
-
-    const bunga   = cfg.bunga ?? 0.009;
-    const nominal = getLoanNominalValue() || 0;
-    if (nominal <= 0) { el.innerHTML = '<p style="text-align:center;color:var(--muted);padding:12px">Masukkan nominal terlebih dahulu</p>'; return; }
-
-    const cicilan = Math.round((nominal * (1 + bunga * selectedTenor)) / selectedTenor);
-    let sisa = nominal;
-    let html = '<table class="tbl"><thead><tr><th>Bln</th><th>Cicilan</th><th>Sisa</th></tr></thead><tbody>';
-    for (let i = 1; i <= selectedTenor; i++) {
-      sisa = Math.max(0, sisa - cicilan);
-      html += `<tr><td>${i}</td><td>${rp(cicilan)}</td><td>${rp(sisa)}</td></tr>`;
-    }
-    html += '</tbody></table>';
-    el.innerHTML = html;
-  }
+  // ── FIX: Selalu render ulang saat dibuka — tangkap perubahan tenor & nominal ──
+  if (amortOpen) renderAmortTable();
 }
 
 // ─── PINJAMAN TAB ───
