@@ -2462,6 +2462,74 @@
   color: #10b981;
   transform: translateX(3px);
 }
+
+/* ══════════════════════════════════════════════════
+   PCARD ACCORDION — Status Pinjaman
+   Harus ada di sini agar override style.css lama
+   ══════════════════════════════════════════════════ */
+
+/* Tombol "Lihat Detail ˅" — inline kecil, bukan block besar */
+.pcard-toggle {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  margin-top: 8px !important;
+  padding: 4px 10px 4px 0 !important;
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  color: var(--primary, #065F46) !important;
+  background: none !important;
+  border: none !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  line-height: 1.2 !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+.pcard-toggle:hover { opacity: 0.75; }
+
+/* SVG chevron di dalam tombol — ukuran kecil saja */
+.pcard-toggle svg {
+  width: 14px !important;
+  height: 14px !important;
+  flex-shrink: 0 !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  transition: transform .25s ease;
+}
+.pcard-toggle[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+/* Panel detail — collapsed by default via max-height */
+.pcard-detail {
+  overflow: hidden !important;
+  max-height: 0 !important;
+  opacity: 0 !important;
+  margin-top: 0 !important;
+  transition: max-height .35s ease, opacity .25s ease, margin-top .25s ease !important;
+}
+.pcard-detail.open {
+  max-height: 500px !important;
+  opacity: 1 !important;
+  margin-top: 12px !important;
+}
+
+/* Separator line antara header dan detail saat terbuka */
+.pcard-detail.open::before {
+  content: '';
+  display: block;
+  height: 1px;
+  background: #f1f5f9;
+  margin-bottom: 12px;
+}
+
+/* pcard-head pastikan tidak wrap aneh */
+.pcard-head {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  margin-bottom: 0 !important;
+}
 </style>
 
 <!-- ══ SCRIPTS ══ -->
