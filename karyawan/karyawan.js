@@ -438,47 +438,50 @@ function getLoanNominalValue() {
 }
 
 // ─── Helper: format angka ribuan saat mengetik — TANPA kursor lompat ───
+//
+// Strategi: lacak posisi kursor berdasarkan INDEX DIGIT MURNI (bukan posisi char).
+//
+//   "12.345.678"  kursor di posisi 6 (setelah '4')
+//    → prefix sebelum kursor = "12.345"
+//    → digit murni di prefix  = "12345"  → rawIndex = 5
+//
+//   Setelah format ulang, telusuri string baru sampai rawIndex digit ke-5:
+//    "12.345.678"  → digit ke-5 ada di posisi 6 → kursor = 6  ✓
+//
+//   Backspace di posisi 6 hapus '4':  raw → "1235678"
+//    → formatted = "1.235.678"
+//    → rawIndex sebelum backspace = 5, setelah hapus satu char rawIndex efektif = 4
+//    → digit ke-4 di "1.235.678" ada di posisi 5 → kursor = 5  ✓
+//
 function formatLoanNominal(input) {
-  // 1. Catat posisi kursor SEBELUM format
-  const cursorPos  = input.selectionStart;
-  const prevValue  = input.value;
+  const prev      = input.value;
+  const cursorPos = input.selectionStart ?? prev.length;
 
-  // 2. Hitung berapa titik ada SEBELUM kursor di nilai lama
-  //    (setiap titik menambah 1 karakter yg tidak bisa kita ketik)
-  const dotsBeforeCursor = (prevValue.slice(0, cursorPos).match(/\./g) || []).length;
-
-  // 3. Strip semua non-digit → dapatkan digit murni
-  const rawDigits = prevValue.replace(/\D/g, '');
-  if (!rawDigits) { input.value = ''; updateSimulasi(); return; }
-
-  // 4. Format ulang
-  const formatted  = parseInt(rawDigits, 10).toLocaleString('id-ID');
-  input.value = formatted;
-
-  // 5. Hitung berapa digit murni ada sebelum kursor lama
-  //    (digit = semua karakter SELAIN titik di prefix lama)
-  const digitsBeforeCursor = cursorPos - dotsBeforeCursor;
-
-  // 6. Di string terformat baru, temukan posisi setelah digit ke-N
-  let digitCount = 0;
-  let newCursor  = formatted.length; // fallback: akhir string
-  for (let i = 0; i < formatted.length; i++) {
-    if (formatted[i] !== '.') {
-      digitCount++;
-      if (digitCount === digitsBeforeCursor) {
-        newCursor = i + 1;
-        break;
-      }
-    }
-    // Jika belum mencapai target digit, teruskan (kursor setelah titik pun benar)
-    if (digitCount >= digitsBeforeCursor && formatted[i] === '.') continue;
+  // Hitung berapa digit MURNI ada di sebelah kiri kursor (rawIndex)
+  let rawIndex = 0;
+  for (let i = 0; i < cursorPos; i++) {
+    if (prev[i] >= '0' && prev[i] <= '9') rawIndex++;
   }
-  // Edge-case: tidak ada digit sebelum kursor → taruh di awal
-  if (digitsBeforeCursor <= 0) newCursor = 0;
 
-  // 7. Kembalikan kursor ke posisi yang tepat
+  // Strip non-digit, format ulang
+  const digits    = prev.replace(/\D/g, '');
+  if (!digits) { input.value = ''; updateSimulasi(); return; }
+  const formatted = parseInt(digits, 10).toLocaleString('id-ID');
+  input.value     = formatted;
+
+  // Cari posisi kursor baru: setelah digit ke-rawIndex di string terformat
+  let count     = 0;
+  let newCursor = formatted.length; // default: akhir string
+  for (let i = 0; i < formatted.length; i++) {
+    if (formatted[i] >= '0' && formatted[i] <= '9') {
+      count++;
+      if (count === rawIndex) { newCursor = i + 1; break; }
+    }
+  }
+  // rawIndex = 0 → kursor di awal
+  if (rawIndex === 0) newCursor = 0;
+
   try { input.setSelectionRange(newCursor, newCursor); } catch(_) {}
-
   updateSimulasi();
 }
 
