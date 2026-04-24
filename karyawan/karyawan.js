@@ -437,51 +437,66 @@ function getLoanNominalValue() {
   return isNaN(num) ? 0 : num;
 }
 
-// ─── Helper: format angka ribuan saat mengetik — TANPA kursor lompat ───
+// ─── Format nominal pinjaman — TANPA kursor lompat di Android Chrome ──────
 //
-// Strategi: lacak posisi kursor berdasarkan INDEX DIGIT MURNI (bukan posisi char).
+// ROOT CAUSE kursor lompat:
+//   Android Chrome mengabaikan setSelectionRange() yang dipanggil
+//   synchronous di dalam event "input" — browser override kursor ke posisi 0
+//   setelah handler selesai.
 //
-//   "12.345.678"  kursor di posisi 6 (setelah '4')
-//    → prefix sebelum kursor = "12.345"
-//    → digit murni di prefix  = "12345"  → rawIndex = 5
-//
-//   Setelah format ulang, telusuri string baru sampai rawIndex digit ke-5:
-//    "12.345.678"  → digit ke-5 ada di posisi 6 → kursor = 6  ✓
-//
-//   Backspace di posisi 6 hapus '4':  raw → "1235678"
-//    → formatted = "1.235.678"
-//    → rawIndex sebelum backspace = 5, setelah hapus satu char rawIndex efektif = 4
-//    → digit ke-4 di "1.235.678" ada di posisi 5 → kursor = 5  ✓
+// SOLUSI:
+//   1. Hitung rawIndex (jumlah digit di kiri kursor) SEBELUM format
+//   2. Format value
+//   3. Defer setSelectionRange ke FRAME BERIKUTNYA via requestAnimationFrame
+//      sehingga dipanggil setelah browser selesai commit perubahan DOM
 //
 function formatLoanNominal(input) {
+  // ── Baca state SEBELUM apapun diubah ──
   const prev      = input.value;
   const cursorPos = input.selectionStart ?? prev.length;
 
-  // Hitung berapa digit MURNI ada di sebelah kiri kursor (rawIndex)
+  // Hitung jumlah digit (0-9) di kiri kursor → "rawIndex"
+  // Ini adalah satu-satunya anchor yang tidak berubah meski titik bergeser
   let rawIndex = 0;
   for (let i = 0; i < cursorPos; i++) {
     if (prev[i] >= '0' && prev[i] <= '9') rawIndex++;
   }
 
-  // Strip non-digit, format ulang
-  const digits    = prev.replace(/\D/g, '');
-  if (!digits) { input.value = ''; updateSimulasi(); return; }
+  // ── Strip & format ──
+  const digits = prev.replace(/\D/g, '');
+  if (!digits) {
+    input.value = '';
+    updateSimulasi();
+    return;
+  }
   const formatted = parseInt(digits, 10).toLocaleString('id-ID');
-  input.value     = formatted;
+  input.value = formatted;
 
-  // Cari posisi kursor baru: setelah digit ke-rawIndex di string terformat
+  // ── Hitung posisi kursor baru di string terformat ──
   let count     = 0;
-  let newCursor = formatted.length; // default: akhir string
-  for (let i = 0; i < formatted.length; i++) {
-    if (formatted[i] >= '0' && formatted[i] <= '9') {
-      count++;
-      if (count === rawIndex) { newCursor = i + 1; break; }
+  let newCursor = formatted.length; // fallback: ujung kanan
+  if (rawIndex === 0) {
+    newCursor = 0;
+  } else {
+    for (let i = 0; i < formatted.length; i++) {
+      if (formatted[i] >= '0' && formatted[i] <= '9') {
+        count++;
+        if (count === rawIndex) { newCursor = i + 1; break; }
+      }
     }
   }
-  // rawIndex = 0 → kursor di awal
-  if (rawIndex === 0) newCursor = 0;
 
-  try { input.setSelectionRange(newCursor, newCursor); } catch(_) {}
+  // ── Defer setSelectionRange ke frame berikutnya ──
+  // Ini kunci utama: Android Chrome mengabaikan setSelectionRange
+  // yang dipanggil synchronous di dalam event "input".
+  // requestAnimationFrame memastikan kursor di-set setelah browser
+  // selesai commit perubahan value ke DOM.
+  requestAnimationFrame(() => {
+    try {
+      input.setSelectionRange(newCursor, newCursor);
+    } catch (_) {}
+  });
+
   updateSimulasi();
 }
 
