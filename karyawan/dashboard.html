@@ -1813,7 +1813,7 @@
                   <label>Nominal Pinjaman</label>
                   <div class="field-box">
                     <span class="fi-text">Rp</span>
-                    <input type="text" id="loanNominal" inputmode="numeric" placeholder="0" oninput="formatLoanNominal(this)" required />
+                    <input type="text" id="loanNominal" inputmode="numeric" placeholder="0" required />
                   </div>
                   <div class="field-hint" id="loanNominalHint"></div>
                 </div>
@@ -3452,6 +3452,57 @@ function kirimMasukan() {
     showToast('✅ Masukan berhasil dikirim, terima kasih!', 'toast-ok', 3200);
   }, 250);
 }
+
+// ══════════════════════════════════════════════════════════════
+//  LOAN NOMINAL INPUT — Robust cursor-safe event wiring
+//  Dipasang lewat JS (bukan oninput attr) agar bisa intercept
+//  keydown SEBELUM browser memproses backspace/delete.
+// ══════════════════════════════════════════════════════════════
+(function wireLoanNominalInput() {
+  // Tunggu DOM siap — bisa dipanggil berulang saat step 2 muncul,
+  // tapi listener dicegah dobel dengan flag _wired
+  function attachOnce() {
+    const el = document.getElementById('loanNominal');
+    if (!el || el._wired) return;
+    el._wired = true;
+
+    // "input" event: format ulang value setelah browser selesai
+    el.addEventListener('input', function () {
+      formatLoanNominal(this);
+    });
+
+    // Cegah karakter non-angka (huruf, simbol) masuk sama sekali
+    el.addEventListener('keydown', function (e) {
+      const allowed = [
+        'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight',
+        'ArrowUp', 'ArrowDown', 'Tab', 'Home', 'End',
+        'Enter', 'Escape',
+      ];
+      if (allowed.includes(e.key)) return;
+      if (e.ctrlKey || e.metaKey) return; // izinkan Ctrl+A, Ctrl+C, dll
+      if (e.key >= '0' && e.key <= '9') return;
+      e.preventDefault(); // blokir karakter lain
+    });
+  }
+
+  // Pasang saat DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', attachOnce);
+  } else {
+    attachOnce();
+  }
+
+  // Pasang ulang setiap kali step-2 form pinjaman ditampilkan
+  // (karena selectLoanCategory() men-toggle hidden, bukan recreate DOM)
+  const origSelect = window.selectLoanCategory;
+  if (typeof origSelect === 'function') {
+    window.selectLoanCategory = function (cat) {
+      origSelect(cat);
+      // Tunggu satu tick agar hidden="false" sudah di-apply
+      requestAnimationFrame(attachOnce);
+    };
+  }
+})();
 </script>
 
 </body>
