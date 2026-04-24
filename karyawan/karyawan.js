@@ -295,29 +295,6 @@ function renderPinjamanStatus() {
     const katCfg    = LOAN_CATEGORIES[p.kategori];
     const katLabel  = katCfg ? katCfg.label : '';
 
-    // ── Detail panel: hanya tampil saat accordion dibuka ──
-    const detailRows = `
-      <div class="pcard-body">
-        <div class="pcard-row"><span>Nominal Pinjaman</span><strong>${rp(p.nominal)}</strong></div>
-        <div class="pcard-row">
-          <span>${isLumpSum ? 'Metode Bayar' : 'Cicilan/bulan'}</span>
-          <strong>${isLumpSum ? 'Potong gaji 1×' : rp(p.cicilan)}</strong>
-        </div>
-        ${!isLumpSum ? `<div class="pcard-row"><span>Tenor</span><strong>${p.tenor} bulan</strong></div>` : ''}
-        ${(p.status === 'active' || p.status === 'done') && !isLumpSum
-          ? `<div class="pcard-row"><span>Sisa Hutang</span><strong style="color:var(--primary)">${rp(sisa)}</strong></div>`
-          : ''}
-      </div>
-      ${(p.status === 'active' || p.status === 'done') && !isLumpSum ? `
-      <div class="pcard-prog">
-        <div class="pprog-label"><span>Lunas ${p.lunas}/${p.tenor}</span><span>${pct}%</span></div>
-        <div class="pprog-bar"><div class="pprog-fill" style="width:${pct}%"></div></div>
-      </div>` : ''}
-    `;
-
-    // Ikon chevron untuk tombol toggle
-    const chevronSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>`;
-
     return `
       <div class="pcard">
         <div class="pcard-head">
@@ -325,38 +302,28 @@ function renderPinjamanStatus() {
             <div class="pcard-id">${p.id}</div>
             <div class="pcard-tujuan">${p.tujuan}</div>
             ${katLabel ? `<div style="margin-top:4px"><span class="badge ${katBadge}" style="font-size:10px">${katLabel}</span></div>` : ''}
-            <button
-              class="pcard-toggle"
-              aria-expanded="false"
-              onclick="togglePcardDetail(this)"
-            >
-              Lihat Detail ${chevronSvg}
-            </button>
           </div>
           <span class="badge ${statusBadge}">${statusLabel}</span>
         </div>
-        <div class="pcard-detail">
-          ${detailRows}
+        <div class="pcard-body">
+          <div class="pcard-row"><span>Nominal Pinjaman</span><strong>${rp(p.nominal)}</strong></div>
+          <div class="pcard-row">
+            <span>${isLumpSum ? 'Metode Bayar' : 'Cicilan/bulan'}</span>
+            <strong>${isLumpSum ? 'Potong gaji 1×' : rp(p.cicilan)}</strong>
+          </div>
+          ${!isLumpSum ? `<div class="pcard-row"><span>Tenor</span><strong>${p.tenor} bulan</strong></div>` : ''}
+          ${(p.status === 'active' || p.status === 'done') && !isLumpSum
+            ? `<div class="pcard-row"><span>Sisa Hutang</span><strong style="color:var(--primary)">${rp(sisa)}</strong></div>`
+            : ''}
         </div>
+        ${(p.status === 'active' || p.status === 'done') && !isLumpSum ? `
+        <div class="pcard-prog">
+          <div class="pprog-label"><span>Lunas ${p.lunas}/${p.tenor}</span><span>${pct}%</span></div>
+          <div class="pprog-bar"><div class="pprog-fill" style="width:${pct}%"></div></div>
+        </div>` : ''}
       </div>
     `;
   }).join('');
-}
-
-// ─── Toggle accordion detail pinjaman ───
-function togglePcardDetail(btn) {
-  const detail = btn.closest('.pcard').querySelector('.pcard-detail');
-  if (!detail) return;
-  const isOpen = detail.classList.contains('open');
-  if (isOpen) {
-    detail.classList.remove('open');
-    btn.setAttribute('aria-expanded', 'false');
-    btn.innerHTML = `Lihat Detail <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>`;
-  } else {
-    detail.classList.add('open');
-    btn.setAttribute('aria-expanded', 'true');
-    btn.innerHTML = `Tutup <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>`;
-  }
 }
 
 // ─── MUTASI ───
@@ -437,65 +404,24 @@ function getLoanNominalValue() {
   return isNaN(num) ? 0 : num;
 }
 
-// ─── Format nominal pinjaman — TANPA kursor lompat di Android Chrome ──────
-//
-// ROOT CAUSE kursor lompat:
-//   Android Chrome mengabaikan setSelectionRange() yang dipanggil
-//   synchronous di dalam event "input" — browser override kursor ke posisi 0
-//   setelah handler selesai.
-//
-// SOLUSI:
-//   1. Hitung rawIndex (jumlah digit di kiri kursor) SEBELUM format
-//   2. Format value
-//   3. Defer setSelectionRange ke FRAME BERIKUTNYA via requestAnimationFrame
-//      sehingga dipanggil setelah browser selesai commit perubahan DOM
-//
+// ─── Helper: format angka ribuan saat mengetik (123456 → "123.456") ───
 function formatLoanNominal(input) {
-  // ── Baca state SEBELUM apapun diubah ──
-  const prev      = input.value;
-  const cursorPos = input.selectionStart ?? prev.length;
+  // Simpan posisi kursor
+  const pos = input.selectionStart;
+  const prevLen = input.value.length;
 
-  // Hitung jumlah digit (0-9) di kiri kursor → "rawIndex"
-  // Ini adalah satu-satunya anchor yang tidak berubah meski titik bergeser
-  let rawIndex = 0;
-  for (let i = 0; i < cursorPos; i++) {
-    if (prev[i] >= '0' && prev[i] <= '9') rawIndex++;
-  }
+  // Strip semua karakter non-digit
+  const raw = input.value.replace(/\D/g, '');
+  if (!raw) { input.value = ''; updateSimulasi(); return; }
 
-  // ── Strip & format ──
-  const digits = prev.replace(/\D/g, '');
-  if (!digits) {
-    input.value = '';
-    updateSimulasi();
-    return;
-  }
-  const formatted = parseInt(digits, 10).toLocaleString('id-ID');
+  // Format dengan titik sebagai pemisah ribuan (id-ID)
+  const formatted = parseInt(raw, 10).toLocaleString('id-ID');
   input.value = formatted;
 
-  // ── Hitung posisi kursor baru di string terformat ──
-  let count     = 0;
-  let newCursor = formatted.length; // fallback: ujung kanan
-  if (rawIndex === 0) {
-    newCursor = 0;
-  } else {
-    for (let i = 0; i < formatted.length; i++) {
-      if (formatted[i] >= '0' && formatted[i] <= '9') {
-        count++;
-        if (count === rawIndex) { newCursor = i + 1; break; }
-      }
-    }
-  }
-
-  // ── Defer setSelectionRange ke frame berikutnya ──
-  // Ini kunci utama: Android Chrome mengabaikan setSelectionRange
-  // yang dipanggil synchronous di dalam event "input".
-  // requestAnimationFrame memastikan kursor di-set setelah browser
-  // selesai commit perubahan value ke DOM.
-  requestAnimationFrame(() => {
-    try {
-      input.setSelectionRange(newCursor, newCursor);
-    } catch (_) {}
-  });
+  // Pertahankan posisi kursor setelah format
+  const newLen  = input.value.length;
+  const newPos  = pos + (newLen - prevLen);
+  try { input.setSelectionRange(newPos, newPos); } catch(_) {}
 
   updateSimulasi();
 }
@@ -710,40 +636,6 @@ function setTenor(btn, t) {
   document.querySelectorAll('.tenor-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   updateSimulasi();
-
-  // ── FIX: Jika jadwal angsuran sedang terbuka, render ulang otomatis ──
-  if (amortOpen) renderAmortTable();
-}
-
-// ─── Render tabel amortisasi (bisa dipanggil kapan saja) ───
-function renderAmortTable() {
-  const el = document.getElementById('amortTable');
-  if (!el) return;
-
-  const cfg = selectedLoanCategory ? LOAN_CATEGORIES[selectedLoanCategory] : null;
-  if (!cfg || cfg.lumpSum) {
-    el.innerHTML = '';
-    el.hidden = true;
-    amortOpen = false;
-    return;
-  }
-
-  const nominal = getLoanNominalValue() || 0;
-  if (nominal <= 0) {
-    el.innerHTML = '<p style="text-align:center;color:var(--muted);padding:12px">Masukkan nominal terlebih dahulu</p>';
-    return;
-  }
-
-  const bunga   = cfg.bunga ?? 0.009;
-  const cicilan = Math.round((nominal * (1 + bunga * selectedTenor)) / selectedTenor);
-  let sisa = nominal;
-  let html = '<table class="tbl"><thead><tr><th>Bln</th><th>Cicilan</th><th>Sisa</th></tr></thead><tbody>';
-  for (let i = 1; i <= selectedTenor; i++) {
-    sisa = Math.max(0, sisa - cicilan);
-    html += `<tr><td>${i}</td><td>${rp(cicilan)}</td><td>${rp(sisa)}</td></tr>`;
-  }
-  html += '</tbody></table>';
-  el.innerHTML = html;
 }
 
 // ─── Update simulasi cicilan real-time ───
@@ -780,8 +672,24 @@ function toggleAmort() {
   if (!el) return;
   el.hidden = !amortOpen;
 
-  // ── FIX: Selalu render ulang saat dibuka — tangkap perubahan tenor & nominal ──
-  if (amortOpen) renderAmortTable();
+  if (amortOpen) {
+    const cfg     = selectedLoanCategory ? LOAN_CATEGORIES[selectedLoanCategory] : null;
+    if (!cfg || cfg.lumpSum) { el.hidden = true; amortOpen = false; return; }
+
+    const bunga   = cfg.bunga ?? 0.009;
+    const nominal = getLoanNominalValue() || 0;
+    if (nominal <= 0) { el.innerHTML = '<p style="text-align:center;color:var(--muted);padding:12px">Masukkan nominal terlebih dahulu</p>'; return; }
+
+    const cicilan = Math.round((nominal * (1 + bunga * selectedTenor)) / selectedTenor);
+    let sisa = nominal;
+    let html = '<table class="tbl"><thead><tr><th>Bln</th><th>Cicilan</th><th>Sisa</th></tr></thead><tbody>';
+    for (let i = 1; i <= selectedTenor; i++) {
+      sisa = Math.max(0, sisa - cicilan);
+      html += `<tr><td>${i}</td><td>${rp(cicilan)}</td><td>${rp(sisa)}</td></tr>`;
+    }
+    html += '</tbody></table>';
+    el.innerHTML = html;
+  }
 }
 
 // ─── PINJAMAN TAB ───
@@ -1193,290 +1101,244 @@ function tutupModalLayanan(e) {
  * @param {string} secId — 'kar-katalog' atau 'kar-ppob'
  */
 function pilihLayanan(secId) {
-  tutupModalLayanan();          // animasi tutup
+  tutupModalLayanan();
   setTimeout(() => {
-    if (secId === 'bayar-qr') {
-      bukaBayarQR();            // buka modal QR payment
-    } else {
-      _showSec(secId);          // pindah section seperti biasa
-    }
+    _showSec(secId);
   }, 240);
 }
 
-/* ══════════════════════════════════════════════════════════════
-   BAYAR DI KOPERASI — QR/Barcode Payment Modal
-   ══════════════════════════════════════════════════════════════ */
+// ══════════════════════════════════════════════════════════════════
+//  BAYAR DI KOPERASI — Modal Pembayaran Digital
+//  Menampilkan QR Code unik pengguna untuk dipindai kasir.
+// ══════════════════════════════════════════════════════════════════
 
-/** State internal modul bayar */
-const _BAYAR = {
-  tab      : 'sukarela',   // 'sukarela' | 'kasbon'
-  timer    : null,         // setInterval handle
-  seconds  : 60,           // hitung mundur
-  token    : '',           // kode unik sesi ini
-};
+let _bayarTimer      = null;   // interval countdown refresh QR
+let _bayarSrc        = 'sukarela'; // sumber dana aktif
+let _bayarQrSeed     = null;   // seed QR aktif (string unik per session)
 
 /**
  * Buka modal Bayar di Koperasi.
- * Dipanggil oleh pilihLayanan('bayar-qr') dari modal Layanan.
+ * Tutup modal layanan terlebih dahulu, lalu tampilkan overlay bayar.
  */
-function bukaBayarQR() {
-  const overlay = document.getElementById('bayarOverlay');
-  if (!overlay) return;
+function bukaBayarModal() {
+  // Tutup modal layanan dulu (tanpa delay navigasi)
+  tutupModalLayanan();
 
-  // Isi identitas user
-  const avatarEl = document.getElementById('bayarAvatar');
-  const nameEl   = document.getElementById('bayarUserName');
-  const nikEl    = document.getElementById('bayarUserNik');
-  if (avatarEl) avatarEl.textContent = (USER.nama || 'A').charAt(0).toUpperCase();
-  if (nameEl)   nameEl.textContent   = USER.nama || '–';
-  if (nikEl)    nikEl.textContent    = 'NIK: ' + (USER.nik || '–');
+  setTimeout(() => {
+    const overlay = document.getElementById('bayarOverlay');
+    if (!overlay) return;
 
-  // Reset ke tab sukarela
-  setBayarTab('sukarela', true);
+    // ── Isi data pengguna ──
+    const nama = USER.nama || 'Anggota';
+    const nik  = USER.nik  || '—';
+    setIfEl('bayarNama',   nama);
+    setIfEl('bayarNIK',    'NIK: ' + nik);
 
-  // Tampilkan
-  overlay.classList.add('show');
-  document.body.style.overflow = 'hidden';
+    const avatarEl = document.getElementById('bayarAvatar');
+    if (avatarEl) avatarEl.textContent = nama.charAt(0).toUpperCase();
+
+    // ── Render saldo sesuai sumber aktif ──
+    _renderBayarSaldo();
+
+    // ── Generate QR pertama kali ──
+    _generateBayarQr();
+
+    // ── Auto-refresh setiap 60 detik ──
+    _bayarTimer = setInterval(_generateBayarQr, 60000);
+
+    // ── Tampilkan modal ──
+    document.body.style.overflow = 'hidden';
+    overlay.classList.add('open');
+  }, 230);
 }
 
 /**
- * Tutup modal Bayar di Koperasi.
+ * Tutup modal Bayar.
  */
-function tutupBayarQR() {
+function tutupBayarModal() {
   const overlay = document.getElementById('bayarOverlay');
   if (!overlay) return;
-  overlay.classList.remove('show');
+
+  overlay.classList.remove('open');
   document.body.style.overflow = '';
-  _bayarStopTimer();
+
+  // Hentikan auto-refresh
+  if (_bayarTimer) { clearInterval(_bayarTimer); _bayarTimer = null; }
 }
 
 /**
- * Ganti tab sumber dana.
- * @param {'sukarela'|'kasbon'} tab
- * @param {boolean} [silent=false] — jika true, tidak animasikan ulang card
+ * Refresh QR secara manual (tombol "Perbarui Kode").
  */
-function setBayarTab(tab, silent) {
-  _BAYAR.tab = tab;
+function refreshBayarQr() {
+  // Reset timer agar tidak double-refresh
+  if (_bayarTimer) { clearInterval(_bayarTimer); }
+  _generateBayarQr();
+  _bayarTimer = setInterval(_generateBayarQr, 60000);
 
-  // Update tombol tab
-  ['sukarela','kasbon'].forEach(t => {
-    const btn = document.getElementById('btab' + t.charAt(0).toUpperCase() + t.slice(1));
-    if (btn) btn.classList.toggle('active', t === tab);
-  });
+  // Animasi tombol feedback
+  const btn = document.querySelector('.bayar-refresh-btn');
+  if (btn) {
+    btn.style.transform = 'scale(.93)';
+    setTimeout(() => { btn.style.transform = ''; }, 180);
+  }
+}
 
-  // Ambil data saldo
-  const simp  = SIMPANAN_DB[USER.nik] || { sukarela: 0 };
-  const pinjDB = typeof PINJAMAN_DB !== 'undefined' ? PINJAMAN_DB : [];
-  const active  = pinjDB.find(p => p.nik === USER.nik && p.status === 'active');
-  const limitKasbon = active ? (active.limitKasbon || 0) : 0;
+/**
+ * Pilih sumber dana (tab toggle).
+ * @param {HTMLElement} el   — elemen tab yang diklik
+ * @param {string}      src  — 'sukarela' | 'kasbon'
+ */
+function pilihSumberDana(el, src) {
+  _bayarSrc = src;
 
-  const isSukarela = tab === 'sukarela';
-  const saldo = isSukarela ? (simp.sukarela || 0) : limitKasbon;
-  const label = isSukarela ? 'Simpanan Sukarela' : 'Limit Kasbon';
+  // Toggle active class pada tab
+  document.querySelectorAll('.bayar-sumber__tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
 
-  // Update label & saldo
-  const lbEl  = document.getElementById('bayarSourceLabel');
-  const sdEl  = document.getElementById('bayarSaldoVal');
-  if (lbEl) lbEl.textContent = label;
-  if (sdEl) sdEl.textContent = _rpFmt(saldo);
+  // Perbarui tampilan saldo
+  _renderBayarSaldo();
 
-  // Animasi kartu (jika bukan init pertama)
-  if (!silent) {
-    const card = document.getElementById('bayarCard');
-    if (card) {
-      card.style.animation = 'none';
-      card.offsetHeight; // reflow
-      card.style.animation = 'bayar-card-in .35s cubic-bezier(.34,1.56,.64,1) both';
+  // Regenerate QR dengan seed baru (sumber dana berubah)
+  _generateBayarQr();
+}
+
+/**
+ * Render saldo sesuai sumber dana aktif ke elemen bayarSaldoVal.
+ * @private
+ */
+function _renderBayarSaldo() {
+  const s = SIMPANAN_DB[USER.nik] || { pokok: 0, wajib: 0, sukarela: 0 };
+
+  let label, nominal;
+  if (_bayarSrc === 'sukarela') {
+    label   = 'Saldo Sukarela';
+    nominal = s.sukarela || 0;
+  } else {
+    // Kasbon: ambil dari pinjaman aktif atau fallback ke 0
+    const pinjamanAktif = PINJAMAN_DB.find(p => p.nik === USER.nik && p.status === 'active');
+    label   = 'Limit Kasbon';
+    nominal = pinjamanAktif ? Math.max(0, pinjamanAktif.nominal - (pinjamanAktif.lunas * pinjamanAktif.cicilan)) : 0;
+  }
+
+  setIfEl('bayarSaldoLabel', label);
+  setIfEl('bayarSaldoVal',   rp(nominal));
+}
+
+/**
+ * Buat QR Code SVG generatif berdasarkan data pengguna + timestamp.
+ * Menggunakan algoritma pseudo-random deterministik sehingga
+ * QR berubah setiap 60 detik (seed baru) tapi konsisten dalam
+ * satu sesi (kasir memindai QR yang sama sampai expire).
+ * @private
+ */
+function _generateBayarQr() {
+  const el = document.getElementById('bayarQrSvg');
+  if (!el) return;
+
+  // Animasi fade out → generate → fade in
+  el.style.transition = 'opacity .2s';
+  el.style.opacity = '0';
+
+  setTimeout(() => {
+    // Seed = NIK + sumber + menit saat ini (berubah setiap 60 detik)
+    const now    = new Date();
+    const minute = `${now.getFullYear()}${now.getMonth()}${now.getDate()}${now.getHours()}${Math.floor(now.getMinutes())}`;
+    _bayarQrSeed = `KOPKAR-MES|${USER.nik}|${_bayarSrc.toUpperCase()}|${minute}`;
+
+    el.innerHTML = _buildQrSvg(_bayarQrSeed, 188);
+    el.style.opacity = '1';
+  }, 200);
+}
+
+/**
+ * Generate SVG QR-style visual dari string seed.
+ * Bukan QR Code standar ISO — ini QR visual deterministik untuk prototyping.
+ * Di produksi, ganti dengan library qrcode.js atau API QR backend.
+ *
+ * @param {string} seed   — string unik yang menentukan pola
+ * @param {number} size   — ukuran SVG dalam px
+ * @returns {string}      — markup SVG
+ */
+function _buildQrSvg(seed, size) {
+  const GRID    = 25;                    // jumlah sel per sisi
+  const CELL    = size / GRID;
+  const QUIET   = 2;                     // sel quiet zone
+  const FINDER  = 7;                     // ukuran finder pattern
+
+  // ── Pseudo-random number generator deterministik (xorshift32) ──
+  let state = 0;
+  for (let i = 0; i < seed.length; i++) {
+    state = (state ^ (seed.charCodeAt(i) * 2654435761)) >>> 0;
+  }
+  function rand() {
+    state ^= state << 13;
+    state ^= state >>> 17;
+    state ^= state << 5;
+    state = state >>> 0;
+    return state / 4294967296;
+  }
+
+  // ── Buat grid modul ──
+  const grid = Array.from({ length: GRID }, () => new Array(GRID).fill(0));
+
+  // Tandai area finder pattern + separator agar tidak ditimpa data
+  function markReserved(r0, c0, sz) {
+    for (let r = r0 - 1; r < r0 + sz + 1; r++)
+      for (let c = c0 - 1; c < c0 + sz + 1; c++)
+        if (r >= 0 && r < GRID && c >= 0 && c < GRID) grid[r][c] = -1;
+  }
+  markReserved(0, 0, FINDER);
+  markReserved(0, GRID - FINDER, FINDER);
+  markReserved(GRID - FINDER, 0, FINDER);
+
+  // ── Isi data area secara pseudo-random ──
+  for (let r = 0; r < GRID; r++) {
+    for (let c = 0; c < GRID; c++) {
+      if (grid[r][c] === -1) continue;  // reserved
+      if (r < QUIET || r >= GRID - QUIET || c < QUIET || c >= GRID - QUIET) continue; // quiet zone
+      grid[r][c] = rand() > 0.5 ? 1 : 0;
     }
   }
 
-  // Generate QR & barcode baru
-  _bayarGenerateKode();
-
-  // (Re)start timer
-  _bayarStartTimer();
-}
-
-/**
- * Format rupiah — fallback jika fungsi rp() belum tersedia di scope ini.
- */
-function _rpFmt(n) {
-  if (typeof rp === 'function') return rp(n);
-  return 'Rp\u00a0' + Number(n).toLocaleString('id-ID');
-}
-
-/**
- * Generate token unik sesi + render QR SVG + barcode SVG.
- */
-function _bayarGenerateKode() {
-  // Token: NIK + tab + timestamp acak 4 digit
-  const rand = Math.floor(Math.random() * 9000) + 1000;
-  _BAYAR.token = [USER.nik || '0000', _BAYAR.tab.toUpperCase(), rand].join('-');
-
-  _bayarRenderQR(_BAYAR.token);
-  _bayarRenderBarcode(_BAYAR.token);
-
-  // Update angka barcode
-  const numEl = document.getElementById('bayarBarcodeNum');
-  if (numEl) {
-    const clean = _BAYAR.token.replace(/\D/g,'');
-    numEl.textContent = (clean.match(/.{1,4}/g) || [clean]).join(' ');
-  }
-}
-
-/* ── QR Code generator (pure JS, tidak perlu library) ─────────────── */
-/**
- * Render QR Code dummy visual (pola placeholder yang realistis).
- * Produksi: ganti dengan library qrcode.js atau endpoint server.
- */
-function _bayarRenderQR(token) {
-  const svgEl = document.getElementById('bayarQrSvg');
-  if (!svgEl) return;
-
-  // Seed deterministik dari token
-  let seed = 0;
-  for (let i = 0; i < token.length; i++) seed = (seed * 31 + token.charCodeAt(i)) >>> 0;
-  const rng = () => { seed ^= seed << 13; seed ^= seed >> 17; seed ^= seed << 5; return (seed >>> 0) / 4294967296; };
-
-  const SIZE   = 21;  // grid 21×21 (simulasi QR v1)
-  const CELL   = 200 / SIZE;
-  const QUIET  = 0;
-
-  // Pola finder (pojok): 3 buah 7×7
-  const FINDER = [
-    [0,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],
-    [0,1],[6,1],
-    [0,2],[2,2],[3,2],[4,2],[6,2],
-    [0,3],[2,3],[3,3],[4,3],[6,3],
-    [0,4],[2,4],[3,4],[4,4],[6,4],
-    [0,5],[6,5],
-    [0,6],[1,6],[2,6],[3,6],[4,6],[5,6],[6,6],
-  ];
-  const reserved = new Set();
-  const addFinder = (ox, oy) => FINDER.forEach(([x,y]) => reserved.add((oy+y)*SIZE+(ox+x)));
-  addFinder(0,0); addFinder(SIZE-7,0); addFinder(0,SIZE-7);
-
-  // Timing patterns
-  for (let i = 8; i < SIZE-8; i++) { reserved.add(6*SIZE+i); reserved.add(i*SIZE+6); }
-
-  // Generate grid
-  const grid = [];
-  for (let r = 0; r < SIZE; r++) {
-    grid[r] = [];
-    for (let c = 0; c < SIZE; c++) {
-      const idx = r*SIZE+c;
-      if (reserved.has(idx)) { grid[r][c] = -1; }  // -1 = reserved
-      else                   { grid[r][c] = rng() > 0.45 ? 1 : 0; }
-    }
+  // ── Fungsi render finder pattern (3 kotak konsentrik) ──
+  function finderSvg(x, y) {
+    const c = x + FINDER / 2 * CELL;
+    const d = y + FINDER / 2 * CELL;
+    return [
+      `<rect x="${x}" y="${y}" width="${FINDER*CELL}" height="${FINDER*CELL}" rx="4" fill="#0f172a"/>`,
+      `<rect x="${x+CELL}" y="${y+CELL}" width="${(FINDER-2)*CELL}" height="${(FINDER-2)*CELL}" rx="2" fill="#fff"/>`,
+      `<rect x="${x+2*CELL}" y="${y+2*CELL}" width="${(FINDER-4)*CELL}" height="${(FINDER-4)*CELL}" rx="2" fill="#0f172a"/>`,
+    ].join('');
   }
 
-  // Terapkan finder pattern & timing
-  const setFinder = (ox,oy) => FINDER.forEach(([x,y]) => { grid[oy+y][ox+x]=1; });
-  setFinder(0,0); setFinder(SIZE-7,0); setFinder(0,SIZE-7);
-  // Inner quiet zone finder
-  [[1,1],[1,SIZE-8],[SIZE-8,1]].forEach(([oy,ox]) => {
-    for (let r=oy;r<=oy+4;r++) for (let c=ox;c<=ox+4;c++) grid[r][c]=(r===oy||r===oy+4||c===ox||c===ox+4)?1:0;
-  });
-  // Timing lines
-  for (let i=8;i<SIZE-8;i++) { grid[6][i]=(i%2===0?1:0); grid[i][6]=(i%2===0?1:0); }
-
-  // Render SVG
+  // ── Susun SVG ──
   let rects = '';
-  for (let r = 0; r < SIZE; r++) {
-    for (let c = 0; c < SIZE; c++) {
-      if (grid[r][c] === 1) {
-        const x = QUIET + c*CELL, y = QUIET + r*CELL;
-        rects += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${CELL.toFixed(1)}" height="${CELL.toFixed(1)}" fill="#111"/>`;
-      }
+
+  // Data modules
+  for (let r = 0; r < GRID; r++) {
+    for (let c = 0; c < GRID; c++) {
+      if (grid[r][c] !== 1) continue;
+      const x  = c * CELL;
+      const y  = r * CELL;
+      const rx = Math.min(CELL * 0.3, 2);
+      rects += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${CELL.toFixed(1)}" height="${CELL.toFixed(1)}" rx="${rx}" fill="#0f172a"/>`;
     }
   }
 
-  svgEl.innerHTML = `<rect width="200" height="200" fill="#fff"/>${rects}`;
-}
+  // Finder patterns (3 sudut)
+  rects += finderSvg(0, 0);
+  rects += finderSvg((GRID - FINDER) * CELL, 0);
+  rects += finderSvg(0, (GRID - FINDER) * CELL);
 
-/* ── Barcode generator (Code-128 style visual) ─────────────────────── */
-/**
- * Render barcode visual dari token string.
- * Produksi: ganti dengan library jsbarcode.
- */
-function _bayarRenderBarcode(token) {
-  const svgEl = document.getElementById('bayarBarcodeSvg');
-  if (!svgEl) return;
+  // Logo KopKar MES di tengah
+  const cx = size / 2;
+  const cy = size / 2;
+  const lr = 22; // radius lingkaran logo
+  rects += `
+    <rect x="${cx-lr}" y="${cy-lr}" width="${lr*2}" height="${lr*2}" rx="${lr*0.45}" fill="#fff"/>
+    <rect x="${cx-lr+3}" y="${cy-lr+3}" width="${(lr-3)*2}" height="${(lr-3)*2}" rx="${(lr*0.45)-2}" fill="#065f46"/>
+    <text x="${cx}" y="${cy+5}" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="900" font-size="13" fill="#fff" letter-spacing="-1">K</text>
+  `;
 
-  // Seed sama persis dengan QR (deterministik)
-  let seed = 0;
-  for (let i = 0; i < token.length; i++) seed = (seed * 31 + token.charCodeAt(i)) >>> 0;
-  const rng = () => { seed ^= seed << 13; seed ^= seed >> 17; seed ^= seed << 5; return (seed >>> 0) / 4294967296; };
-
-  const W = 280, H = 56, MARGIN = 10;
-  const usableW = W - MARGIN*2;
-
-  // Buat pola lebar bar (1-4 unit) alternating hitam/putih
-  const units = [];
-  let total = 0;
-  while (total < 120) { // 120 unit = jumlah bar
-    const u = Math.floor(rng() * 3) + 1;
-    units.push(u); total += u;
-  }
-  // Normalisasi ke usableW
-  const scale = usableW / total;
-
-  let bars = `<rect width="${W}" height="${H}" fill="#fff"/>`;
-  let x = MARGIN;
-  units.forEach((u, i) => {
-    const bw = u * scale;
-    if (i % 2 === 0) { // hitam
-      bars += `<rect x="${x.toFixed(2)}" y="4" width="${bw.toFixed(2)}" height="${H-12}" fill="#111"/>`;
-    }
-    x += bw;
-  });
-
-  svgEl.innerHTML = bars;
-}
-
-/* ── Timer countdown ────────────────────────────────────────────────── */
-const TIMER_MAX = 60;
-const CIRC_FULL = 125.66; // 2π × r(20)
-
-function _bayarStartTimer() {
-  _bayarStopTimer();
-  _BAYAR.seconds = TIMER_MAX;
-  _bayarUpdateTimerUI(TIMER_MAX);
-
-  const refreshBtn = document.getElementById('bayarRefreshBtn');
-  if (refreshBtn) refreshBtn.style.display = 'none';
-
-  _BAYAR.timer = setInterval(() => {
-    _BAYAR.seconds--;
-    _bayarUpdateTimerUI(_BAYAR.seconds);
-    if (_BAYAR.seconds <= 0) {
-      _bayarStopTimer();
-      if (refreshBtn) refreshBtn.style.display = 'flex';
-    }
-  }, 1000);
-}
-
-function _bayarStopTimer() {
-  if (_BAYAR.timer) { clearInterval(_BAYAR.timer); _BAYAR.timer = null; }
-}
-
-function _bayarUpdateTimerUI(secs) {
-  const numEl    = document.getElementById('bayarTimerNum');
-  const circEl   = document.getElementById('bayarTimerCircle');
-  if (numEl)  numEl.textContent = Math.max(0, secs);
-  if (circEl) {
-    const offset = CIRC_FULL * (1 - secs / TIMER_MAX);
-    circEl.style.strokeDashoffset = offset.toFixed(2);
-    circEl.style.stroke = secs > 20 ? '#f0c040' : (secs > 10 ? '#f97316' : '#ef4444');
-  }
-}
-
-/**
- * Tombol "Perbarui Sekarang" — generate ulang kode & restart timer.
- */
-function refreshBayarQR() {
-  const refreshBtn = document.getElementById('bayarRefreshBtn');
-  if (refreshBtn) refreshBtn.style.display = 'none';
-  _bayarGenerateKode();
-  _bayarStartTimer();
+  return `<svg viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">${rects}</svg>`;
 }
