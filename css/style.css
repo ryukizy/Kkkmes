@@ -976,9 +976,43 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 /* PINJAMAN STATUS CARDS */
 .pcard { background: white; border: 1px solid rgba(0,0,0,0.05); border-radius: var(--radius-lg); padding: 18px; margin-bottom: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.03); transition: box-shadow 0.2s, transform 0.2s; }
 .pcard:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.08); transform: translateY(-1px); }
-.pcard-head { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+
+/* ── Accordion header: ID + Tujuan di kiri, tombol toggle di kanan ── */
+.pcard-head { display: flex; align-items: flex-start; gap: 10px; }
 .pcard-id { font-size: 0.68rem; color: var(--muted); }
 .pcard-tujuan { font-weight: 700; font-size: 0.9rem; margin-top: 2px; }
+
+/* Tombol "Lihat Detail / Tutup" */
+.pcard-toggle {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-top: 10px;
+  font-size: 0.72rem; font-weight: 600;
+  color: var(--primary);
+  background: none; border: none; padding: 0;
+  cursor: pointer; white-space: nowrap;
+  transition: color .15s;
+}
+.pcard-toggle:hover { color: var(--primary-dk); }
+.pcard-toggle svg  {
+  width: 13px; height: 13px; flex-shrink: 0;
+  transition: transform .25s ease;
+}
+.pcard-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+
+/* ── Detail panel: collapsed by default ── */
+.pcard-detail {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height .32s ease, opacity .22s ease, margin-top .22s ease;
+  margin-top: 0;
+}
+.pcard-detail.open {
+  max-height: 400px;     /* cukup besar untuk konten apapun */
+  opacity: 1;
+  margin-top: 12px;
+}
+
 .pcard-body { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
 .pcard-row { display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-2); }
 .pcard-row strong { color: var(--text); font-weight: 700; }
