@@ -91,11 +91,17 @@ function init() {
     });
   });
 
-  document.getElementById('hamBtn').addEventListener('click', openSidebar);
-  document.getElementById('sbClose').addEventListener('click', closeSidebar);
-  document.getElementById('sbOverlay').addEventListener('click', closeSidebar);
-  document.getElementById('logoutBtn').addEventListener('click', logout);
-  document.getElementById('loanForm').addEventListener('submit', submitLoan);
+  const hamBtn    = document.getElementById('hamBtn');
+  const sbClose   = document.getElementById('sbClose');
+  const sbOverlay = document.getElementById('sbOverlay');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const loanForm  = document.getElementById('loanForm');
+
+  if (hamBtn)    hamBtn.addEventListener('click', openSidebar);
+  if (sbClose)   sbClose.addEventListener('click', closeSidebar);
+  if (sbOverlay) sbOverlay.addEventListener('click', closeSidebar);
+  if (logoutBtn) logoutBtn.addEventListener('click', logout);
+  if (loanForm)  loanForm.addEventListener('submit', submitLoan);
 
   // Bottom nav
   const bottomNav = document.getElementById('navKaryawanBottom');
@@ -636,6 +642,8 @@ function setTenor(btn, t) {
   document.querySelectorAll('.tenor-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   updateSimulasi();
+  // Auto-update tabel angsuran jika sedang terbuka
+  if (amortOpen) renderAmortTable();
 }
 
 // ─── Update simulasi cicilan real-time ───
@@ -665,6 +673,36 @@ function updateSimulasi() {
   if (warn40) warn40.hidden = !(nominal > 0 && cicilan > estGaji * 0.4);
 }
 
+// ─── Render tabel jadwal angsuran (dapat dipanggil kapan saja) ───
+function renderAmortTable() {
+  const el = document.getElementById('amortTable');
+  if (!el) return;
+
+  const cfg = selectedLoanCategory ? LOAN_CATEGORIES[selectedLoanCategory] : null;
+  if (!cfg || cfg.lumpSum) {
+    el.hidden = true;
+    amortOpen = false;
+    return;
+  }
+
+  const nominal = getLoanNominalValue() || 0;
+  if (nominal <= 0) {
+    el.innerHTML = '<p style="text-align:center;color:var(--muted);padding:12px">Masukkan nominal terlebih dahulu</p>';
+    return;
+  }
+
+  const bunga   = cfg.bunga ?? 0.009;
+  const cicilan = Math.round((nominal * (1 + bunga * selectedTenor)) / selectedTenor);
+  let sisa = nominal;
+  let html = '<table class="tbl"><thead><tr><th>Bln</th><th>Cicilan</th><th>Sisa</th></tr></thead><tbody>';
+  for (let i = 1; i <= selectedTenor; i++) {
+    sisa = Math.max(0, sisa - cicilan);
+    html += `<tr><td>${i}</td><td>${rp(cicilan)}</td><td>${rp(sisa)}</td></tr>`;
+  }
+  html += '</tbody></table>';
+  el.innerHTML = html;
+}
+
 // ─── Toggle jadwal angsuran ───
 function toggleAmort() {
   amortOpen = !amortOpen;
@@ -672,24 +710,8 @@ function toggleAmort() {
   if (!el) return;
   el.hidden = !amortOpen;
 
-  if (amortOpen) {
-    const cfg     = selectedLoanCategory ? LOAN_CATEGORIES[selectedLoanCategory] : null;
-    if (!cfg || cfg.lumpSum) { el.hidden = true; amortOpen = false; return; }
-
-    const bunga   = cfg.bunga ?? 0.009;
-    const nominal = getLoanNominalValue() || 0;
-    if (nominal <= 0) { el.innerHTML = '<p style="text-align:center;color:var(--muted);padding:12px">Masukkan nominal terlebih dahulu</p>'; return; }
-
-    const cicilan = Math.round((nominal * (1 + bunga * selectedTenor)) / selectedTenor);
-    let sisa = nominal;
-    let html = '<table class="tbl"><thead><tr><th>Bln</th><th>Cicilan</th><th>Sisa</th></tr></thead><tbody>';
-    for (let i = 1; i <= selectedTenor; i++) {
-      sisa = Math.max(0, sisa - cicilan);
-      html += `<tr><td>${i}</td><td>${rp(cicilan)}</td><td>${rp(sisa)}</td></tr>`;
-    }
-    html += '</tbody></table>';
-    el.innerHTML = html;
-  }
+  // Selalu render ulang saat dibuka agar data selalu segar
+  if (amortOpen) renderAmortTable();
 }
 
 // ─── PINJAMAN TAB ───
@@ -1131,8 +1153,10 @@ function bukaBayarModal() {
     // ── Isi data pengguna ──
     const nama = USER.nama || 'Anggota';
     const nik  = USER.nik  || '—';
-    setIfEl('bayarNama',   nama);
-    setIfEl('bayarNIK',    'NIK: ' + nik);
+    const namEl = document.getElementById('bayarNama');
+    const nikEl = document.getElementById('bayarNIK');
+    if (namEl) namEl.textContent = nama;
+    if (nikEl) nikEl.textContent = 'NIK: ' + nik;
 
     const avatarEl = document.getElementById('bayarAvatar');
     if (avatarEl) avatarEl.textContent = nama.charAt(0).toUpperCase();
@@ -1220,8 +1244,10 @@ function _renderBayarSaldo() {
     nominal = pinjamanAktif ? Math.max(0, pinjamanAktif.nominal - (pinjamanAktif.lunas * pinjamanAktif.cicilan)) : 0;
   }
 
-  setIfEl('bayarSaldoLabel', label);
-  setIfEl('bayarSaldoVal',   rp(nominal));
+  const lblEl = document.getElementById('bayarSaldoLabel');
+  const valEl = document.getElementById('bayarSaldoVal');
+  if (lblEl) lblEl.textContent = label;
+  if (valEl) valEl.textContent = rp(nominal);
 }
 
 /**
@@ -1342,3 +1368,85 @@ function _buildQrSvg(seed, size) {
 
   return `<svg viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">${rects}</svg>`;
 }
+
+// ══════════════════════════════════════════════════════════════════
+//  DOMPET DIGITAL KOPERASI — Alias & Extended Functions
+//  Fungsi openPaymentModal() / closePaymentModal() sebagai antarmuka
+//  standar untuk fitur "Bayar di Koperasi" (QR Code Payment).
+// ══════════════════════════════════════════════════════════════════
+
+/**
+ * Buka modal Dompet Digital / QR Payment.
+ * Bisa dipanggil langsung dari tombol manapun tanpa perlu
+ * melewati layanan sheet terlebih dahulu.
+ * Alias dari bukaBayarModal() dengan penanganan edge-case tambahan.
+ */
+function openPaymentModal() {
+  // Pastikan semua modal lain tertutup terlebih dahulu
+  const layananOv = document.getElementById('layananOverlay');
+  if (layananOv && layananOv.classList.contains('show')) {
+    // Tutup langsung tanpa animasi keluar agar transisi mulus
+    layananOv.classList.remove('show');
+  }
+
+  const overlay = document.getElementById('bayarOverlay');
+  if (!overlay) {
+    console.warn('[KopKar] #bayarOverlay tidak ditemukan di DOM.');
+    return;
+  }
+
+  // ── Populasi data pengguna ──
+  const nama = (typeof USER !== 'undefined' && USER.nama) ? USER.nama : 'Anggota';
+  const nik  = (typeof USER !== 'undefined' && USER.nik)  ? USER.nik  : '—';
+
+  const namEl = document.getElementById('bayarNama');
+  const nikEl = document.getElementById('bayarNIK');
+  if (namEl) namEl.textContent = nama;
+  if (nikEl) nikEl.textContent = 'NIK: ' + nik;
+
+  const avatarEl = document.getElementById('bayarAvatar');
+  if (avatarEl) avatarEl.textContent = nama.charAt(0).toUpperCase();
+
+  // ── Render saldo & QR ──
+  if (typeof _renderBayarSaldo === 'function') _renderBayarSaldo();
+  if (typeof _generateBayarQr  === 'function') _generateBayarQr();
+
+  // ── Auto-refresh QR setiap 60 detik ──
+  if (typeof _bayarTimer !== 'undefined') {
+    if (_bayarTimer) clearInterval(_bayarTimer);
+  }
+  window._bayarTimer = setInterval(function() {
+    if (typeof _generateBayarQr === 'function') _generateBayarQr();
+  }, 60000);
+
+  // ── Tampilkan modal dengan animasi ──
+  document.body.style.overflow = 'hidden';
+  overlay.classList.add('open');
+
+  // Accessibility: fokuskan tombol tutup
+  const closeBtn = overlay.querySelector('.bayar-close');
+  if (closeBtn) setTimeout(function() { closeBtn.focus(); }, 350);
+}
+
+/**
+ * Tutup modal Dompet Digital / QR Payment.
+ * Alias dari tutupBayarModal() — dapat dipanggil dari mana saja.
+ */
+function closePaymentModal() {
+  tutupBayarModal();
+}
+
+// Dukung penutupan dengan tombol Escape (jika belum terdaftar)
+(function _paymentModalEscListener() {
+  // Cek apakah listener sudah ada via flag
+  if (window._paymentEscListenerRegistered) return;
+  window._paymentEscListenerRegistered = true;
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key !== 'Escape') return;
+    const overlay = document.getElementById('bayarOverlay');
+    if (overlay && overlay.classList.contains('open')) {
+      closePaymentModal();
+    }
+  });
+})();
