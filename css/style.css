@@ -207,8 +207,8 @@
   padding-right: 0 !important;
 }
 
-html { font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
-body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
+html { font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+body { background: var(--bg); min-height: 100vh; overflow-x: clip; }
 
 /* ============================================
    LOGIN PAGE
@@ -343,7 +343,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 .err-box {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   background: #FEF2F2;
   border: 1px solid #FECACA;
   color: #DC2626;
@@ -531,7 +531,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 .sb-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 190; backdrop-filter: blur(3px); }
 
 /* MAIN WRAP */
-.main-wrap { margin-left: 0; flex: 1; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+.main-wrap { margin-left: 0; flex: 1; display: flex; flex-direction: column; min-height: 100vh; overflow-x: clip; }
 
 /* TOP BAR */
 .topbar {
@@ -567,7 +567,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
   flex: 1;
   max-width: 1100px;
   width: 100%;
-  overflow-x: hidden;
+  overflow-x: clip; /* clip: potong visual, tidak buat scroll-container — .table-wrap tetap bisa di-swipe */
 }
 
 /* â”€â”€ GLOBAL CONTAINER SYSTEM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -728,7 +728,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
   border: 1px solid rgba(0,0,0,0.05);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   transition: transform 0.2s, box-shadow 0.2s;
   box-shadow: 0 2px 10px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
 }
@@ -743,8 +743,8 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 .kpi-ico.blue  { background: var(--blue-lt); color: var(--blue); }
 .kpi-ico.orange{ background: var(--orange-lt); color: var(--orange); }
 .kpi-ico.purple{ background: var(--purple-lt); color: var(--purple); }
-.kpi-val { font-size: 1.2rem; font-weight: 800; color: var(--text); }
-.kpi-lbl { font-size: 0.72rem; color: var(--muted); font-weight: 500; }
+.kpi-val { font-size: 1.35rem; font-weight: 800; color: var(--text); letter-spacing: -0.02em; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kpi-lbl { font-size: 11px; font-weight: 600; color: var(--muted); margin-top: 2px; letter-spacing: 0.01em; }
 
 /* CARD SECTION */
 .card-section { margin-bottom: 20px; }
@@ -871,7 +871,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
   font-family: inherit;
   font-size: 0.7rem;
@@ -1082,7 +1082,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
   border-radius: 50px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
@@ -2127,12 +2127,12 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
   margin-left: auto;
   margin-right: auto;
   width: 100%;
-  padding: 24px var(--page-x) 48px;
+  padding: 0 0 48px 0;
 }
 
 @media (max-width: 768px) {
   .admin-page .content {
-    padding: 16px var(--page-x) calc(82px + env(safe-area-inset-bottom, 0px));
+    padding: 0 0 calc(82px + env(safe-area-inset-bottom, 0px)) 0;
   }
 }
 
@@ -2197,7 +2197,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 /* â”€â”€ PPOB Admin tabs â”€â”€ */
 .adm-ppob-tabs {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
@@ -2388,11 +2388,11 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
   .admin-page .kpi-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* â”€â”€ Table wrap: full width tanpa overflow clip di desktop â”€â”€ */
-.admin-page .table-wrap {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
+
+
+
+
+
 
 /* â”€â”€ Badge alias yang sering dipakai di admin â”€â”€ */
 .badge-err  { background: #FEF2F2; color: var(--danger); }
@@ -2522,4 +2522,335 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
   .bottom-nav-mobile {
     display: none !important;
   }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ADMIN PANEL — Mobile UI Fixes (Batch Perbaikan)
+   Menggantikan semua override parsial sebelumnya.
+   ════════════════════════════════════════════════════════════════
+
+   FIX 1 · Spacing & Overlapping Judul
+   FIX 2 · Scroll Horizontal Tabel
+   FIX 3 · Tipografi & Grid Kartu KPI
+   FIX 4 · Hapus Judul Ganda (CSS hide)
+   ════════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────────────────
+   FIX 1 — Ruang napas konten: tidak mepet topbar, tidak double pad
+   ───────────────────────────────────────────────────────────────── */
+
+/* Setiap section admin: tidak punya padding sendiri — cukup dari child */
+.admin-page .sec {
+  padding-left:  0;
+  padding-right: 0;
+  /* Ruang bawah: cukup untuk bottom nav + safe area */
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 88px);
+}
+
+/* Satu variabel tunggal untuk semua jarak tepi horizontal */
+.admin-page .sec { --pad: 16px; }
+@media (min-width: 769px) {
+  .admin-page .sec { --pad: 20px; }
+}
+
+/* .sec-hd: breathing room atas + horizontal alignment seragam */
+.admin-page .sec .sec-hd {
+  padding-top:    20px;
+  padding-bottom: 14px;
+  padding-left:   var(--pad);
+  padding-right:  var(--pad);
+  margin-bottom:  0;   /* hapus margin, cukup dari padding child berikutnya */
+}
+.admin-page .sec .sec-hd h2 {
+  font-size:   18px;
+  font-weight: 800;
+  color:       var(--text);
+  line-height: 1.25;
+}
+.admin-page .sec .sec-hd p {
+  font-size: 12px;
+  color:     var(--muted);
+  margin-top: 3px;
+}
+
+/* Elemen konten yang butuh padding horizontal seragam */
+.admin-page .sec .kpi-grid,
+.admin-page .sec .chart-row,
+.admin-page .sec .ppob-nav-label {
+  padding-left:  var(--pad);
+  padding-right: var(--pad);
+}
+
+/* Card-box dan laporan-grid: pakai margin (bukan padding section) */
+.admin-page .sec .card-box,
+.admin-page .sec .laporan-grid {
+  margin-left:  var(--pad);
+  margin-right: var(--pad);
+}
+
+/* Reset demo button */
+.admin-page .sec > div[style*="text-align:right"],
+.admin-page .sec > div[style*="text-align: right"] {
+  padding-left:  var(--pad);
+  padding-right: var(--pad);
+}
+
+/* ppob-nav-list: margin horizontal */
+.admin-page .sec .ppob-nav-list {
+  margin-left:  var(--pad);
+  margin-right: var(--pad);
+  margin-bottom: 16px;
+}
+
+/* approvalCont, depositCont, laporanCont, ppobProdukCont:
+   padding dalam container itu sendiri */
+.admin-page #approvalCont,
+.admin-page #depositCont,
+.admin-page #laporanCont,
+.admin-page #ppobProdukCont,
+.admin-page #ppobOverviewCont {
+  padding-left:  var(--pad);
+  padding-right: var(--pad);
+  padding-top:   16px;
+}
+
+/* Konter: kpi-grid di dalam ppobOverviewCont sudah dapat padding dari parent,
+   jangan double */
+.admin-page #ppobOverviewCont .kpi-grid {
+  padding-left:  0;
+  padding-right: 0;
+}
+.admin-page #ppobOverviewCont .ppob-nav-label {
+  padding-left:  0;
+  padding-right: 0;
+}
+.admin-page #ppobOverviewCont .ppob-nav-list {
+  margin-left:  0;
+  margin-right: 0;
+}
+
+/* Hero admin: full-bleed (tidak pakai --pad) */
+.admin-page .admin-hero {
+  margin-left:  0;
+  margin-right: 0;
+}
+
+
+/* ─────────────────────────────────────────────────────────────────
+   FIX 2 — Scroll horizontal tabel: aktifkan swipe di HP
+   Kunci: overflow-x: clip di ancestor, bukan hidden.
+   hidden membuat scroll container baru → blokir scroll anak.
+   clip hanya memotong paint → scroll anak tetap bisa jalan.
+   ───────────────────────────────────────────────────────────────── */
+
+/* Pastikan tidak ada sisa overflow: hidden di chain admin */
+.admin-page .main-wrap { overflow-x: clip !important; }
+.admin-page .content   { overflow-x: clip !important; }
+.admin-page .sec       { overflow-x: clip; }
+
+/* .table-wrap: aktifkan scroll dengan momentum iOS */
+.admin-page .table-wrap {
+  width:    100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  /* Sisakan margin kiri-kanan supaya card punya tepi */
+  margin-left:  var(--pad, 16px);
+  margin-right: var(--pad, 16px);
+  /* Kurangi width agar fit dalam section (kompensasi margin) */
+  width: calc(100% - 2 * var(--pad, 16px));
+  /* Tampilan rapi */
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-xs);
+}
+
+/* Tabel PPOB Riwayat (banyak kolom) — tetap scroll, min-width eksplisit */
+#adm-ppob-riwayat .table-wrap { overflow-x: auto; }
+#adm-ppob-riwayat .dtable     { min-width: 640px; }
+
+/* Tabel Laporan (jika ada) — tetap scroll */
+#adm-laporan .table-wrap { overflow-x: auto; }
+
+/* Tabel Barang & Pengguna di mobile: kolom fit tanpa scroll */
+@media (max-width: 640px) {
+  #adm-barang   .table-wrap,
+  #adm-pengguna .table-wrap {
+    overflow-x: hidden; /* kolom sudah di-fit — tidak perlu scroll */
+  }
+  #adm-barang   .dtable,
+  #adm-pengguna .dtable {
+    min-width: unset;
+    width: 100%;
+    table-layout: fixed;
+    font-size: 0.76rem;
+  }
+
+  /* Sembunyikan kolom # (nomor urut) */
+  #adm-barang   .dtable th:first-child,
+  #adm-barang   .dtable td:first-child,
+  #adm-pengguna .dtable th:first-child,
+  #adm-pengguna .dtable td:first-child { display: none; }
+
+  /* Lebar kolom Barang: Nama·Kat·Harga·Stok·Aksi */
+  #adm-barang .dtable th:nth-child(2), #adm-barang .dtable td:nth-child(2) { width: 30%; }
+  #adm-barang .dtable th:nth-child(3), #adm-barang .dtable td:nth-child(3) { width: 17%; }
+  #adm-barang .dtable th:nth-child(4), #adm-barang .dtable td:nth-child(4) { width: 22%; }
+  #adm-barang .dtable th:nth-child(5), #adm-barang .dtable td:nth-child(5) { width: 10%; }
+  #adm-barang .dtable th:nth-child(6), #adm-barang .dtable td:nth-child(6) { width: 21%; }
+
+  /* Lebar kolom Pengguna: NIK·Nama·Dept·Role·Aksi */
+  #adm-pengguna .dtable th:nth-child(2), #adm-pengguna .dtable td:nth-child(2) { width: 22%; }
+  #adm-pengguna .dtable th:nth-child(3), #adm-pengguna .dtable td:nth-child(3) { width: 26%; }
+  #adm-pengguna .dtable th:nth-child(4), #adm-pengguna .dtable td:nth-child(4) { width: 18%; }
+  #adm-pengguna .dtable th:nth-child(5), #adm-pengguna .dtable td:nth-child(5) { width: 13%; }
+  #adm-pengguna .dtable th:nth-child(6), #adm-pengguna .dtable td:nth-child(6) { display: none; }
+  #adm-pengguna .dtable th:nth-child(7), #adm-pengguna .dtable td:nth-child(7) { width: 21%; }
+
+  /* Sel tabel: text-overflow agar tidak overflow */
+  #adm-barang   .dtable th, #adm-barang   .dtable td,
+  #adm-pengguna .dtable th, #adm-pengguna .dtable td {
+    padding: 9px 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 0; /* trick: buat ellipsis bekerja di table-layout:fixed */
+  }
+  /* Kolom Aksi: tidak di-clip */
+  #adm-barang   .dtable td:nth-child(6),
+  #adm-pengguna .dtable td:nth-child(7) {
+    white-space: normal;
+    overflow: visible;
+  }
+  .admin-page .dtable .btn-s { padding: 4px 8px; font-size: 0.7rem; }
+  .admin-page .td-aksi { flex-direction: column; align-items: flex-start; gap: 3px; }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────
+   FIX 3 — Tipografi & grid KPI: hierarki jelas, nilai tidak wrap
+   ───────────────────────────────────────────────────────────────── */
+
+/* KPI Grid admin: konsisten 2 kolom mobile, 4 kolom desktop */
+.admin-page .kpi-grid {
+  display:               grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:                   12px;
+  margin-bottom:         16px;
+}
+@media (min-width: 900px) {
+  .admin-page .kpi-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* KPI Card: padding lega, flex column rapi */
+.admin-page .kpi-card {
+  background:    var(--surface);
+  border-radius: 18px;
+  padding:       16px 14px;
+  border:        1px solid rgba(0,0,0,0.05);
+  box-shadow:    0 2px 12px rgba(0,0,0,0.05);
+  display:       flex;
+  flex-direction: column;
+  gap:           10px;
+  transition:    transform 0.18s, box-shadow 0.18s;
+}
+.admin-page .kpi-card:hover {
+  transform:  translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.09);
+}
+
+/* Icon chip dalam kpi-card */
+.admin-page .kpi-ico {
+  width: 42px; height: 42px;
+  border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.admin-page .kpi-ico svg { width: 19px; height: 19px; }
+
+/* Nilai utama: font besar, terbaca, tidak wrap */
+.admin-page .kpi-val {
+  font-size:      1.4rem;      /* 21px pada base 15px */
+  font-weight:    800;
+  color:          var(--text-slate, #1E293B);
+  letter-spacing: -0.025em;
+  line-height:    1.2;
+  white-space:    nowrap;
+  overflow:       hidden;
+  text-overflow:  ellipsis;
+}
+
+/* Label: kecil, kontras sedang — mendukung nilai di atas */
+.admin-page .kpi-lbl {
+  font-size:      11.5px;
+  font-weight:    600;
+  color:          var(--muted, #64748B);
+  line-height:    1.4;
+  letter-spacing: 0.01em;
+}
+
+/* Jika kpi-val menampilkan nilai Rp (panjang) di mobile — shrink font */
+@media (max-width: 400px) {
+  .admin-page .kpi-val { font-size: 1.1rem; }
+}
+
+
+/* ─────────────────────────────────────────────────────────────────
+   FIX 4 — Hapus judul ganda di mobile
+   .sec-hd > div:first-child = blok teks (h2 + p deskripsi)
+   Di mobile judul sudah ada di topbar → sembunyikan di konten.
+   Section yang punya tombol aksi (Tambah Barang/Pengguna):
+   tetap tampilkan .sec-hd tapi sembunyikan teks judulnya saja.
+   ───────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Section tanpa tombol aksi → sembunyikan seluruh sec-hd */
+  #adm-ppob     .sec-hd,
+  #adm-pinjaman .sec-hd,
+  #adm-laporan  .sec-hd,
+  #adm-ppob-riwayat .sec-hd,
+  #adm-ppob-produk  .sec-hd,
+  #adm-ppob-deposit .sec-hd {
+    display: none;
+  }
+
+  /* Section dengan tombol Tambah: sembunyikan teks judul saja,
+     biarkan tombol tetap terlihat di kanan atas */
+  #adm-barang   .sec-hd > div:first-child,
+  #adm-pengguna .sec-hd > div:first-child {
+    display: none;
+  }
+  #adm-barang   .sec-hd,
+  #adm-pengguna .sec-hd {
+    justify-content: flex-end;
+    padding-top:    14px;
+    padding-bottom: 10px;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   MISC — Penyempurnaan minor
+   ───────────────────────────────────────────────────────────────── */
+
+/* Tombol aksi kolom tabel: flex stack di mobile */
+.admin-page .td-aksi {
+  display:    flex;
+  flex-wrap:  wrap;
+  gap:        5px;
+  align-items: center;
+}
+
+/* Kolom aksi chart-row: gap & padding konsisten */
+.admin-page .chart-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding-bottom: 16px;
+}
+@media (max-width: 520px) {
+  .admin-page .chart-row { grid-template-columns: 1fr; }
+}
+
+/* Activity feed: padding horizontal konsisten */
+.admin-page .activity-item {
+  padding-left:  var(--pad, 16px);
+  padding-right: var(--pad, 16px);
 }
