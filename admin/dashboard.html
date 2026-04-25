@@ -13,7 +13,7 @@
 
   <style>
     /* ═══════════════════════════════════════════════════
-       ADMIN PANEL — Icon & UI tokens seragam dgn karyawan
+       ADMIN PANEL — Mobile-Banking Grade UI
        Palette: Dark Emerald · stroke SVG · pastel chips
        ═══════════════════════════════════════════════════ */
     :root {
@@ -22,28 +22,80 @@
       --accent-mint     : #10B981;
       --text-slate      : #1E293B;
       --text-muted      : #64748B;
-      --bg-app          : #F5F7FA;
+      --bg-app          : #F1F5F9;
       --surface         : #ffffff;
-      --border-lt       : #f1f5f9;
+      --border-lt       : #e8edf2;
+      --radius-card     : 18px;
     }
 
     body    { background: var(--bg-app); }
     .content { background: var(--bg-app); }
 
-    /* ── ICON CHIP — pastel container (sama persis dgn .scc-ico) ─ */
+    /* ══════════════════════════════════════════════════
+       TUGAS 1 — Topbar: Sembunyikan hamburger di mobile
+    ══════════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      .admin-page .ham-btn {
+        display: none !important;
+      }
+      .admin-page .topbar {
+        gap: 0;
+        padding: 0 16px;
+        padding-top: max(0px, env(safe-area-inset-top));
+      }
+      .admin-page .tb-title {
+        font-size: 1rem;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        color: var(--text-slate);
+      }
+    }
+    @media (min-width: 769px) {
+      .admin-page .ham-btn { display: flex; }
+    }
+
+    /* ══════════════════════════════════════════════════
+       TUGAS 2 — Hapus duplikasi .sec-hd di mobile
+       (sec-hd sudah ada di topbar; sembunyikan yg di konten)
+    ══════════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      /* Sembunyikan .sec-hd di semua section KECUALI yang
+         berisi tombol aksi (Tambah Barang / Tambah Pengguna).
+         Untuk section yg punya tombol, kita tetap tampilkan
+         tapi sembunyikan teks judul & deskripsinya. */
+      #adm-ppob     .sec-hd,
+      #adm-ppob-riwayat .sec-hd,
+      #adm-ppob-produk  .sec-hd,
+      #adm-ppob-deposit .sec-hd,
+      #adm-pinjaman .sec-hd,
+      #adm-laporan  .sec-hd {
+        display: none;
+      }
+      /* Section yg punya tombol Tambah: sembunyikan teks judulnya saja */
+      #adm-barang   .sec-hd > div:first-child,
+      #adm-pengguna .sec-hd > div:first-child {
+        display: none;
+      }
+      #adm-barang   .sec-hd,
+      #adm-pengguna .sec-hd {
+        padding: 12px 16px 8px;
+        margin-bottom: 0;
+        justify-content: flex-end;
+      }
+    }
+
+    /* ══════════════════════════════════════════════════
+       ICON CHIP — pastel container
+    ══════════════════════════════════════════════════ */
     .ico-chip {
       display: flex; align-items: center; justify-content: center;
       border-radius: 12px; flex-shrink: 0;
     }
     .ico-chip svg { width: 18px; height: 18px; }
-
-    /* Ukuran */
     .ico-chip--sm  { width: 36px; height: 36px; border-radius: 10px; }
     .ico-chip--md  { width: 42px; height: 42px; border-radius: 13px; }
     .ico-chip--lg  { width: 48px; height: 48px; border-radius: 14px; }
     .ico-chip--lg svg { width: 22px; height: 22px; }
-
-    /* Warna — identik dng .scc-ico--* & .lcc-icon--* di karyawan */
     .ico-chip--green  { background: #dcfce7; color: #15803d; }
     .ico-chip--blue   { background: #dbeafe; color: #2563eb; }
     .ico-chip--teal   { background: #ccfbf1; color: #0d9488; }
@@ -52,7 +104,9 @@
     .ico-chip--purple { background: #f3e8ff; color: #7c3aed; }
     .ico-chip--slate  { background: #f1f5f9; color: #475569; }
 
-    /* ── HERO ADMIN ─────────────────────────────────── */
+    /* ══════════════════════════════════════════════════
+       HERO ADMIN
+    ══════════════════════════════════════════════════ */
     .admin-hero {
       background: linear-gradient(135deg, var(--hero-grad-start) 0%, var(--hero-grad-end) 100%);
       padding: calc(env(safe-area-inset-top,14px) + 18px) 20px 22px;
@@ -83,38 +137,27 @@
       font-size:11px; font-weight:500; color:rgba(255,255,255,.65);
       letter-spacing:.4px; display:flex; align-items:center; gap:6px;
     }
-    /* ikon kecil di dalam hero pakai warna putih transparan */
     .ah-sub svg { width:13px; height:13px; opacity:.7; }
 
-    /* ── SIDEBAR SVG icons ─────────────────────────── */
-    .nav-link {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .nav-link svg {
-      width: 17px; height: 17px;
-      stroke: currentColor; flex-shrink: 0;
-    }
+    /* ══════════════════════════════════════════════════
+       SIDEBAR & NAV
+    ══════════════════════════════════════════════════ */
+    .nav-link { display: flex; align-items: center; gap: 10px; }
+    .nav-link svg { width: 17px; height: 17px; stroke: currentColor; flex-shrink: 0; }
     .nav-badge {
-      margin-left: auto;
-      min-width: 18px; height: 18px;
-      padding: 0 5px;
-      border-radius: 99px;
-      background: #ef4444;
-      color: #fff; font-size: 10px; font-weight: 700;
+      margin-left: auto; min-width: 18px; height: 18px; padding: 0 5px;
+      border-radius: 99px; background: #ef4444; color: #fff;
+      font-size: 10px; font-weight: 700;
       display: flex; align-items: center; justify-content: center;
     }
-    .sb-logout {
-      display: flex; align-items: center; gap: 8px;
-    }
+    .sb-logout { display: flex; align-items: center; gap: 8px; }
     .sb-logout svg { width: 16px; height: 16px; flex-shrink: 0; }
-
-    /* ── TOPBAR SVG ham / avatar ────────────────────── */
     .ham-btn svg { width: 20px; height: 20px; }
-    .tb-title    { font-size: 15px; font-weight: 700; color: var(--text-slate); }
+    .tb-title { font-size: 15px; font-weight: 700; color: var(--text-slate); }
 
-    /* ── KPI CARDS ────────────────────────────────── */
+    /* ══════════════════════════════════════════════════
+       TUGAS 3A — KPI CARDS: grid rapi & nilai tidak wrap
+    ══════════════════════════════════════════════════ */
     .kpi-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -123,15 +166,98 @@
     }
     .kpi-card {
       background: var(--surface);
-      border-radius: 16px;
+      border-radius: var(--radius-card);
       padding: 16px 14px;
-      box-shadow: 0 2px 14px rgba(0,0,0,0.06);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
       display: flex; flex-direction: column; gap: 8px;
+      border: 1px solid rgba(0,0,0,0.04);
     }
-    .kpi-val { font-size: 20px; font-weight: 800; color: var(--text-slate); letter-spacing: -.3px; }
+    .kpi-val {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-slate);
+      letter-spacing: -.4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.25;
+    }
     .kpi-lbl { font-size: 11px; font-weight: 500; color: var(--text-muted); }
 
-    /* ── CHART ROW ────────────────────────────────── */
+    /* ── kpi-ico chip dalam KPI card ── */
+    .kpi-ico {
+      width: 38px; height: 38px; border-radius: 11px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .kpi-ico svg { width: 18px; height: 18px; }
+    .kpi-ico.green  { background: #dcfce7; color: #15803d; }
+    .kpi-ico.blue   { background: #dbeafe; color: #2563eb; }
+    .kpi-ico.orange { background: #fef3c7; color: #d97706; }
+    .kpi-ico.purple { background: #f3e8ff; color: #7c3aed; }
+    .kpi-ico.red    { background: #fef2f2; color: #dc2626; }
+
+    /* ══════════════════════════════════════════════════
+       TUGAS 3B — NAVIGASI PPOB: List menu gaya banking
+       Ganti quick-btn kotak besar → list row horizontal
+    ══════════════════════════════════════════════════ */
+    .ppob-nav-list {
+      background: var(--surface);
+      border-radius: var(--radius-card);
+      border: 1px solid rgba(0,0,0,0.04);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+      overflow: hidden;
+      margin: 0 var(--page-x, 16px) 16px;
+    }
+    .ppob-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 15px 16px;
+      background: none;
+      border: none;
+      border-bottom: 1px solid var(--border-lt);
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-slate);
+      transition: background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .ppob-nav-item:last-child { border-bottom: none; }
+    .ppob-nav-item:active,
+    .ppob-nav-item:hover  { background: #f8fafc; }
+    .ppob-nav-item .pni-ico {
+      width: 40px; height: 40px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .ppob-nav-item .pni-ico svg { width: 19px; height: 19px; }
+    .ppob-nav-item .pni-label { flex: 1; }
+    .ppob-nav-item .pni-sub {
+      font-size: 0.72rem; font-weight: 400; color: var(--text-muted);
+      margin-top: 1px; display: block;
+    }
+    .ppob-nav-item .pni-arrow {
+      color: #CBD5E1; flex-shrink: 0;
+    }
+    .ppob-nav-item .pni-arrow svg { width: 16px; height: 16px; }
+
+    /* Section label "Navigasi PPOB" */
+    .ppob-nav-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 16px var(--page-x, 16px) 8px;
+    }
+
+    /* ══════════════════════════════════════════════════
+       CHART & ACTIVITY (home section)
+    ══════════════════════════════════════════════════ */
     .chart-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -145,11 +271,8 @@
       margin-bottom: 10px;
     }
     .chart-wrap { height: 140px; position: relative; }
-    @media (max-width: 520px) {
-      .chart-row { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 520px) { .chart-row { grid-template-columns: 1fr; } }
 
-    /* ── ACTIVITY FEED ─────────────────────────────── */
     .activity-feed { display: flex; flex-direction: column; }
     .activity-item {
       display: flex; align-items: flex-start; gap: 12px;
@@ -160,13 +283,15 @@
       width: 8px; height: 8px; border-radius: 50%;
       background: #cbd5e1; flex-shrink: 0; margin-top: 4px;
     }
-    .activity-dot--warn   { background: #f59e0b; }
-    .activity-dot--blue   { background: #3b82f6; }
-    .activity-dot--green  { background: var(--accent-mint); }
+    .activity-dot--warn  { background: #f59e0b; }
+    .activity-dot--blue  { background: #3b82f6; }
+    .activity-dot--green { background: var(--accent-mint); }
     .activity-text { flex: 1; font-size: 13px; color: var(--text-slate); line-height: 1.5; }
     .activity-time { font-size: 11px; color: var(--text-muted); flex-shrink: 0; margin-top: 2px; }
 
-    /* ── BOTTOM NAV MOBILE ─────────────────────────── */
+    /* ══════════════════════════════════════════════════
+       BOTTOM NAV MOBILE
+    ══════════════════════════════════════════════════ */
     .bottom-nav-mobile .bn-item {
       display: flex; flex-direction: column; align-items: center; gap: 3px;
       font-size: 10px; font-weight: 600; color: var(--text-muted);
@@ -174,15 +299,13 @@
       flex: 1; -webkit-tap-highlight-color: transparent;
       transition: color .15s;
     }
-    .bottom-nav-mobile .bn-item svg {
-      width: 22px; height: 22px;
-      stroke: currentColor;
-      transition: stroke .15s;
-    }
+    .bottom-nav-mobile .bn-item svg { width: 22px; height: 22px; stroke: currentColor; transition: stroke .15s; }
     .bottom-nav-mobile .bn-item.active,
     .bottom-nav-mobile .bn-item.active svg { color: var(--accent-mint); stroke: var(--accent-mint); }
 
-    /* ── SEC-HD (section header) ────────────────────── */
+    /* ══════════════════════════════════════════════════
+       SECTION HEADER (.sec-hd)
+    ══════════════════════════════════════════════════ */
     .sec-hd {
       display: flex; align-items: flex-start; justify-content: space-between;
       padding: 16px var(--page-x, 16px) 12px;
@@ -191,7 +314,9 @@
     .sec-hd h2 { font-size: 18px; font-weight: 800; color: var(--text-slate); margin-bottom: 2px; }
     .sec-hd p  { font-size: 12px; color: var(--text-muted); }
 
-    /* ── QUICK NAV PPOB (Overview → sub-seksi) ─────── */
+    /* ══════════════════════════════════════════════════
+       QUICK NAV (home overview)
+    ══════════════════════════════════════════════════ */
     .quick-btn {
       display: flex; flex-direction: column; align-items: center;
       gap: 8px; padding: 14px 8px;
@@ -201,162 +326,107 @@
       transition: all .15s; -webkit-tap-highlight-color: transparent;
     }
     .quick-btn:hover { border-color: var(--accent-mint); background: #f0fdf4; color: #065F46; }
-    .quick-btn .qb-ico { /* wrapper for ico-chip inside quick-btn */ }
+    .qb-ico {
+      width: 44px; height: 44px; border-radius: 13px;
+      display: flex; align-items: center; justify-content: center;
+    }
 
-    /* ── RESET DEMO BTN ────────────────────────────── */
-    #btnResetDemo { display: flex; align-items: center; gap: 6px; }
-    #btnResetDemo svg { width: 14px; height: 14px; }
-
-    /* ── Laporan / deposit / approval inherited from style.css ─ */
-    .card-box { background: var(--surface); border-radius: 16px; padding: 16px; box-shadow: 0 2px 14px rgba(0,0,0,0.06); margin-bottom: 12px; }
+    /* ══════════════════════════════════════════════════
+       CARD BOX (generic)
+    ══════════════════════════════════════════════════ */
+    .card-box {
+      background: var(--surface); border-radius: var(--radius-card);
+      padding: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+      margin-bottom: 12px;
+      border: 1px solid rgba(0,0,0,0.04);
+    }
     .card-box:last-child { margin-bottom: 0; }
 
-    /* Section padding */
+    /* ══════════════════════════════════════════════════
+       TABEL BARANG & PENGGUNA — Mobile responsive
+    ══════════════════════════════════════════════════ */
     .sec { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px); }
 
-    /* ═══════════════════════════════════════════════════════════
-       MOBILE FIX — Layout, Tabel, dan KPI
-       ═══════════════════════════════════════════════════════════
-
-       Root cause:
-       1. style.css strip padding section (padding: 0 !important)
-          → semua child element nempel ke tepi, tidak ada jarak.
-       2. .dtable punya min-width: 500px → tabel overflow scroll
-          dan kolom kiri terpotong di layar mobile ~390px.
-       3. .kpi-val tidak ada white-space → "Rp" wrap ke baris baru.
-    ═══════════════════════════════════════════════════════════ */
-
-    /* ── 1. Kembalikan padding horizontal ke semua section ─── */
+    /* Kembalikan padding horizontal ke section */
     .admin-page .sec {
       padding-left:  16px;
       padding-right: 16px;
     }
 
-    /* Pastikan .sec-hd ikut dapat padding (sudah di-inherit,
-       tapi overide explicit untuk keamanan) */
-    .admin-page .sec .sec-hd {
-      padding-left:  0;
-      padding-right: 0;
-    }
-
-    /* ── 2. Tabel Barang & Pengguna — mobile responsive ────── */
-
-    /* Hapus min-width dan overflow scroll pada mobile */
     @media (max-width: 640px) {
       #adm-barang   .table-wrap,
       #adm-pengguna .table-wrap {
         overflow-x: visible;
         border-radius: 14px;
+        margin: 0;
       }
-
-      /* Reset min-width agar tabel mengikuti lebar container */
       #adm-barang   .dtable,
       #adm-pengguna .dtable {
         min-width: unset;
         width: 100%;
         table-layout: fixed;
       }
-
-      /* Sembunyikan kolom # (nomor urut) di mobile — hemat ruang */
+      /* Sembunyikan kolom nomor urut */
       #adm-barang   .dtable th:first-child,
       #adm-barang   .dtable td:first-child,
       #adm-pengguna .dtable th:first-child,
-      #adm-pengguna .dtable td:first-child {
-        display: none;
-      }
+      #adm-pengguna .dtable td:first-child { display: none; }
 
-      /* Atur lebar kolom tabel Barang: Nama | Kategori | Harga | Stok | Aksi */
+      /* Lebar kolom Barang */
       #adm-barang .dtable th:nth-child(2),
-      #adm-barang .dtable td:nth-child(2) { width: 28%; }   /* Nama */
+      #adm-barang .dtable td:nth-child(2) { width: 30%; }
       #adm-barang .dtable th:nth-child(3),
-      #adm-barang .dtable td:nth-child(3) { width: 18%; }   /* Kategori */
+      #adm-barang .dtable td:nth-child(3) { width: 18%; }
       #adm-barang .dtable th:nth-child(4),
-      #adm-barang .dtable td:nth-child(4) { width: 22%; }   /* Harga */
+      #adm-barang .dtable td:nth-child(4) { width: 22%; }
       #adm-barang .dtable th:nth-child(5),
-      #adm-barang .dtable td:nth-child(5) { width: 12%; }   /* Stok */
+      #adm-barang .dtable td:nth-child(5) { width: 10%; }
       #adm-barang .dtable th:nth-child(6),
-      #adm-barang .dtable td:nth-child(6) { width: 20%; }   /* Aksi */
+      #adm-barang .dtable td:nth-child(6) { width: 20%; }
 
-      /* Atur lebar kolom tabel Pengguna: NIK | Nama | Dept | Role | Status | Aksi */
+      /* Lebar kolom Pengguna */
       #adm-pengguna .dtable th:nth-child(2),
-      #adm-pengguna .dtable td:nth-child(2) { width: 22%; } /* NIK */
+      #adm-pengguna .dtable td:nth-child(2) { width: 24%; }
       #adm-pengguna .dtable th:nth-child(3),
-      #adm-pengguna .dtable td:nth-child(3) { width: 26%; } /* Nama */
+      #adm-pengguna .dtable td:nth-child(3) { width: 28%; }
       #adm-pengguna .dtable th:nth-child(4),
-      #adm-pengguna .dtable td:nth-child(4) { width: 18%; } /* Dept */
+      #adm-pengguna .dtable td:nth-child(4) { width: 18%; }
       #adm-pengguna .dtable th:nth-child(5),
-      #adm-pengguna .dtable td:nth-child(5) { width: 14%; } /* Role */
+      #adm-pengguna .dtable td:nth-child(5) { width: 14%; }
       #adm-pengguna .dtable th:nth-child(6),
-      #adm-pengguna .dtable td:nth-child(6) { display: none; } /* Sembunyikan Status */
+      #adm-pengguna .dtable td:nth-child(6) { display: none; }
       #adm-pengguna .dtable th:nth-child(7),
-      #adm-pengguna .dtable td:nth-child(7) { width: 20%; } /* Aksi */
+      #adm-pengguna .dtable td:nth-child(7) { width: 16%; }
 
-      /* Padding cell lebih rapat di mobile */
       #adm-barang   .dtable th,
       #adm-barang   .dtable td,
       #adm-pengguna .dtable th,
-      #adm-pengguna .dtable td {
-        padding: 9px 8px;
-        font-size: 0.76rem;
-      }
+      #adm-pengguna .dtable td { padding: 9px 8px; font-size: 0.76rem; }
 
-      /* Teks yang panjang: potong dengan ellipsis */
       #adm-barang   .dtable td,
       #adm-pengguna .dtable td {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        max-width: 0; /* trick untuk text-overflow di table-layout:fixed */
+        overflow: hidden; text-overflow: ellipsis;
+        white-space: nowrap; max-width: 0;
       }
-
-      /* Kolom Aksi: jangan di-clip, tombol harus kelihatan */
       #adm-barang   .dtable td:nth-child(6),
       #adm-pengguna .dtable td:nth-child(7) {
-        white-space: normal;
-        overflow: visible;
+        white-space: normal; overflow: visible;
       }
-
-      /* Tombol Edit & Hapus — lebih compact di mobile */
       #adm-barang   .dtable .btn-s,
-      #adm-pengguna .dtable .btn-s {
-        padding: 4px 8px;
-        font-size: 0.7rem;
-        gap: 3px;
-      }
+      #adm-pengguna .dtable .btn-s { padding: 4px 8px; font-size: 0.7rem; }
     }
 
-    /* ── 3. KPI nilai — cegah "Rp" terpisah dari angka ─────── */
-    .kpi-val {
-      font-size: 1rem !important;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      line-height: 1.3;
-    }
-
-    /* ── 4. Container JS-rendered — beri padding ───────────── */
-    #ppobOverviewCont,
-    #depositCont,
-    #approvalCont,
-    #laporanCont {
-      padding-left:  0;
-      padding-right: 0;
-    }
-
-    /* ── 5. Kolom Aksi tabel — stack vertikal di mobile ──── */
-    .td-aksi {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      align-items: center;
-    }
+    /* Kolom Aksi */
+    .td-aksi { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
     @media (max-width: 640px) {
-      .td-aksi {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 3px;
-      }
+      .td-aksi { flex-direction: column; align-items: flex-start; gap: 3px; }
     }
+
+    /* ══════════════════════════════════════════════════
+       MISC (KPI icon remap dari admin.js)
+    ══════════════════════════════════════════════════ */
+    #btnResetDemo { display: flex; align-items: center; gap: 6px; }
+    #btnResetDemo svg { width: 14px; height: 14px; }
   </style>
 </head>
 <body class="admin-page">
@@ -605,14 +675,6 @@
            ID: ppobOverviewCont
       ──────────────────────────────────────────────── -->
       <section class="sec" id="adm-ppob" style="display:none">
-
-        <div class="sec-hd">
-          <div>
-            <h2>PPOB Overview</h2>
-            <p>Ringkasan transaksi pembayaran digital</p>
-          </div>
-        </div>
-
         <!-- renderPPOBOverview() → .kpi-grid + navigasi quick-btn -->
         <div id="ppobOverviewCont"></div>
 
@@ -625,14 +687,6 @@
            Fallback : ppobRiwayatCont (DIV)
       ──────────────────────────────────────────────── -->
       <section class="sec" id="adm-ppob-riwayat" style="display:none">
-
-        <div class="sec-hd">
-          <div>
-            <h2>Riwayat Transaksi PPOB</h2>
-            <p>Seluruh transaksi pembayaran anggota</p>
-          </div>
-        </div>
-
         <div class="table-wrap">
           <table class="dtable">
             <thead>
@@ -661,14 +715,6 @@
            ID: ppobProdukCont
       ──────────────────────────────────────────────── -->
       <section class="sec" id="adm-ppob-produk" style="display:none">
-
-        <div class="sec-hd">
-          <div>
-            <h2>Produk &amp; Margin PPOB</h2>
-            <p>Kelola daftar layanan dan margin keuntungan</p>
-          </div>
-        </div>
-
         <div id="ppobProdukCont"></div>
 
       </section><!-- /#adm-ppob-produk -->
@@ -679,14 +725,6 @@
            ID: depositCont
       ──────────────────────────────────────────────── -->
       <section class="sec" id="adm-ppob-deposit" style="display:none">
-
-        <div class="sec-hd">
-          <div>
-            <h2>Manajemen Deposit</h2>
-            <p>Kelola saldo deposit untuk layanan PPOB</p>
-          </div>
-        </div>
-
         <div id="depositCont"></div>
 
       </section><!-- /#adm-ppob-deposit -->
@@ -774,14 +812,6 @@
            ID: approvalCont
       ──────────────────────────────────────────────── -->
       <section class="sec" id="adm-pinjaman" style="display:none">
-
-        <div class="sec-hd">
-          <div>
-            <h2>Approval Pinjaman</h2>
-            <p>Pengajuan pinjaman yang menunggu persetujuan</p>
-          </div>
-        </div>
-
         <div id="approvalCont"></div>
 
       </section><!-- /#adm-pinjaman -->
@@ -792,14 +822,6 @@
            ID: laporanCont
       ──────────────────────────────────────────────── -->
       <section class="sec" id="adm-laporan" style="display:none">
-
-        <div class="sec-hd">
-          <div>
-            <h2>Laporan</h2>
-            <p>Ekspor &amp; ringkasan data koperasi</p>
-          </div>
-        </div>
-
         <div id="laporanCont"></div>
 
       </section><!-- /#adm-laporan -->
