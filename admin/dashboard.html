@@ -342,23 +342,157 @@
     }
     .card-box:last-child { margin-bottom: 0; }
 
-    /* ══════════════════════════════════════════════════
-       TABEL BARANG & PENGGUNA — Mobile responsive
-    ══════════════════════════════════════════════════ */
-    .sec { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px); }
+    /* ══════════════════════════════════════════════════════════
+       FINISHING — 3 masalah layout mobile
+       ══════════════════════════════════════════════════════════
 
-    /* Kembalikan padding horizontal ke section */
+       MASALAH & SOLUSINYA:
+
+       1. HORIZONTAL SCROLL MATI
+          Penyebab: .main-wrap dan .content di style.css punya
+          overflow-x:hidden, membunuh scroll di .table-wrap.
+          Fix: override overflow-x menjadi 'clip' (bukan hidden)
+          pada .main-wrap & .content di admin → clip hanya
+          memotong paint tanpa merusak scroll context child.
+          .table-wrap tetap overflow-x:auto dan bisa digeser.
+
+       2. DOUBLE PADDING BERANDA & PPOB
+          Penyebab: .admin-page .sec { padding: 16px } dari
+          sesi sebelumnya + .kpi-grid { padding: 16px var(--page-x) }
+          dari style.css → total margin kiri = 32px.
+          Fix: set padding .admin-page .sec = 0, lalu atur
+          padding/margin tiap child secara eksplisit & seragam.
+
+       3. JUDUL MEPET TOPBAR & TEPI
+          Penyebab: .sec-hd padding-top tidak cukup, dan
+          .admin-page .content padding-top terlalu kecil.
+          Fix: tambahkan padding-top pada .sec-hd &
+          pastikan horizontal align sama dengan konten lain.
+    ══════════════════════════════════════════════════════════ */
+
+    /* ─────────────────────────────────────────────────────────
+       FIX 1 — Aktifkan horizontal scroll tabel
+       overflow-x: clip  →  memotong paint overflow tanpa
+       membuat scroll container baru (tidak membunuh scroll anak)
+    ───────────────────────────────────────────────────────── */
+    .admin-page .main-wrap {
+      overflow-x: clip !important;
+    }
+    .admin-page .content {
+      overflow-x: clip !important;
+    }
+    /* Pastikan semua .sec juga tidak membuat scroll barrier */
     .admin-page .sec {
-      padding-left:  16px;
-      padding-right: 16px;
+      overflow-x: clip;
+      padding-left:  0;
+      padding-right: 0;
+      padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px);
     }
 
+    /* .table-wrap: aktifkan scroll dengan momentum iOS */
+    .admin-page .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      /* Jangan pakai margin negatif — biarkan padding section jadi tepi */
+    }
+
+    /* ─────────────────────────────────────────────────────────
+       FIX 2 — Seragamkan padding tepi kiri-kanan
+       Satu variabel tunggal: --pad = 16px
+       Semua elemen mengacu ke nilai ini agar konsisten.
+    ───────────────────────────────────────────────────────── */
+    .admin-page .sec {
+      --pad: 16px;
+    }
+
+    /* Elemen yang butuh padding horizontal langsung */
+    .admin-page .sec .sec-hd,
+    .admin-page .sec .ppob-nav-label {
+      padding-left:  var(--pad);
+      padding-right: var(--pad);
+    }
+
+    /* .kpi-grid sudah punya padding via style.css (padding: 16px var(--page-x))
+       Saat --page-x = 16px di mobile, ini sudah pas.
+       Override hanya jika ada double dari rule lain. */
+    .admin-page .sec .kpi-grid {
+      padding-left:  var(--pad);
+      padding-right: var(--pad);
+      padding-top:   12px;
+      padding-bottom: 12px;
+    }
+
+    /* .ppob-nav-list & .card-box di dalam section langsung */
+    .admin-page .sec .ppob-nav-list {
+      margin-left:  var(--pad);
+      margin-right: var(--pad);
+    }
+    /* chart-row di #adm-home */
+    .admin-page .sec .chart-row {
+      padding-left:  var(--pad);
+      padding-right: var(--pad);
+    }
+
+    /* table-wrap: beri tepi kiri-kanan sama dengan konten lain */
+    .admin-page .sec .table-wrap {
+      margin-left:  var(--pad);
+      margin-right: var(--pad);
+    }
+
+    /* search bar wrapper di atas tabel */
+    .admin-page .sec > div.searchbox-wrap {
+      padding-left:  var(--pad);
+      padding-right: var(--pad);
+      padding-bottom: 10px;
+    }
+
+    /* ─────────────────────────────────────────────────────────
+       FIX 3 — Ruang napas judul: tidak mepet topbar & tepi
+    ───────────────────────────────────────────────────────── */
+    .admin-page .sec .sec-hd {
+      padding-top:    20px;    /* jarak dari topbar */
+      padding-bottom: 14px;
+      padding-left:   var(--pad);
+      padding-right:  var(--pad);
+      margin-bottom:  0;
+    }
+    /* Section yg sec-hd-nya hanya berisi tombol (Barang & Pengguna) */
+    .admin-page #adm-barang   .sec-hd,
+    .admin-page #adm-pengguna .sec-hd {
+      padding-top:    20px;
+      padding-bottom: 12px;
+      justify-content: flex-end; /* tombol Tambah di kanan */
+    }
+    /* Sembunyikan teks judul di mobile untuk section tersebut
+       (sudah ada di topbar) */
+    @media (max-width: 768px) {
+      .admin-page #adm-barang   .sec-hd > div:first-child,
+      .admin-page #adm-pengguna .sec-hd > div:first-child {
+        display: none;
+      }
+    }
+
+    /* Untuk PPOB: tidak ada sec-hd di HTML (sudah dihapus),
+       beri padding-top pada container pertama di dalam section */
+    .admin-page #adm-ppob     > #ppobOverviewCont,
+    .admin-page #adm-pinjaman > #approvalCont,
+    .admin-page #adm-laporan  > #laporanCont,
+    .admin-page #adm-ppob-deposit > #depositCont,
+    .admin-page #adm-ppob-riwayat > .table-wrap,
+    .admin-page #adm-ppob-produk  > #ppobProdukCont {
+      margin-top: 8px;
+    }
+
+    /* ─────────────────────────────────────────────────────────
+       TABEL MOBILE — responsive tanpa scroll (fixed layout)
+       Khusus Barang & Pengguna yang kolom-nya bisa di-fit
+    ───────────────────────────────────────────────────────── */
     @media (max-width: 640px) {
+      /* Tabel Barang & Pengguna: pakai fixed layout, no scroll */
       #adm-barang   .table-wrap,
       #adm-pengguna .table-wrap {
-        overflow-x: visible;
+        overflow-x: hidden;  /* kolom sudah di-fit, tidak perlu scroll */
         border-radius: 14px;
-        margin: 0;
       }
       #adm-barang   .dtable,
       #adm-pengguna .dtable {
@@ -366,7 +500,7 @@
         width: 100%;
         table-layout: fixed;
       }
-      /* Sembunyikan kolom nomor urut */
+      /* Sembunyikan kolom # */
       #adm-barang   .dtable th:first-child,
       #adm-barang   .dtable td:first-child,
       #adm-pengguna .dtable th:first-child,
@@ -408,6 +542,7 @@
         overflow: hidden; text-overflow: ellipsis;
         white-space: nowrap; max-width: 0;
       }
+      /* Kolom Aksi: tidak di-clip */
       #adm-barang   .dtable td:nth-child(6),
       #adm-pengguna .dtable td:nth-child(7) {
         white-space: normal; overflow: visible;
@@ -416,15 +551,21 @@
       #adm-pengguna .dtable .btn-s { padding: 4px 8px; font-size: 0.7rem; }
     }
 
-    /* Kolom Aksi */
+    /* Tabel dengan banyak kolom (PPOB Riwayat) → tetap pakai scroll */
+    #adm-ppob-riwayat .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Kolom Aksi — flex stack */
     .td-aksi { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
     @media (max-width: 640px) {
       .td-aksi { flex-direction: column; align-items: flex-start; gap: 3px; }
     }
 
-    /* ══════════════════════════════════════════════════
-       MISC (KPI icon remap dari admin.js)
-    ══════════════════════════════════════════════════ */
+    /* ─────────────────────────────────────────────────────────
+       MISC
+    ───────────────────────────────────────────────────────── */
     #btnResetDemo { display: flex; align-items: center; gap: 6px; }
     #btnResetDemo svg { width: 14px; height: 14px; }
   </style>
