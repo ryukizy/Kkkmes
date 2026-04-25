@@ -80,7 +80,6 @@
         <span class="nav-badge" id="admPendingBadge">2</span>
       </a>
 
-      <!-- PPOB MENU -->
       <div class="nav-grp-lbl" style="margin-top:24px">PPOB</div>
       <a class="nav-link" data-sec="adm-ppob">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>PPOB Overview
@@ -124,7 +123,7 @@
 
     <main class="content">
 
-      <!-- ADM HOME (tetap sama) -->
+      <!-- ADM HOME -->
       <section class="sec" id="adm-home">
         <div class="page-hero green-hero">
           <div class="ph-body">
@@ -166,7 +165,7 @@
         </div>
       </section>
 
-      <!-- PPOB OVERVIEW -->
+      <!-- PPOB OVERVIEW (dengan tombol simulasi) -->
       <section class="sec" id="adm-ppob" style="display:none">
         <div class="page-hero green-hero">
           <div class="ph-body">
@@ -193,13 +192,21 @@
             <div class="kpi-lbl">Keuntungan Hari Ini</div>
           </div>
         </div>
+
+        <div class="ppob-card" style="margin-bottom:24px">
+          <button onclick="showPPOBSimulasiModal()" class="btn-prim" style="width:100%;padding:16px;font-size:1.1rem">
+            🔄 Simulasi Transaksi PPOB Baru
+          </button>
+          <p style="text-align:center;margin-top:8px;font-size:13px;color:var(--muted)">Demo transaksi anggota secara real-time</p>
+        </div>
+
         <div class="card-box">
           <h3 class="card-box__title">Grafik Transaksi PPOB 7 Hari Terakhir</h3>
           <canvas id="chartPPOB" height="110"></canvas>
         </div>
       </section>
 
-      <!-- RIWAYAT TRANSAKSI PPOB -->
+      <!-- PPOB RIWAYAT -->
       <section class="sec" id="adm-ppob-riwayat" style="display:none">
         <div class="sec-hd"><div><h2>Riwayat Transaksi PPOB</h2><p>Semua transaksi anggota</p></div></div>
         <div class="table-wrap">
@@ -210,7 +217,7 @@
         </div>
       </section>
 
-      <!-- PRODUK & MARGIN -->
+      <!-- PPOB PRODUK & MARGIN -->
       <section class="sec" id="adm-ppob-produk" style="display:none">
         <div class="sec-hd"><div><h2>Produk & Margin PPOB</h2><p>Atur harga jual dan margin koperasi</p></div></div>
         <div class="table-wrap">
@@ -221,17 +228,17 @@
         </div>
       </section>
 
-      <!-- MANAJEMEN DEPOSIT -->
+      <!-- PPOB DEPOSIT -->
       <section class="sec" id="adm-ppob-deposit" style="display:none">
         <div class="sec-hd"><div><h2>Manajemen Deposit</h2><p>Saldo & riwayat top-up aggregator</p></div></div>
         <div class="ppob-card">
           <h3>Saldo Deposit Saat Ini</h3>
-          <div id="deposit-total" style="font-size:2.4rem; font-weight:800; color:var(--primary); margin:20px 0;">Rp 4.850.000</div>
-          <button onclick="topupDepositDemo()" class="btn-prim" style="width:100%; padding:14px;">Top-up Deposit Baru</button>
+          <div id="deposit-total" style="font-size:2.4rem;font-weight:800;color:var(--primary);margin:20px 0">Rp 4.850.000</div>
+          <button onclick="topupDepositDemo()" class="btn-prim" style="width:100%;padding:14px">Top-up Deposit Baru</button>
         </div>
       </section>
 
-      <!-- SECTION LAMA (tetap sama) -->
+      <!-- SECTION LAMA -->
       <section class="sec" id="adm-barang" style="display:none">
         <div class="sec-hd"><div><h2>Kelola Barang</h2><p>Manajemen inventori koperasi</p></div></div>
         <div class="table-wrap">
@@ -262,10 +269,7 @@
         <div class="card-box">
           <h3 class="card-box__title">Ekspor Laporan</h3>
           <div class="export-actions">
-            <button class="btn-prim" onclick="exportPDF('admin')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-ico"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              Unduh Laporan Koperasi (PDF)
-            </button>
+            <button class="btn-prim" onclick="exportPDF('admin')">Unduh Laporan Koperasi (PDF)</button>
             <button class="btn-sec" onclick="exportPDF('struk')">Cetak Struk Transaksi</button>
           </div>
         </div>
@@ -275,7 +279,7 @@
   </div>
 </div>
 
-<!-- MODAL EDIT BARANG (tetap sama) -->
+<!-- MODAL EDIT BARANG -->
 <div id="modalBarang" class="modal-overlay">
   <div class="modal-box">
     <div class="modal-hd">
@@ -319,7 +323,6 @@
 
 <div id="toast" class="toast"></div>
 
-<!-- SCRIPTS -->
 <script src="../js/shared.js"></script>
 <script src="admin.js"></script>
 </body>
