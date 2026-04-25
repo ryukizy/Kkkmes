@@ -15,7 +15,9 @@
 
 <div class="dash-page">
 
-  <!-- SIDEBAR DESKTOP -->
+  <!-- ═══════════════════════════════════════════
+       SIDEBAR DESKTOP
+  ════════════════════════════════════════════ -->
   <aside id="sidebar" class="sidebar">
     <div class="sb-head">
       <div class="sb-logo brand-hex">
@@ -27,6 +29,7 @@
       </div>
       <button id="sbClose" class="sb-close">✕</button>
     </div>
+
     <div class="sb-user-card">
       <div class="sb-avatar" id="sbAvatar">—</div>
       <div>
@@ -34,22 +37,36 @@
         <span class="sb-urole admin" id="sbUrole">Administrator</span>
       </div>
     </div>
+
     <nav class="sb-nav">
       <a class="nav-link" data-sec="adm-home">📊 Beranda</a>
       <a class="nav-link" data-sec="adm-ppob">📡 PPOB</a>
       <a class="nav-link" data-sec="adm-barang">📦 Kelola Barang</a>
       <a class="nav-link" data-sec="adm-pengguna">👥 Kelola Pengguna</a>
-      <a class="nav-link" data-sec="adm-pinjaman">📋 Approval Pinjaman</a>
+      <a class="nav-link" data-sec="adm-pinjaman">
+        📋 Approval Pinjaman
+        <span class="nav-badge"></span>
+      </a>
       <a class="nav-link" data-sec="adm-laporan">📄 Laporan</a>
+
+      <!-- Sub-nav PPOB (disembunyikan; JS bisa menampilkannya bila perlu) -->
+      <a class="nav-link nav-sub" data-sec="adm-ppob-riwayat" style="display:none">↳ Riwayat Transaksi</a>
+      <a class="nav-link nav-sub" data-sec="adm-ppob-produk"  style="display:none">↳ Produk &amp; Margin</a>
+      <a class="nav-link nav-sub" data-sec="adm-ppob-deposit" style="display:none">↳ Manajemen Deposit</a>
     </nav>
+
     <button id="logoutBtn" class="sb-logout">Keluar</button>
   </aside>
 
-  <!-- Sidebar overlay untuk mobile -->
+  <!-- Overlay sidebar mobile -->
   <div id="sbOverlay" class="sb-overlay"></div>
 
-  <!-- MAIN CONTENT -->
+  <!-- ═══════════════════════════════════════════
+       MAIN CONTENT
+  ════════════════════════════════════════════ -->
   <div class="main-wrap">
+
+    <!-- Top Bar -->
     <header class="topbar">
       <button id="hamBtn" class="ham-btn">☰</button>
       <span class="tb-title" id="tbTitle">Beranda</span>
@@ -57,69 +74,304 @@
     </header>
 
     <main class="content">
-      <!-- ADM HOME -->
+
+      <!-- ───────────────────────────────────────
+           1. ADM-HOME  ←  Beranda / KPI Overview
+           IDs yang dipakai JS:
+             kpiGrid        → renderAdminOverview()
+             activityFeed   → renderActivityFeed() + startActivitySimulation()
+             chartSimpanan  → _initChartSimpanan()
+             chartPinjaman  → _initChartPinjaman()
+             admGreet       → init()
+             admName        → init()
+             btnResetDemo   → initResetFeature()
+      ──────────────────────────────────────── -->
       <section class="sec" id="adm-home">
+
         <div class="page-hero green-hero">
           <div class="ph-body">
             <div class="ph-greet" id="admGreet">Selamat pagi,</div>
-            <div class="ph-name" id="admName">Administrator</div>
+            <div class="ph-name"  id="admName">Administrator</div>
             <div class="ph-sub">Panel Manajemen KopKar MES</div>
           </div>
           <div class="ph-illo">⚙️</div>
         </div>
-        <!-- KPI dan chart lama tetap ada -->
-      </section>
 
-      <!-- PPOB OVERVIEW + SIMULASI -->
-      <section class="sec" id="adm-ppob" style="display:none">
-        <!-- isi PPOB Overview + tombol simulasi seperti kode sebelumnya -->
-      </section>
+        <!-- KPI cards — diisi oleh renderAdminOverview() -->
+        <div class="kpi-grid" id="kpiGrid"></div>
 
-      <!-- Kelola Barang -->
-      <section class="sec" id="adm-barang" style="display:none">
-        <div class="sec-hd">
-          <div><h2>Kelola Barang</h2><p>Manajemen inventori koperasi</p></div>
-          <button onclick="showTambahBarangModal()" class="btn-prim">+ Tambah Barang</button>
+        <!-- Charts berdampingan -->
+        <div class="chart-row">
+          <div class="card-box chart-box">
+            <h3 class="card-box__title">Tren Simpanan</h3>
+            <div class="chart-wrap">
+              <canvas id="chartSimpanan"></canvas>
+            </div>
+          </div>
+          <div class="card-box chart-box">
+            <h3 class="card-box__title">Status Pinjaman</h3>
+            <div class="chart-wrap">
+              <canvas id="chartPinjaman"></canvas>
+            </div>
+          </div>
         </div>
+
+        <!-- Activity feed — diisi & diperbarui oleh renderActivityFeed() / startActivitySimulation() -->
+        <div class="card-box">
+          <div class="cs-head">
+            <h3>Aktivitas Terkini</h3>
+          </div>
+          <div id="activityFeed" class="activity-feed"></div>
+        </div>
+
+        <!-- Tombol reset data demo -->
+        <div style="margin-top:16px;text-align:right">
+          <button id="btnResetDemo" class="btn-sec">🔄 Reset Demo Data</button>
+        </div>
+
+      </section><!-- /#adm-home -->
+
+
+      <!-- ───────────────────────────────────────
+           2. ADM-PPOB  ←  PPOB Overview
+           ID yang dipakai JS:
+             ppobOverviewCont  → renderPPOBOverview()
+      ──────────────────────────────────────── -->
+      <section class="sec" id="adm-ppob" style="display:none">
+
+        <div class="sec-hd">
+          <div>
+            <h2>PPOB Overview</h2>
+            <p>Ringkasan transaksi pembayaran digital</p>
+          </div>
+        </div>
+
+        <!-- Diisi oleh renderPPOBOverview() -->
+        <div id="ppobOverviewCont"></div>
+
+      </section><!-- /#adm-ppob -->
+
+
+      <!-- ───────────────────────────────────────
+           3. ADM-PPOB-RIWAYAT  ←  Riwayat Transaksi PPOB
+           ID yang dipakai JS:
+             tbRiwayatPPOB   → renderPPOBRiwayat()  (target utama: TBODY)
+             ppobRiwayatCont → renderPPOBRiwayat()  (fallback: DIV)
+           Catatan: JS memeriksa tagName; jika TBODY ditemukan
+           maka baris <tr> di-inject langsung. Jika tidak,
+           ia merender tabel lengkap ke dalam DIV fallback.
+      ──────────────────────────────────────── -->
+      <section class="sec" id="adm-ppob-riwayat" style="display:none">
+
+        <div class="sec-hd">
+          <div>
+            <h2>Riwayat Transaksi PPOB</h2>
+            <p>Seluruh transaksi pembayaran anggota</p>
+          </div>
+        </div>
+
         <div class="table-wrap">
           <table class="dtable">
-            <thead><tr><th>#</th><th>Nama</th><th>Kategori</th><th>Harga</th><th>Stok</th><th>Aksi</th></tr></thead>
+            <thead>
+              <tr>
+                <th>ID Trx</th>
+                <th>Anggota</th>
+                <th>Layanan</th>
+                <th>Tujuan</th>
+                <th>Nominal</th>
+                <th>Margin</th>
+                <th>Tanggal</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="tbRiwayatPPOB"></tbody>
+          </table>
+        </div>
+
+        <!-- Fallback: dipakai jika JS tidak menemukan #tbRiwayatPPOB -->
+        <div id="ppobRiwayatCont"></div>
+
+      </section><!-- /#adm-ppob-riwayat -->
+
+
+      <!-- ───────────────────────────────────────
+           4. ADM-PPOB-PRODUK  ←  Produk & Margin PPOB
+           ID yang dipakai JS:
+             ppobProdukCont  → renderPPOBProduk()
+      ──────────────────────────────────────── -->
+      <section class="sec" id="adm-ppob-produk" style="display:none">
+
+        <div class="sec-hd">
+          <div>
+            <h2>Produk &amp; Margin PPOB</h2>
+            <p>Kelola daftar layanan dan margin keuntungan</p>
+          </div>
+        </div>
+
+        <!-- Diisi oleh renderPPOBProduk() -->
+        <div id="ppobProdukCont"></div>
+
+      </section><!-- /#adm-ppob-produk -->
+
+
+      <!-- ───────────────────────────────────────
+           5. ADM-PPOB-DEPOSIT  ←  Manajemen Deposit
+           ID yang dipakai JS:
+             depositCont  → renderDeposit() + tambahDeposit()
+      ──────────────────────────────────────── -->
+      <section class="sec" id="adm-ppob-deposit" style="display:none">
+
+        <div class="sec-hd">
+          <div>
+            <h2>Manajemen Deposit</h2>
+            <p>Kelola saldo deposit untuk layanan PPOB</p>
+          </div>
+        </div>
+
+        <!-- Diisi oleh renderDeposit() -->
+        <div id="depositCont"></div>
+
+      </section><!-- /#adm-ppob-deposit -->
+
+
+      <!-- ───────────────────────────────────────
+           6. ADM-BARANG  ←  Kelola Barang / Inventori
+           ID yang dipakai JS:
+             tbodyBarang  → renderBarang()
+      ──────────────────────────────────────── -->
+      <section class="sec" id="adm-barang" style="display:none">
+
+        <div class="sec-hd">
+          <div>
+            <h2>Kelola Barang</h2>
+            <p>Manajemen inventori koperasi</p>
+          </div>
+          <button onclick="showTambahBarangModal()" class="btn-prim">+ Tambah Barang</button>
+        </div>
+
+        <div class="table-wrap">
+          <table class="dtable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nama</th>
+                <th>Kategori</th>
+                <th>Harga</th>
+                <th>Stok</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <!-- Diisi oleh renderBarang() -->
             <tbody id="tbodyBarang"></tbody>
           </table>
         </div>
-      </section>
 
-      <!-- Kelola Pengguna -->
+      </section><!-- /#adm-barang -->
+
+
+      <!-- ───────────────────────────────────────
+           7. ADM-PENGGUNA  ←  Kelola Pengguna
+           ID yang dipakai JS:
+             tbUsers  → renderUsers()
+      ──────────────────────────────────────── -->
       <section class="sec" id="adm-pengguna" style="display:none">
+
         <div class="sec-hd">
-          <div><h2>Kelola Pengguna</h2><p>Daftar anggota & admin</p></div>
+          <div>
+            <h2>Kelola Pengguna</h2>
+            <p>Daftar anggota &amp; admin</p>
+          </div>
           <button onclick="showTambahPenggunaModal()" class="btn-prim">+ Tambah Pengguna</button>
         </div>
+
         <div class="table-wrap">
           <table class="dtable">
-            <thead><tr><th>#</th><th>NIK</th><th>Nama</th><th>Dept</th><th>Role</th><th>Status</th><th>Aksi</th></tr></thead>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>NIK</th>
+                <th>Nama</th>
+                <th>Dept</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <!-- Diisi oleh renderUsers() -->
             <tbody id="tbUsers"></tbody>
           </table>
         </div>
-      </section>
 
-      <!-- Approval Pinjaman, Riwayat PPOB, Produk PPOB, Deposit, Laporan -->
-      <!-- (semua section ini sudah ada di kode sebelumnya yang kamu punya) -->
+      </section><!-- /#adm-pengguna -->
 
-    </main>
-  </div>
 
-  <!-- BOTTOM NAV MOBILE -->
+      <!-- ───────────────────────────────────────
+           8. ADM-PINJAMAN  ←  Approval Pinjaman
+           ID yang dipakai JS:
+             approvalCont  → renderApproval()
+      ──────────────────────────────────────── -->
+      <section class="sec" id="adm-pinjaman" style="display:none">
+
+        <div class="sec-hd">
+          <div>
+            <h2>Approval Pinjaman</h2>
+            <p>Pengajuan pinjaman yang menunggu persetujuan</p>
+          </div>
+        </div>
+
+        <!-- Diisi oleh renderApproval() -->
+        <div id="approvalCont"></div>
+
+      </section><!-- /#adm-pinjaman -->
+
+
+      <!-- ───────────────────────────────────────
+           9. ADM-LAPORAN  ←  Laporan
+           ID yang dipakai JS:
+             laporanCont  → renderLaporan()
+      ──────────────────────────────────────── -->
+      <section class="sec" id="adm-laporan" style="display:none">
+
+        <div class="sec-hd">
+          <div>
+            <h2>Laporan</h2>
+            <p>Ekspor &amp; ringkasan data koperasi</p>
+          </div>
+        </div>
+
+        <!-- Diisi oleh renderLaporan() -->
+        <div id="laporanCont"></div>
+
+      </section><!-- /#adm-laporan -->
+
+    </main><!-- /.content -->
+  </div><!-- /.main-wrap -->
+
+
+  <!-- ═══════════════════════════════════════════
+       BOTTOM NAV MOBILE
+  ════════════════════════════════════════════ -->
   <nav class="bottom-nav-mobile">
-    <a onclick="showSec('adm-home', SEC_TITLES)" class="bn-item"><span class="bn-icon">📊</span><span>Beranda</span></a>
-    <a onclick="showSec('adm-ppob', SEC_TITLES)" class="bn-item"><span class="bn-icon">📡</span><span>PPOB</span></a>
-    <a onclick="showSec('adm-barang', SEC_TITLES)" class="bn-item"><span class="bn-icon">📦</span><span>Barang</span></a>
-    <a onclick="showSec('adm-pengguna', SEC_TITLES)" class="bn-item"><span class="bn-icon">👥</span><span>Pengguna</span></a>
-    <a onclick="showSec('adm-laporan', SEC_TITLES)" class="bn-item"><span class="bn-icon">📄</span><span>Laporan</span></a>
+    <a class="bn-item" data-sec="adm-home">
+      <span class="bn-icon">📊</span><span>Beranda</span>
+    </a>
+    <a class="bn-item" data-sec="adm-ppob">
+      <span class="bn-icon">📡</span><span>PPOB</span>
+    </a>
+    <a class="bn-item" data-sec="adm-barang">
+      <span class="bn-icon">📦</span><span>Barang</span>
+    </a>
+    <a class="bn-item" data-sec="adm-pengguna">
+      <span class="bn-icon">👥</span><span>Pengguna</span>
+    </a>
+    <a class="bn-item" data-sec="adm-laporan">
+      <span class="bn-icon">📄</span><span>Laporan</span>
+    </a>
   </nav>
 
-</div>
+</div><!-- /.dash-page -->
 
+<!-- Toast Notification -->
 <div id="toast" class="toast"></div>
 
 <script src="../js/shared.js"></script>
