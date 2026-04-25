@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=DM+Serif+Display:ital@0;1&display=swap');
 
 /* ============================================
-   KOPKAR MES — STYLE.CSS  v3.0
-   Theme: Modern Green Fintech · Mobile-First
+   KOPKAR MES â€” STYLE.CSS  v3.0
+   Theme: Modern Green Fintech Â· Mobile-First
    Design: Soft Cards, Bottom Nav, Premium UX
    ============================================ */
 
@@ -54,11 +54,11 @@
   /* Bottom Nav */
   --bnav-h:   68px;
 
-  /* ── GLOBAL SPACING SYSTEM ──────────────────────
+  /* â”€â”€ GLOBAL SPACING SYSTEM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
      Satu-satunya sumber kebenaran untuk jarak tepi
      kiri/kanan di seluruh aplikasi.
-     Ubah satu nilai ini → semua section ikut berubah.
-  ─────────────────────────────────────────────── */
+     Ubah satu nilai ini â†’ semua section ikut berubah.
+  â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
   --page-x: 16px;   /* standar mobile UI: 16px (tetap di semua ukuran mobile) */
 
   /* Design Tokens */
@@ -79,9 +79,9 @@
   --shadow-green-sm: 0 4px 12px rgba(22,163,74,0.20);
 }
 
-/* ══════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    GLOBAL SPACING SYSTEM
-   ══════════════════════════════════════════════════════
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    Satu-satunya cara mengatur jarak tepi kiri/kanan:
 
      padding: 0 var(--page-x);
@@ -91,18 +91,18 @@
 
    Nilai otomatis per breakpoint (diatur di @media):
      Mobile  < 640px : 16px
-     Tablet  ≥ 640px : 24px
-     Desktop ≥ 900px : 28px
+     Tablet  â‰¥ 640px : 24px
+     Desktop â‰¥ 900px : 28px
 
    Elemen FULL-BLEED (tidak pakai --page-x):
-     ✓ .hero-unified, .hero-ppob, .simp-carousel-wrap
-     ✓ .bottom-nav, .topbar
-     ✓ Elemen yang memang harus mepet ke tepi layar
-══════════════════════════════════════════════════════ */
+     âœ“ .hero-unified, .hero-ppob, .simp-carousel-wrap
+     âœ“ .bottom-nav, .topbar
+     âœ“ Elemen yang memang harus mepet ke tepi layar
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-/* ══════════════════════════════════════════════════════════
-   SECTION CONTAINER — STANDARDISASI SPACING HORIZONTAL
-   ══════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   SECTION CONTAINER â€” STANDARDISASI SPACING HORIZONTAL
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
    Gunakan class .section-container ATAU target langsung ID
    section (#kar-home, #kar-simpanan, dll.) untuk memastikan
@@ -113,15 +113,15 @@
 
    Nilai otomatis (ikuti var(--page-x) yang sudah responsif):
      Mobile  < 640px : 16px
-     Tablet  ≥ 640px : 24px
-     Desktop ≥ 900px : 28px
+     Tablet  â‰¥ 640px : 24px
+     Desktop â‰¥ 900px : 28px
 
    Elemen FULL-BLEED di dalam section tetap bisa mepet tepi
    dengan menambahkan class .full-bleed (sudah didefinisikan
    di atas).
-══════════════════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-/* ── Class utama: bisa ditambahkan ke elemen apapun ───── */
+/* â”€â”€ Class utama: bisa ditambahkan ke elemen apapun â”€â”€â”€â”€â”€ */
 .section-container {
   padding-left:  var(--page-x);
   padding-right: var(--page-x);
@@ -129,7 +129,7 @@
   width: 100%;
 }
 
-/* ── Pastikan semua kartu di dalam section mengisi lebar penuh ── */
+/* â”€â”€ Pastikan semua kartu di dalam section mengisi lebar penuh â”€â”€ */
 .section-container *,
 #kar-home *,
 #kar-simpanan *,
@@ -142,11 +142,11 @@
   box-sizing: border-box;
 }
 
-/* ── Target langsung semua ID section karyawan ─────────
+/* â”€â”€ Target langsung semua ID section karyawan â”€â”€â”€â”€â”€â”€â”€â”€â”€
    Pastikan tidak ada override inline style yang merusak.
    Menggunakan !important HANYA untuk padding horizontal agar
    tidak bersaing dengan padding-top/bottom per section.
-────────────────────────────────────────────────────────── */
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 #kar-home,
 #kar-simpanan,
 #kar-pinjaman,
@@ -164,7 +164,7 @@
   box-sizing: border-box;
 }
 
-/* ── Kartu & widget dalam section: selalu full-width ──── */
+/* â”€â”€ Kartu & widget dalam section: selalu full-width â”€â”€â”€â”€ */
 #kar-home      .widget-card,
 #kar-home      .card-box,
 #kar-home      .card-section,
@@ -181,10 +181,10 @@
   box-sizing: border-box;
 }
 
-/* ── Elemen FULL-BLEED di dalam section: reset ke tepi ──
+/* â”€â”€ Elemen FULL-BLEED di dalam section: reset ke tepi â”€â”€
    Hero card, carousel, dan banner yang harus mepet tepi
    WAJIB memakai class .full-bleed agar tidak terpotong.
-────────────────────────────────────────────────────────── */
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 #kar-home     > .full-bleed,
 #kar-simpanan > .full-bleed,
 #kar-pinjaman > .full-bleed,
@@ -200,7 +200,7 @@
   width: calc(100% + 2 * var(--page-x));
 }
 
-/* ── Bottom nav & topbar: selalu full-width, tidak terpengaruh --page-x ── */
+/* â”€â”€ Bottom nav & topbar: selalu full-width, tidak terpengaruh --page-x â”€â”€ */
 .bottom-nav,
 .topbar {
   padding-left:  0 !important;
@@ -407,7 +407,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
    ============================================ */
 .dash-page { display: flex; min-height: 100vh; }
 
-/* SIDEBAR — Desktop Only */
+/* SIDEBAR â€” Desktop Only */
 .sidebar {
   width: var(--sb-w);
   background: var(--sb-bg);
@@ -561,7 +561,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 .tb-avatar { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, var(--primary), var(--green-400)); display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; font-size: 0.84rem; cursor: pointer; box-shadow: var(--shadow-green-sm); }
 
 /* CONTENT */
-/* CONTENT — wrapper utama semua halaman */
+/* CONTENT â€” wrapper utama semua halaman */
 .content {
   padding: 20px var(--page-x) 100px;
   flex: 1;
@@ -570,13 +570,13 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
   overflow-x: hidden;
 }
 
-/* ── GLOBAL CONTAINER SYSTEM ────────────────────────────────
-   .page-inner  → konten dalam section, ikut --page-x
-   .full-bleed  → elemen yang harus mepet penuh ke tepi layar
+/* â”€â”€ GLOBAL CONTAINER SYSTEM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   .page-inner  â†’ konten dalam section, ikut --page-x
+   .full-bleed  â†’ elemen yang harus mepet penuh ke tepi layar
                   (hero card, carousel, news banner)
-   .page-pad    → utility: tambah padding horizontal --page-x
+   .page-pad    â†’ utility: tambah padding horizontal --page-x
                   pada elemen yang berada di luar .content
-──────────────────────────────────────────────────────────── */
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .page-inner {
   padding-left:  var(--page-x);
   padding-right: var(--page-x);
@@ -607,7 +607,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 .sec-hd p { color: var(--muted); font-size: 0.82rem; }
 
 /* ============================================
-   BOTTOM NAV — Mobile Only
+   BOTTOM NAV â€” Mobile Only
    ============================================ */
 .bottom-nav {
   display: none;
@@ -620,7 +620,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
   box-shadow: 0 -8px 32px rgba(0,0,0,0.09), 0 -2px 8px rgba(0,0,0,0.04);
   padding: 0;
   align-items: center;
-  /* 5 item terbagi rata — setiap item flex:1 */
+  /* 5 item terbagi rata â€” setiap item flex:1 */
   justify-content: stretch;
   padding-bottom: max(8px, env(safe-area-inset-bottom));
 }
@@ -764,7 +764,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 .card-box h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
 
 /* ============================================
-   SALDO HERO CARD — REDESIGNED
+   SALDO HERO CARD â€” REDESIGNED
    ============================================ */
 .saldo-hero-card {
   background: linear-gradient(145deg, #0a3d1f 0%, #14532d 35%, #166534 65%, #1a7a42 100%);
@@ -814,7 +814,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
   border: 1px solid rgba(255,255,255,0.18);
   letter-spacing: 0.04em;
 }
-/* LARGE AMOUNT — Key Typographic Hierarchy */
+/* LARGE AMOUNT â€” Key Typographic Hierarchy */
 .shc-amount {
   font-family: 'DM Serif Display', serif;
   font-size: 2.4rem;
@@ -855,7 +855,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 .shc-item.highlight { background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.22); }
 
 /* ============================================
-   HOME QUICK GRID — REDESIGNED
+   HOME QUICK GRID â€” REDESIGNED
    ============================================ */
 .home-quick-grid {
   display: grid;
@@ -977,7 +977,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 .pcard { background: white; border: 1px solid rgba(0,0,0,0.05); border-radius: var(--radius-lg); padding: 18px; margin-bottom: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.03); transition: box-shadow 0.2s, transform 0.2s; }
 .pcard:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.08); transform: translateY(-1px); }
 
-/* ── Accordion header: ID + Tujuan di kiri, tombol toggle di kanan ── */
+/* â”€â”€ Accordion header: ID + Tujuan di kiri, tombol toggle di kanan â”€â”€ */
 .pcard-head { display: flex; align-items: flex-start; gap: 10px; }
 .pcard-id { font-size: 0.68rem; color: var(--muted); }
 .pcard-tujuan { font-weight: 700; font-size: 0.9rem; margin-top: 2px; }
@@ -999,7 +999,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 }
 .pcard-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
 
-/* ── Detail panel: collapsed by default ── */
+/* â”€â”€ Detail panel: collapsed by default â”€â”€ */
 .pcard-detail {
   overflow: hidden;
   max-height: 0;
@@ -1194,14 +1194,14 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 .dtable tr:last-child td { border-bottom: none; }
 .dtable tbody tr:hover td { background: var(--green-50); }
 
-/* ── RIWAYAT TRANSAKSI — Pertegas tipografi header tabel ──────
+/* â”€â”€ RIWAYAT TRANSAKSI â€” Pertegas tipografi header tabel â”€â”€â”€â”€â”€â”€
    Override khusus #kar-riwayat agar header kolom (#Tanggal,
    Keterangan, Nominal, Status) lebih tebal, tegas, dan mudah
    dibaca sesuai tema korporat aplikasi.
-──────────────────────────────────────────────────────────────── */
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 #kar-riwayat .dtable th {
   font-size: 0.72rem;          /* sedikit lebih besar dari 0.68rem global */
-  font-weight: 600;            /* medium-bold — lebih tegas dari sekadar 500 */
+  font-weight: 600;            /* medium-bold â€” lebih tegas dari sekadar 500 */
   color: var(--text-2);        /* abu-abu gelap (#374151), bukan muted (#6b7280) */
   letter-spacing: 0.04em;      /* sedikit lebih rapat agar lebih readable */
   background: #F1F5F9;         /* latar sedikit lebih gelap untuk kontras */
@@ -1216,7 +1216,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
   background: #F1F5F9;
 }
 
-/* Tab riwayat — label yang lebih tegas */
+/* Tab riwayat â€” label yang lebih tegas */
 #kar-riwayat .riwayat-tabs .rtab {
   font-weight: 600;
   color: var(--text-2);
@@ -1232,7 +1232,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
   color: var(--text);          /* hitam penuh, bukan muted */
 }
 
-/* Badge status di kolom Status — pastikan mudah terbaca */
+/* Badge status di kolom Status â€” pastikan mudah terbaca */
 #kar-riwayat .badge {
   font-size: 0.7rem;
   font-weight: 700;
@@ -1346,7 +1346,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
   .home-quick-grid { grid-template-columns: repeat(4,1fr); }
   .shc-amount { font-size: 2rem; }
 
-  /* FAB: posisi dihitung otomatis dari var(--bnav-h) — tidak perlu override manual */
+  /* FAB: posisi dihitung otomatis dari var(--bnav-h) â€” tidak perlu override manual */
   /* Cart FAB sudah menggunakan calc(var(--bnav-h) + 16px) di rule utama */
   .toast { bottom: calc(var(--bnav-h) + 12px); }
 
@@ -1408,7 +1408,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 }
 
 /* ============================================
-   NIK UNDER SALDO — explicit class
+   NIK UNDER SALDO â€” explicit class
    ============================================ */
 .shc-nik {
   font-size: 0.72rem;
@@ -1420,7 +1420,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 }
 
 /* ============================================
-   ADMPJ — admin pinjaman summary item
+   ADMPJ â€” admin pinjaman summary item
    ============================================ */
 .adm-pj-item {
   display: flex;
@@ -1435,7 +1435,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 }
 
 /* ============================================
-   TABLE — tbl (amortization)
+   TABLE â€” tbl (amortization)
    ============================================ */
 .tbl { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
 .tbl th { text-align: left; padding: 6px 10px; font-size: 0.68rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; background: var(--green-50); }
@@ -1444,7 +1444,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 
 
 /* ============================================
-   UTILITY CLASSES — menggantikan inline style
+   UTILITY CLASSES â€” menggantikan inline style
    ============================================ */
 
 /* Buttons with top margin */
@@ -1556,7 +1556,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 
 
 /* ============================================
-   SIMPANAN STAT CARDS — Beranda (ganti quick-btn)
+   SIMPANAN STAT CARDS â€” Beranda (ganti quick-btn)
    4 kotak putih yg menampilkan rincian simpanan
    ============================================ */
 .simp-stat-card {
@@ -1625,7 +1625,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 }
 
 /* ============================================
-   SALDO CARD ICON WRAP — Halaman Simpanan
+   SALDO CARD ICON WRAP â€” Halaman Simpanan
    Ganti emoji dengan line icon berwarna korporat
    ============================================ */
 .sc-icon-wrap {
@@ -1636,7 +1636,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 }
 .sc-svg { width: 20px; height: 20px; }
 
-/* Varian warna icon wrap — korporat & elegan */
+/* Varian warna icon wrap â€” korporat & elegan */
 .sc-icon-wrap--green {
   background: rgba(22,163,74,0.08);
   color: #15803d;
@@ -1747,7 +1747,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 }
 .profil-menu-item:active { transform: scale(0.99); }
 
-/* Install CTA — highlight khusus */
+/* Install CTA â€” highlight khusus */
 .profil-menu-item--install {
   background: linear-gradient(135deg, rgba(22,163,74,0.04), rgba(22,163,74,0.08));
   border-color: rgba(22,163,74,0.2);
@@ -1969,7 +1969,7 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 
 
 /* ============================================
-   TOPBAR KARYAWAN — Hamburger disembunyikan
+   TOPBAR KARYAWAN â€” Hamburger disembunyikan
    Biarkan elemen tetap di DOM untuk event listener
    ============================================ */
 .ham-btn--hidden {
@@ -2084,17 +2084,370 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
   .scc-amount { font-size: 0.82rem; }
 }
 
-/* ── Sembunyikan shc-nik (NIK sudah dihapus dari HTML,
-   ini sebagai fallback jika ada file lain yang masih menggunakannya) ── */
+/* â”€â”€ Sembunyikan shc-nik (NIK sudah dihapus dari HTML,
+   ini sebagai fallback jika ada file lain yang masih menggunakannya) â”€â”€ */
 .shc-nik { display: none !important; }
 
 
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   ADMIN PANEL â€” SPECIFIC STYLES
+   Semua rule berikut menggunakan .admin-page sebagai scope
+   agar tidak pernah bertabrakan dengan halaman karyawan.
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
+/* â”€â”€ Layout: .dash-page admin (sidebar + main-wrap) â”€â”€ */
+.admin-page .dash-page {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* â”€â”€ Sidebar: selalu visible di desktop, hidden di mobile â”€â”€ */
+.admin-page .sidebar {
+  width: var(--sb-w);
+  background: var(--sb-bg);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 200;
+  overflow-y: auto;
+  transition: transform 0.28s cubic-bezier(.22,1,.36,1);
+}
+
+/* â”€â”€ Main wrap admin: offset by sidebar width on desktop â”€â”€ */
+@media (min-width: 769px) {
+  .admin-page .main-wrap {
+    margin-left: var(--sb-w);
+  }
+}
+
+/* â”€â”€ Content area: max-width + auto margin untuk centering â”€â”€ */
+.admin-page .content {
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  padding: 24px var(--page-x) 48px;
+}
+
+@media (max-width: 768px) {
+  .admin-page .content {
+    padding: 16px var(--page-x) calc(82px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* â”€â”€ Admin section IDs: pastikan tidak ada double padding â”€â”€ */
+#adm-home,
+#adm-ppob,
+#adm-barang,
+#adm-pengguna,
+#adm-pinjaman,
+#adm-laporan,
+#adm-ppob-riwayat,
+#adm-ppob-produk,
+#adm-ppob-deposit {
+  padding-left:  0 !important;
+  padding-right: 0 !important;
+  box-sizing: border-box;
+}
+
+/* â”€â”€ sb-overlay (mobile sidebar backdrop) â”€â”€ */
+.admin-page .sb-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 190;
+  backdrop-filter: blur(3px);
+}
+.admin-page .sb-overlay.show { display: block; }
+
+/* â”€â”€ sb-close: visible di mobile â”€â”€ */
+.admin-page .sb-close { display: none; }
+@media (max-width: 768px) {
+  .admin-page .sb-close { display: flex; }
+  .admin-page .sidebar {
+    transform: translateX(-100%);
+    display: flex !important; /* override display:none dari rule mobile umum */
+  }
+  .admin-page .sidebar.open {
+    transform: translateX(0);
+  }
+}
+
+/* â”€â”€ Hamburger: hanya di mobile â”€â”€ */
+.admin-page .ham-btn { display: none; }
+@media (max-width: 768px) {
+  .admin-page .ham-btn { display: flex; }
+}
+
+/* â”€â”€ Modal admin: center alignment di semua ukuran â”€â”€ */
+.admin-page .modal-overlay {
+  align-items: center;
+}
+.admin-page .modal-box {
+  border-radius: var(--radius-xl);
+  animation: modalCenter 0.3s cubic-bezier(.22,1,.36,1);
+}
+@keyframes modalCenter {
+  from { transform: scale(0.94) translateY(12px); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+
+/* â”€â”€ PPOB Admin tabs â”€â”€ */
+.adm-ppob-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.adm-ppob-tab {
+  padding: 8px 18px;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  background: white;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.adm-ppob-tab.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  box-shadow: var(--shadow-green-sm);
+}
+.adm-ppob-tab:hover:not(.active) {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* â”€â”€ Deposit saldo card â”€â”€ */
+.deposit-card {
+  background: linear-gradient(135deg, #0f4c29 0%, #166534 60%, #16a34a 100%);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  color: white;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-green);
+}
+.deposit-card::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  pointer-events: none;
+}
+.deposit-card__label { font-size: 0.72rem; color: rgba(255,255,255,0.55); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+.deposit-card__amount { font-family: 'DM Serif Display', serif; font-size: 2.2rem; color: white; line-height: 1.1; margin-bottom: 4px; }
+.deposit-card__sub { font-size: 0.78rem; color: rgba(255,255,255,0.5); }
+
+/* â”€â”€ Simulasi PPOB form â”€â”€ */
+.ppob-sim-form {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-xs);
+}
+.ppob-sim-form h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 14px; }
+
+/* â”€â”€ PPOB produk margin table row â”€â”€ */
+.ppob-prod-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+  font-size: 0.83rem;
+}
+.ppob-prod-row:last-child { border-bottom: none; }
+.ppob-prod-name { font-weight: 600; color: var(--text); }
+.ppob-prod-margin { color: var(--primary); font-weight: 700; }
+
+/* â”€â”€ Activity feed â”€â”€ */
+.activity-feed { display: flex; flex-direction: column; gap: 0; }
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+  transition: background 0.15s;
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-item:hover { background: var(--green-50); }
+.activity-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+.activity-dot--warn   { background: var(--accent); }
+.activity-dot--blue   { background: var(--blue); }
+.activity-dot--danger { background: var(--danger); }
+.activity-text { flex: 1; font-size: 0.82rem; color: var(--text-2); line-height: 1.45; }
+.activity-text strong { color: var(--text); font-weight: 700; }
+.activity-time { font-size: 0.7rem; color: var(--light); flex-shrink: 0; white-space: nowrap; margin-top: 1px; }
+
+/* â”€â”€ Chart wrapper â€” responsif â”€â”€ */
+.chart-wrap {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-xs);
+  position: relative;
+}
+.chart-wrap h3 { font-size: 0.92rem; font-weight: 700; color: var(--text); margin-bottom: 14px; }
+.chart-wrap canvas { max-height: 240px; width: 100% !important; }
+
+/* â”€â”€ Laporan section â”€â”€ */
+.laporan-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+@media (max-width: 640px) {
+  .laporan-grid { grid-template-columns: 1fr; }
+}
+.laporan-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-xs);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.laporan-card h3 { font-size: 0.92rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.laporan-card p  { font-size: 0.8rem; color: var(--muted); }
+.btn-export {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  background: white;
+  border: 1.5px solid var(--primary);
+  color: var(--primary);
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  margin-top: auto;
+  width: fit-content;
+}
+.btn-export:hover { background: var(--green-50); }
+.btn-export svg { width: 14px; height: 14px; }
+
+/* â”€â”€ Form field row: label + input inline â”€â”€ */
+.field-grp { margin-bottom: 14px; }
+.field-grp label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-2); margin-bottom: 5px; }
+.field-grp input,
+.field-grp select,
+.field-grp textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.85rem;
+  color: var(--text);
+  background: white;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  -webkit-appearance: none;
+}
+.field-grp input:focus,
+.field-grp select:focus,
+.field-grp textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(22,163,74,0.12);
+}
+.field-grp textarea { resize: vertical; min-height: 80px; }
+
+/* â”€â”€ KPI grid admin: always 4 columns on desktop â”€â”€ */
+@media (min-width: 900px) {
+  .admin-page .kpi-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 640px) {
+  .admin-page .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* â”€â”€ Table wrap: full width tanpa overflow clip di desktop â”€â”€ */
+.admin-page .table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* â”€â”€ Badge alias yang sering dipakai di admin â”€â”€ */
+.badge-err  { background: #FEF2F2; color: var(--danger); }
+.badge-blue { background: var(--blue-lt); color: var(--blue); }
+.badge-teal { background: rgba(20,184,166,0.1); color: #0f766e; }
+
+/* â”€â”€ Tombol aksi kecil di tabel â”€â”€ */
+.btn-del {
+  padding: 5px 12px;
+  border-radius: 50px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  background: #FEF2F2;
+  color: var(--danger);
+  border: 1px solid #FECACA;
+  transition: all 0.15s;
+}
+.btn-del:hover { background: #FEE2E2; }
+
+/* â”€â”€ Reset Demo button â”€â”€ */
+.btn-reset-demo {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  border: 1.5px solid #FECACA;
+  border-radius: 50px;
+  background: white;
+  color: var(--danger);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.btn-reset-demo:hover { background: #FEF2F2; }
+
+/* â”€â”€ Toast posisi admin (tidak ada bottom-nav di desktop) â”€â”€ */
+@media (min-width: 769px) {
+  .admin-page .toast { bottom: 28px; }
+}
+
+
+
 /* ============================================
-   BOTTOM NAV MOBILE — ADMIN PANEL
-   Ditambahkan khusus untuk tampilan HP
+   BOTTOM NAV MOBILE â€” ADMIN PANEL
+   Ditambahkan khusus untuk tampilan HP admin.
+   Menggunakan class berbeda (.bottom-nav-mobile)
+   agar tidak bentrok dengan .bottom-nav karyawan.
    ============================================ */
 
 .bottom-nav-mobile {
+  /* Default: disembunyikan di semua ukuran */
   display: none;
   position: fixed;
   bottom: 0;
@@ -2102,14 +2455,16 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
   right: 0;
   background: #ffffff;
   border-top: 1px solid #e2e8f0;
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
   z-index: 9999;
-  padding: 8px 0 6px;
+  padding: 8px 0 max(6px, env(safe-area-inset-bottom, 6px));
   grid-template-columns: repeat(5, 1fr);
-  display: grid;
+  gap: 0;
 }
 
-.bn-item {
+/* Hanya override .bn-item di dalam .bottom-nav-mobile
+   agar tidak merusak .bn-item karyawan yang sudah benar */
+.bottom-nav-mobile .bn-item {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2118,31 +2473,46 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
   font-size: 10px;
   color: #64748b;
   text-decoration: none;
-  transition: all 0.2s ease;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  /* Reset properti dari .bn-item karyawan yang tidak sesuai admin */
+  flex: 1;
+  min-width: 0;
+  padding: 6px 4px;
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  border-radius: 0;
+  position: static;
+  margin: 0;
 }
 
-.bn-item .bn-icon {
-  font-size: 24px;
+.bottom-nav-mobile .bn-item .bn-icon {
+  font-size: 22px;
   line-height: 1;
 }
 
-.bn-item.active {
+.bottom-nav-mobile .bn-item.active {
   color: var(--primary);
 }
 
-.bn-item.active .bn-icon {
+.bottom-nav-mobile .bn-item.active .bn-icon {
   transform: scale(1.1);
 }
 
-/* Tampilkan hanya di HP */
+/* Tampilkan di HP, sembunyikan sidebar (hanya halaman admin â€”
+   gunakan class .admin-page di <body> agar tidak bentrok dengan karyawan) */
 @media (max-width: 768px) {
-  .sidebar {
+  /* Sidebar admin: sembunyikan di mobile (sidebar pakai .sidebar biasa) */
+  .admin-page .sidebar {
     display: none !important;
   }
-  .bottom-nav-mobile {
+  /* Bottom nav admin: tampilkan sebagai grid */
+  .admin-page .bottom-nav-mobile {
     display: grid !important;
   }
-  .main-wrap {
+  /* Konten admin: beri padding bawah agar tidak tertutup bottom nav */
+  .admin-page .main-wrap {
     padding-bottom: 78px;
   }
 }
