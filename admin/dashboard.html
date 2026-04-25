@@ -345,7 +345,7 @@
     /* Style dipindahkan ke style.css (Admin Mobile Fixes section) */
   </style>
 </head>
-<body class="admin-page">
+<body class="admin-page admin-theme">
 
 <div class="dash-page">
 
@@ -847,3 +847,589 @@
 <script src="admin.js"></script>
 </body>
 </html>
+
+<style id="admin-theme-exclusive">
+/* ════════════════════════════════════════════════════════════════
+   ADMIN THEME — EXCLUSIVE SCOPE
+   Semua selector diawali .admin-theme agar 100% terisolasi.
+
+   Palet Corporate High-End:
+     Deep Navy   #0f172a  — latar / header utama
+     Emerald     #10b981  — tombol aksi / status aktif
+     Gold        #fbbf24  — aksen nominal / highlight eksklusif
+   ════════════════════════════════════════════════════════════════ */
+
+/* ─── CSS VARIABLES (terikat ke .admin-theme) ─────────────────── */
+.admin-theme {
+  --adm-navy:       #0f172a;
+  --adm-navy-800:   #1e293b;
+  --adm-navy-700:   #334155;
+  --adm-navy-600:   #475569;
+  --adm-navy-200:   #e2e8f0;
+  --adm-navy-100:   #f1f5f9;
+  --adm-emerald:    #10b981;
+  --adm-emerald-dk: #059669;
+  --adm-emerald-lt: #d1fae5;
+  --adm-gold:       #fbbf24;
+  --adm-gold-dk:    #d97706;
+  --adm-gold-lt:    #fef3c7;
+  --adm-surface:    #ffffff;
+  --adm-border:     rgba(15, 23, 42, 0.08);
+  --adm-shadow-sm:  0 1px 4px rgba(15,23,42,0.07), 0 1px 2px rgba(15,23,42,0.04);
+  --adm-shadow:     0 4px 16px rgba(15,23,42,0.10), 0 1px 4px rgba(15,23,42,0.06);
+  --adm-shadow-md:  0 8px 24px rgba(15,23,42,0.13), 0 2px 8px rgba(15,23,42,0.07);
+  --adm-radius:     16px;
+  --adm-radius-sm:  10px;
+  --adm-radius-lg:  20px;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   1. TOPBAR — Deep Navy
+   ════════════════════════════════════════════════════════════════ */
+.admin-theme .topbar {
+  background:    var(--adm-navy);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  box-shadow:    0 2px 12px rgba(15,23,42,0.25);
+}
+
+/* Judul topbar — putih di atas Navy */
+.admin-theme .tb-title {
+  color:       #ffffff;
+  font-size:   0.96rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+/* Hamburger — ikon putih di Navy */
+.admin-theme .ham-btn {
+  color: rgba(255,255,255,0.75);
+}
+.admin-theme .ham-btn:hover {
+  background: rgba(255,255,255,0.08);
+  color:      #ffffff;
+}
+
+/* Avatar topbar — Emerald gradient */
+.admin-theme .tb-avatar {
+  background: linear-gradient(135deg, var(--adm-emerald-dk), var(--adm-emerald));
+  box-shadow: 0 2px 8px rgba(16,185,129,0.35);
+  color:      #ffffff;
+  font-weight: 800;
+}
+
+/* Notif dot — Gold */
+.admin-theme .notif-dot {
+  background: var(--adm-gold);
+  border-color: var(--adm-navy);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   2. SIDEBAR — Deep Navy (lebih dalam dari topbar)
+   ════════════════════════════════════════════════════════════════ */
+.admin-theme .sidebar {
+  background: var(--adm-navy);
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+/* Header sidebar */
+.admin-theme .sb-head {
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  padding: 20px 16px 16px;
+}
+.admin-theme .sb-name {
+  color:       #ffffff;
+  font-weight: 800;
+}
+.admin-theme .sb-sub {
+  color: var(--adm-emerald);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Tombol close sidebar */
+.admin-theme .sb-close {
+  background: rgba(255,255,255,0.07);
+  color:      rgba(255,255,255,0.65);
+  border-radius: 8px;
+}
+.admin-theme .sb-close:hover {
+  background: rgba(255,255,255,0.14);
+  color:      #ffffff;
+}
+
+/* User card di sidebar */
+.admin-theme .sb-user-card {
+  background: rgba(255,255,255,0.04);
+  border:     1px solid rgba(255,255,255,0.07);
+  margin: 12px 12px 6px;
+  border-radius: 12px;
+}
+.admin-theme .sb-avatar {
+  background: linear-gradient(135deg, var(--adm-emerald-dk), var(--adm-emerald));
+  box-shadow: 0 2px 8px rgba(16,185,129,0.3);
+}
+.admin-theme .sb-uname {
+  color:       #ffffff;
+  font-weight: 700;
+}
+.admin-theme .sb-urole.admin {
+  background: rgba(251,191,36,0.15);
+  color:      var(--adm-gold);
+  border: 1px solid rgba(251,191,36,0.25);
+}
+
+/* Nav links */
+.admin-theme .nav-link {
+  color:       rgba(255,255,255,0.5);
+  font-weight: 500;
+  border-radius: 10px;
+  margin: 2px 8px;
+  padding: 10px 12px;
+  transition: all 0.15s;
+}
+.admin-theme .nav-link:hover {
+  color:      rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.06);
+}
+.admin-theme .nav-link.active {
+  color:       #ffffff;
+  background:  rgba(16,185,129,0.16);
+  border-left: 3px solid var(--adm-emerald);
+  font-weight: 700;
+}
+
+/* Nav badge — Gold bukan merah biasa */
+.admin-theme .nav-badge {
+  background: var(--adm-gold);
+  color:      var(--adm-navy);
+  font-weight: 800;
+  box-shadow: 0 2px 6px rgba(251,191,36,0.4);
+}
+
+/* Grup label nav */
+.admin-theme .nav-grp-lbl {
+  color: rgba(255,255,255,0.2);
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+}
+
+/* Tombol logout */
+.admin-theme .sb-logout {
+  background: rgba(239,68,68,0.07);
+  border:     1px solid rgba(239,68,68,0.18);
+  color:      #f87171;
+  margin: 12px;
+  width: calc(100% - 24px);
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-weight: 600;
+  transition: all 0.15s;
+}
+.admin-theme .sb-logout:hover {
+  background: rgba(239,68,68,0.15);
+  color:      #fca5a5;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   3. HERO ADMIN — Deep Navy gradient ke Emerald
+   ════════════════════════════════════════════════════════════════ */
+.admin-theme .admin-hero {
+  background: linear-gradient(135deg, var(--adm-navy) 0%, #1a3a5c 55%, #0f4c37 100%);
+  box-shadow: 0 8px 32px rgba(15,23,42,0.35);
+}
+
+/* Badge "Admin Aktif" — Emerald */
+.admin-theme .ah-badge {
+  background:  rgba(16,185,129,0.15);
+  color:       var(--adm-emerald);
+  border:      1px solid rgba(16,185,129,0.35);
+  font-weight: 700;
+}
+
+.admin-theme .ah-name  { color: #ffffff; font-weight: 800; }
+.admin-theme .ah-greet { color: rgba(255,255,255,0.6); }
+.admin-theme .ah-sub   { color: rgba(255,255,255,0.55); }
+
+/* ════════════════════════════════════════════════════════════════
+   4. KPI CARDS — Corporate High-End
+   ════════════════════════════════════════════════════════════════ */
+.admin-theme .kpi-card {
+  background:    var(--adm-surface);
+  border:        1px solid var(--adm-border);
+  border-radius: var(--adm-radius);
+  box-shadow:    var(--adm-shadow-sm);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.admin-theme .kpi-card:hover {
+  transform:  translateY(-2px);
+  box-shadow: var(--adm-shadow-md);
+  border-color: rgba(16,185,129,0.2);
+}
+
+/* Nilai KPI — Gold untuk angka nominal (sorotan eksklusif) */
+.admin-theme .kpi-val {
+  font-size:      1.35rem;
+  font-weight:    800;
+  color:          var(--adm-navy);
+  letter-spacing: -0.025em;
+  line-height:    1.2;
+  white-space:    nowrap;
+  overflow:       hidden;
+  text-overflow:  ellipsis;
+}
+
+/* Kelas khusus untuk nilai nominal uang — pakai Gold */
+.admin-theme .kpi-val--nominal {
+  color: var(--adm-gold-dk);
+}
+
+/* Label KPI */
+.admin-theme .kpi-lbl {
+  font-size:   11.5px;
+  font-weight: 600;
+  color:       var(--adm-navy-600);
+  letter-spacing: 0.01em;
+}
+
+/* Icon chips dalam KPI — override ke palet Admin */
+.admin-theme .kpi-ico.green  { background: var(--adm-emerald-lt); color: var(--adm-emerald-dk); }
+.admin-theme .kpi-ico.blue   { background: #dbeafe; color: #2563eb; }
+.admin-theme .kpi-ico.orange { background: var(--adm-gold-lt);    color: var(--adm-gold-dk); }
+.admin-theme .kpi-ico.purple { background: #ede9fe; color: #7c3aed; }
+.admin-theme .kpi-ico.red    { background: #fee2e2; color: #dc2626; }
+
+/* ════════════════════════════════════════════════════════════════
+   5. CARD BOX — Generic surface card
+   ════════════════════════════════════════════════════════════════ */
+.admin-theme .card-box {
+  background:    var(--adm-surface);
+  border:        1px solid var(--adm-border);
+  border-radius: var(--adm-radius);
+  box-shadow:    var(--adm-shadow-sm);
+}
+.admin-theme .card-box__title {
+  color:          var(--adm-navy-600);
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-size:      11px;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   6. TABEL — Gaya korporat bersih
+   ════════════════════════════════════════════════════════════════ */
+.admin-theme .table-wrap {
+  border:        1px solid var(--adm-border);
+  border-radius: var(--adm-radius);
+  box-shadow:    var(--adm-shadow-sm);
+  overflow:      hidden;
+}
+
+/* Header tabel — Navy gelap */
+.admin-theme .dtable th {
+  background:      var(--adm-navy);
+  color:           rgba(255,255,255,0.75);
+  font-size:       0.68rem;
+  font-weight:     700;
+  letter-spacing:  0.07em;
+  text-transform:  uppercase;
+  border-bottom:   none;
+  padding:         12px 14px;
+  white-space:     nowrap;
+}
+
+/* Baris data */
+.admin-theme .dtable td {
+  color:         var(--adm-navy-800);
+  border-bottom: 1px solid rgba(15,23,42,0.05);
+  padding:       11px 14px;
+  font-size:     0.83rem;
+}
+.admin-theme .dtable tr:last-child td {
+  border-bottom: none;
+}
+
+/* Hover row — Emerald sangat soft */
+.admin-theme .dtable tbody tr:hover td {
+  background: rgba(16,185,129,0.04);
+}
+
+/* Sel nilai nominal (Rp) — Gold */
+.admin-theme .dtable td.td-nominal {
+  color:       var(--adm-gold-dk);
+  font-weight: 700;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   7. TOMBOL AKSI — Emerald sebagai primary
+   ════════════════════════════════════════════════════════════════ */
+.admin-theme .btn-prim {
+  background:  linear-gradient(135deg, var(--adm-emerald-dk), var(--adm-emerald));
+  box-shadow:  0 3px 12px rgba(16,185,129,0.35);
+  border:      none;
+  color:       #ffffff;
+  font-weight: 700;
+}
+.admin-theme .btn-prim:hover {
+  background:  linear-gradient(135deg, #047857, var(--adm-emerald-dk));
+  box-shadow:  0 6px 18px rgba(16,185,129,0.45);
+  transform:   translateY(-1px);
+}
+
+/* Tombol sekunder */
+.admin-theme .btn-sec {
+  border:     1.5px solid var(--adm-navy-200);
+  color:      var(--adm-navy-700);
+  background: #ffffff;
+}
+.admin-theme .btn-sec:hover {
+  border-color: var(--adm-navy-600);
+  background:   var(--adm-navy-100);
+}
+
+/* Tombol export */
+.admin-theme .btn-export {
+  border-color: var(--adm-emerald);
+  color:        var(--adm-emerald-dk);
+}
+.admin-theme .btn-export:hover {
+  background: var(--adm-emerald-lt);
+}
+
+/* Tombol hapus */
+.admin-theme .btn-del {
+  background:   rgba(239,68,68,0.07);
+  color:        #dc2626;
+  border-color: rgba(239,68,68,0.2);
+}
+
+/* Tombol approval OK — Emerald */
+.admin-theme .btn-appr-ok {
+  background: linear-gradient(135deg, var(--adm-emerald-dk), var(--adm-emerald));
+  box-shadow: 0 2px 8px rgba(16,185,129,0.3);
+}
+.admin-theme .btn-appr-ok:hover {
+  background: linear-gradient(135deg, #047857, var(--adm-emerald-dk));
+}
+
+/* ════════════════════════════════════════════════════════════════
+   8. STATUS BADGES
+   ════════════════════════════════════════════════════════════════ */
+.admin-theme .badge-ok {
+  background: var(--adm-emerald-lt);
+  color:      var(--adm-emerald-dk);
+  font-weight: 700;
+}
+.admin-theme .badge-warn,
+.admin-theme .badge-pending {
+  background: var(--adm-gold-lt);
+  color:      var(--adm-gold-dk);
+  font-weight: 700;
+}
+.admin-theme .badge-danger {
+  background: #fee2e2;
+  color:      #dc2626;
+  font-weight: 700;
+}
+.admin-theme .badge-info {
+  background: #dbeafe;
+  color:      #1d4ed8;
+  font-weight: 700;
+}
+.admin-theme .badge-done,
+.admin-theme .badge-muted {
+  background: var(--adm-navy-100);
+  color:      var(--adm-navy-600);
+  font-weight: 600;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   9. SECTION HEADER
+   ════════════════════════════════════════════════════════════════ */
+.admin-theme .sec-hd h2 {
+  color:       var(--adm-navy);
+  font-weight: 800;
+}
+.admin-theme .sec-hd p {
+  color: var(--adm-navy-600);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   10. BOTTOM NAV MOBILE — Navy bar, Emerald active
+   ════════════════════════════════════════════════════════════════ */
+.admin-theme .bottom-nav-mobile {
+  background:  var(--adm-navy);
+  border-top:  1px solid rgba(255,255,255,0.07);
+  box-shadow:  0 -4px 16px rgba(15,23,42,0.3);
+}
+.admin-theme .bottom-nav-mobile .bn-item {
+  color: rgba(255,255,255,0.4);
+  font-size: 10px;
+  font-weight: 600;
+  transition: color 0.15s;
+}
+.admin-theme .bottom-nav-mobile .bn-item svg {
+  stroke: rgba(255,255,255,0.4);
+  transition: stroke 0.15s;
+}
+.admin-theme .bottom-nav-mobile .bn-item.active {
+  color: var(--adm-emerald);
+}
+.admin-theme .bottom-nav-mobile .bn-item.active svg {
+  stroke: var(--adm-emerald);
+}
+/* Pill indicator atas item aktif — Emerald */
+.admin-theme .bottom-nav-mobile .bn-item.active::before {
+  content:       '';
+  position:      absolute;
+  top:           0;
+  left:          50%;
+  transform:     translateX(-50%);
+  width:         28px;
+  height:        3px;
+  background:    var(--adm-emerald);
+  border-radius: 0 0 6px 6px;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   11. ACTIVITY FEED — dot warna sesuai palet Admin
+   ════════════════════════════════════════════════════════════════ */
+.admin-theme .activity-dot           { background: var(--adm-navy-200); }
+.admin-theme .activity-dot--warn     { background: var(--adm-gold); }
+.admin-theme .activity-dot--blue     { background: #3b82f6; }
+.admin-theme .activity-dot--green,
+.admin-theme .activity-dot--danger   { }
+.admin-theme .activity-dot--green    { background: var(--adm-emerald); }
+.admin-theme .activity-dot--danger   { background: #ef4444; }
+.admin-theme .activity-text          { color: var(--adm-navy-800); }
+.admin-theme .activity-text strong   { color: var(--adm-navy); font-weight: 700; }
+.admin-theme .activity-time          { color: var(--adm-navy-600); }
+
+/* ════════════════════════════════════════════════════════════════
+   12. FORM FIELDS — dalam konteks Admin
+   ════════════════════════════════════════════════════════════════ */
+.admin-theme .field-box {
+  border-color: var(--adm-navy-200);
+  background:   #f8fafc;
+}
+.admin-theme .field-box:focus-within {
+  border-color: var(--adm-emerald);
+  box-shadow:   0 0 0 3px rgba(16,185,129,0.12);
+  background:   #ffffff;
+}
+.admin-theme .field-grp input:focus,
+.admin-theme .field-grp select:focus,
+.admin-theme .field-grp textarea:focus {
+  border-color: var(--adm-emerald);
+  box-shadow:   0 0 0 3px rgba(16,185,129,0.12);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   13. MODAL — Admin style
+   ════════════════════════════════════════════════════════════════ */
+.admin-theme .modal-hd h3 {
+  color:       var(--adm-navy);
+  font-weight: 800;
+}
+.admin-theme .modal-x {
+  background: var(--adm-navy-100);
+  color:      var(--adm-navy-700);
+}
+.admin-theme .modal-x:hover {
+  background: var(--adm-navy-200);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   14. TOAST — Admin flavor
+   ════════════════════════════════════════════════════════════════ */
+.admin-theme .toast         { background: var(--adm-navy); }
+.admin-theme .toast.toast-ok  { background: var(--adm-emerald-dk); }
+.admin-theme .toast.toast-err { background: #dc2626; }
+.admin-theme .toast.toast-info {
+  background: linear-gradient(135deg, var(--adm-navy), #1e40af);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   15. OVERLAY SIDEBAR MOBILE
+   ════════════════════════════════════════════════════════════════ */
+.admin-theme .sb-overlay {
+  background: rgba(15,23,42,0.65);
+  backdrop-filter: blur(4px);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   16. PPOB NAV LIST
+   ════════════════════════════════════════════════════════════════ */
+.admin-theme .ppob-nav-item:hover,
+.admin-theme .ppob-nav-item:active {
+  background: rgba(16,185,129,0.05);
+}
+.admin-theme .ppob-nav-label {
+  color: var(--adm-navy-600);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   17. CHART & LAPORAN CARD
+   ════════════════════════════════════════════════════════════════ */
+.admin-theme .laporan-card {
+  background:    var(--adm-surface);
+  border:        1px solid var(--adm-border);
+  border-radius: var(--adm-radius);
+  box-shadow:    var(--adm-shadow-sm);
+}
+.admin-theme .laporan-card h3 {
+  color:       var(--adm-navy);
+  font-weight: 700;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   18. DEPOSIT CARD — Gold aksen eksklusif
+   ════════════════════════════════════════════════════════════════ */
+.admin-theme .deposit-card {
+  background: linear-gradient(135deg, var(--adm-navy) 0%, #1a3a5c 60%, #0f4c37 100%);
+  box-shadow: 0 8px 28px rgba(15,23,42,0.35);
+}
+.admin-theme .deposit-card__label  { color: rgba(255,255,255,0.55); }
+.admin-theme .deposit-card__amount {
+  color: var(--adm-gold);
+  font-weight: 800;
+}
+.admin-theme .deposit-card__sub { color: rgba(255,255,255,0.45); }
+
+/* ════════════════════════════════════════════════════════════════
+   19. QUICK BTN (home overview)
+   ════════════════════════════════════════════════════════════════ */
+.admin-theme .quick-btn {
+  border-color: var(--adm-navy-200);
+  color:        var(--adm-navy-700);
+  background:   var(--adm-surface);
+}
+.admin-theme .quick-btn:hover {
+  border-color: var(--adm-emerald);
+  background:   var(--adm-emerald-lt);
+  color:        var(--adm-emerald-dk);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   20. APPROVAL CARD
+   ════════════════════════════════════════════════════════════════ */
+.admin-theme .appr-card {
+  border:     1px solid var(--adm-border);
+  box-shadow: var(--adm-shadow-sm);
+}
+.admin-theme .appr-body {
+  background:    var(--adm-navy-100);
+  border-radius: var(--adm-radius-sm);
+}
+.admin-theme .appr-row { color: var(--adm-navy-700); }
+.admin-theme .appr-row strong { color: var(--adm-navy); }
+
+/* Nominal di approval card — Gold */
+.admin-theme .appr-row.appr-nominal strong { color: var(--adm-gold-dk); }
+
+/* ════════════════════════════════════════════════════════════════
+   END: ADMIN THEME
+   ════════════════════════════════════════════════════════════════ */
+</style>
