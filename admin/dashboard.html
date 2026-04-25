@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="../css/ppob-style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
-<body>
+<body class="admin-page">
 
 <div class="dash-page">
 
@@ -31,7 +31,7 @@
       <div class="sb-avatar" id="sbAvatar">—</div>
       <div>
         <div class="sb-uname" id="sbUname">—</div>
-        <span class="sb-urole" id="sbUrole">Administrator</span>
+        <span class="sb-urole admin" id="sbUrole">Administrator</span>
       </div>
     </div>
     <nav class="sb-nav">
@@ -44,6 +44,9 @@
     </nav>
     <button id="logoutBtn" class="sb-logout">Keluar</button>
   </aside>
+
+  <!-- Sidebar overlay untuk mobile -->
+  <div id="sbOverlay" class="sb-overlay"></div>
 
   <!-- MAIN CONTENT -->
   <div class="main-wrap">
