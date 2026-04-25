@@ -185,14 +185,21 @@ function _namaByNik(nik) {
 // ============================================================
 //  KELOLA BARANG
 // ============================================================
-function renderBarang(list) {
+function renderBarang(list, query = '') {
   const tbody = $('tbodyBarang');
   if (!tbody) return;
-  if (!list.length) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">Tidak ada produk.</td></tr>';
+
+  // Filter berdasarkan query (nama barang), case-insensitive
+  const keyword = query.trim().toLowerCase();
+  const filtered = keyword
+    ? list.filter(p => (p.nama || '').toLowerCase().includes(keyword))
+    : list;
+
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">${keyword ? 'Tidak ada barang yang cocok dengan pencarian.' : 'Tidak ada produk.'}</td></tr>`;
     return;
   }
-  tbody.innerHTML = list.map((p, i) => `
+  tbody.innerHTML = filtered.map((p, i) => `
     <tr>
       <td>${i + 1}</td>
       <td><strong>${p.nama}</strong></td>
@@ -299,14 +306,24 @@ function hapusBarang(id) {
 // ============================================================
 //  KELOLA PENGGUNA
 // ============================================================
-function renderUsers() {
+function renderUsers(query = '') {
   const tbody = $('tbUsers');
   if (!tbody) return;
-  if (!USERS_DATA.length) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted)">Tidak ada data pengguna.</td></tr>';
+
+  // Filter berdasarkan query (nama atau NIK), case-insensitive
+  const keyword = query.trim().toLowerCase();
+  const filtered = keyword
+    ? USERS_DATA.filter(u =>
+        (u.nama || '').toLowerCase().includes(keyword) ||
+        (u.nik  || '').toLowerCase().includes(keyword)
+      )
+    : USERS_DATA;
+
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted)">${keyword ? 'Tidak ada pengguna yang cocok dengan pencarian.' : 'Tidak ada data pengguna.'}</td></tr>`;
     return;
   }
-  tbody.innerHTML = USERS_DATA.map((u, i) => `
+  tbody.innerHTML = filtered.map((u, i) => `
     <tr>
       <td>${i + 1}</td>
       <td><code style="font-size:.75rem;background:var(--bg);padding:2px 6px;border-radius:6px">${u.nik}</code></td>
