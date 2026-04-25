@@ -185,28 +185,21 @@ function _namaByNik(nik) {
 // ============================================================
 //  KELOLA BARANG
 // ============================================================
-function renderBarang(list, query = '') {
+function renderBarang(list) {
   const tbody = $('tbodyBarang');
   if (!tbody) return;
-
-  // Filter berdasarkan query (nama barang), case-insensitive
-  const keyword = query.trim().toLowerCase();
-  const filtered = keyword
-    ? list.filter(p => (p.nama || '').toLowerCase().includes(keyword))
-    : list;
-
-  if (!filtered.length) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">${keyword ? 'Tidak ada barang yang cocok dengan pencarian.' : 'Tidak ada produk.'}</td></tr>`;
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--muted)">Tidak ada produk.</td></tr>';
     return;
   }
-  tbody.innerHTML = filtered.map((p, i) => `
+  tbody.innerHTML = list.map((p, i) => `
     <tr>
       <td>${i + 1}</td>
       <td><strong>${p.nama}</strong></td>
       <td><span class="badge badge-info">${p.kategori || '-'}</span></td>
       <td>${rp(p.harga)}</td>
       <td>${p.stok ?? p.stock ?? '-'}</td>
-      <td class="td-aksi">
+      <td style="display:flex;gap:6px">
         <button class="btn-s btn-edit" onclick="editBarang(${p.id})">${ICO.edit} Edit</button>
         <button class="btn-s btn-del"  onclick="hapusBarang(${p.id})">${ICO.trash} Hapus</button>
       </td>
@@ -306,24 +299,14 @@ function hapusBarang(id) {
 // ============================================================
 //  KELOLA PENGGUNA
 // ============================================================
-function renderUsers(query = '') {
+function renderUsers() {
   const tbody = $('tbUsers');
   if (!tbody) return;
-
-  // Filter berdasarkan query (nama atau NIK), case-insensitive
-  const keyword = query.trim().toLowerCase();
-  const filtered = keyword
-    ? USERS_DATA.filter(u =>
-        (u.nama || '').toLowerCase().includes(keyword) ||
-        (u.nik  || '').toLowerCase().includes(keyword)
-      )
-    : USERS_DATA;
-
-  if (!filtered.length) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted)">${keyword ? 'Tidak ada pengguna yang cocok dengan pencarian.' : 'Tidak ada data pengguna.'}</td></tr>`;
+  if (!USERS_DATA.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted)">Tidak ada data pengguna.</td></tr>';
     return;
   }
-  tbody.innerHTML = filtered.map((u, i) => `
+  tbody.innerHTML = USERS_DATA.map((u, i) => `
     <tr>
       <td>${i + 1}</td>
       <td><code style="font-size:.75rem;background:var(--bg);padding:2px 6px;border-radius:6px">${u.nik}</code></td>
@@ -493,7 +476,7 @@ function renderPPOBOverview() {
   const totalVolume = PPOB_TRX.reduce((s, t) => s + (t.nominal || t.amount || 50000), 0) || 24_000_000;
 
   cont.innerHTML = `
-    <div class="kpi-grid" style="margin-bottom:20px">
+    <div class="kpi-grid" style="padding-top:16px">
       <div class="kpi-card">
         <div class="kpi-ico green">${ICO.chart}</div>
         <div class="kpi-val">${totalTrx}</div>
@@ -516,24 +499,32 @@ function renderPPOBOverview() {
       </div>
     </div>
 
-    <div class="card-section">
-      <div class="cs-head">
-        <h3>Navigasi PPOB</h3>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
-        <button class="quick-btn" onclick="_showSec('adm-ppob-riwayat')">
-          <div class="qb-ico">${ICO.file}</div>
-          Riwayat
-        </button>
-        <button class="quick-btn" onclick="_showSec('adm-ppob-produk')">
-          <div class="qb-ico">${ICO.box}</div>
-          Produk
-        </button>
-        <button class="quick-btn" onclick="_showSec('adm-ppob-deposit')">
-          <div class="qb-ico">${ICO.money}</div>
-          Deposit
-        </button>
-      </div>
+    <p class="ppob-nav-label">Menu PPOB</p>
+    <div class="ppob-nav-list">
+      <button class="ppob-nav-item" onclick="_showSec('adm-ppob-riwayat')">
+        <span class="pni-ico" style="background:#dcfce7;color:#15803d">${ICO.file}</span>
+        <span class="pni-label">
+          Riwayat Transaksi
+          <span class="pni-sub">Lihat semua transaksi anggota</span>
+        </span>
+        <span class="pni-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></span>
+      </button>
+      <button class="ppob-nav-item" onclick="_showSec('adm-ppob-produk')">
+        <span class="pni-ico" style="background:#dbeafe;color:#2563eb">${ICO.box}</span>
+        <span class="pni-label">
+          Produk &amp; Margin
+          <span class="pni-sub">Kelola daftar layanan &amp; margin</span>
+        </span>
+        <span class="pni-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></span>
+      </button>
+      <button class="ppob-nav-item" onclick="_showSec('adm-ppob-deposit')">
+        <span class="pni-ico" style="background:#fef3c7;color:#d97706">${ICO.money}</span>
+        <span class="pni-label">
+          Manajemen Deposit
+          <span class="pni-sub">Saldo deposit: ${rp(DEPOSIT_SALDO)}</span>
+        </span>
+        <span class="pni-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></span>
+      </button>
     </div>
   `;
 }
