@@ -213,6 +213,71 @@
 
     /* Section padding */
     .sec { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px); }
+
+    /* ── FIX: Padding horizontal pada konten dalam section ──────
+       Section admin di-strip padding-left/right (!important),
+       sehingga .sec-hd, .table-wrap, dan elemen lain perlu
+       diberi padding/margin kembali secara eksplisit.         */
+    #adm-barang   .sec-hd,
+    #adm-pengguna .sec-hd,
+    #adm-ppob     .sec-hd,
+    #adm-ppob-riwayat .sec-hd,
+    #adm-ppob-produk  .sec-hd,
+    #adm-ppob-deposit .sec-hd,
+    #adm-pinjaman .sec-hd,
+    #adm-laporan  .sec-hd {
+      padding-left:  var(--page-x, 16px);
+      padding-right: var(--page-x, 16px);
+    }
+
+    /* Table wrap — beri margin agar tidak nempel tepi layar */
+    #adm-barang       .table-wrap,
+    #adm-pengguna     .table-wrap,
+    #adm-ppob-riwayat .table-wrap,
+    #adm-ppob-produk  .table-wrap {
+      margin-left:  var(--page-x, 16px);
+      margin-right: var(--page-x, 16px);
+    }
+
+    /* Container yang di-render JS: ppob, deposit, approval, laporan */
+    #ppobOverviewCont,
+    #depositCont,
+    #approvalCont,
+    #laporanCont {
+      padding-left:  var(--page-x, 16px);
+      padding-right: var(--page-x, 16px);
+    }
+
+    /* kpi-grid di dalam ppobOverviewCont: hapus padding ganda */
+    #ppobOverviewCont .kpi-grid {
+      padding-left:  0;
+      padding-right: 0;
+    }
+
+    /* Search bar wrapper yang sudah ditambahkan sebelumnya */
+    #adm-barang   > div[style*="padding"],
+    #adm-pengguna > div[style*="padding"] {
+      padding-left:  var(--page-x, 16px) !important;
+      padding-right: var(--page-x, 16px) !important;
+    }
+
+    /* ── FIX: Nilai KPI — cegah "Rp" terpisah dari angka ──────
+       Gunakan nowrap + font lebih kecil agar muat di 2-col grid */
+    .kpi-val {
+      font-size: 1.05rem !important;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* KPI grid di dalam ppobOverviewCont & laporanCont juga ikut */
+    #ppobOverviewCont .kpi-val,
+    #laporanCont      .kpi-val {
+      font-size: 1.05rem !important;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   </style>
 </head>
 <body class="admin-page">
