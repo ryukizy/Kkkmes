@@ -2087,3 +2087,69 @@ body { background: var(--bg); min-height: 100vh; overflow-x: hidden; }
 /* ── Sembunyikan shc-nik (NIK sudah dihapus dari HTML,
    ini sebagai fallback jika ada file lain yang masih menggunakannya) ── */
 .shc-nik { display: none !important; }
+
+
+/* ============================================
+   BOTTOM NAV MOBILE — ADMIN PANEL
+   Ditambahkan khusus untuk tampilan HP
+   ============================================ */
+
+.bottom-nav-mobile {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  padding: 8px 0 6px;
+  grid-template-columns: repeat(5, 1fr);
+  display: grid;
+}
+
+.bn-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 10px;
+  color: #64748b;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.bn-item .bn-icon {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.bn-item.active {
+  color: var(--primary);
+}
+
+.bn-item.active .bn-icon {
+  transform: scale(1.1);
+}
+
+/* Tampilkan hanya di HP */
+@media (max-width: 768px) {
+  .sidebar {
+    display: none !important;
+  }
+  .bottom-nav-mobile {
+    display: grid !important;
+  }
+  .main-wrap {
+    padding-bottom: 78px;
+  }
+}
+
+/* Sembunyikan di desktop */
+@media (min-width: 769px) {
+  .bottom-nav-mobile {
+    display: none !important;
+  }
+}
