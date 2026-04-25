@@ -206,7 +206,7 @@ function renderBarang(list, query = '') {
       <td><span class="badge badge-info">${p.kategori || '-'}</span></td>
       <td>${rp(p.harga)}</td>
       <td>${p.stok ?? p.stock ?? '-'}</td>
-      <td style="display:flex;gap:6px">
+      <td class="td-aksi">
         <button class="btn-s btn-edit" onclick="editBarang(${p.id})">${ICO.edit} Edit</button>
         <button class="btn-s btn-del"  onclick="hapusBarang(${p.id})">${ICO.trash} Hapus</button>
       </td>
