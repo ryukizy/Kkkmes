@@ -20,8 +20,9 @@
 
   <!-- CSS -->
   <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/ppob-style.css" />
 
-  <!-- Chart.js (admin only) -->
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
@@ -29,7 +30,7 @@
 <div class="dash-page">
   <div id="sbOverlay" class="sb-overlay"></div>
 
-  <!-- ══ SIDEBAR ══ -->
+  <!-- SIDEBAR -->
   <aside id="sidebar" class="sidebar">
     <div class="sb-head">
       <div class="sb-logo brand-hex">
@@ -78,6 +79,22 @@
         Approval Pinjaman
         <span class="nav-badge" id="admPendingBadge">2</span>
       </a>
+
+      <!-- PPOB MENU -->
+      <div class="nav-grp-lbl" style="margin-top:24px">PPOB</div>
+      <a class="nav-link" data-sec="adm-ppob">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>PPOB Overview
+      </a>
+      <a class="nav-link" data-sec="adm-ppob-riwayat">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 8v4l3 3"/><path d="M3 12h18"/></svg>Riwayat Transaksi
+      </a>
+      <a class="nav-link" data-sec="adm-ppob-produk">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>Produk & Margin
+      </a>
+      <a class="nav-link" data-sec="adm-ppob-deposit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M2 12h20"/></svg>Manajemen Deposit
+      </a>
+
       <a class="nav-link" data-sec="adm-laporan">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Laporan
       </a>
@@ -89,9 +106,8 @@
     </button>
   </aside>
 
-  <!-- ══ MAIN WRAP ══ -->
+  <!-- MAIN WRAP -->
   <div class="main-wrap">
-
     <header class="topbar">
       <button id="hamBtn" class="ham-btn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -108,7 +124,7 @@
 
     <main class="content">
 
-      <!-- ═══ ADM HOME ═══ -->
+      <!-- ADM HOME (tetap sama) -->
       <section class="sec" id="adm-home">
         <div class="page-hero green-hero">
           <div class="ph-body">
@@ -150,7 +166,72 @@
         </div>
       </section>
 
-      <!-- ═══ ADM BARANG ═══ -->
+      <!-- PPOB OVERVIEW -->
+      <section class="sec" id="adm-ppob" style="display:none">
+        <div class="page-hero green-hero">
+          <div class="ph-body">
+            <div class="ph-greet">PPOB Dashboard</div>
+            <div class="ph-name">Status Real-time</div>
+            <div class="ph-sub">Layanan PPOB KopKar MES</div>
+          </div>
+          <div class="ph-illo">📡</div>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-ico kpi-ico--green">💰</div>
+            <div class="kpi-val" id="deposit-saldo">Rp 4.850.000</div>
+            <div class="kpi-lbl">Saldo Deposit Aggregator</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-ico kpi-ico--orange">📈</div>
+            <div class="kpi-val" id="trx-hari-ini">28</div>
+            <div class="kpi-lbl">Transaksi Hari Ini</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-ico kpi-ico--blue">💵</div>
+            <div class="kpi-val" id="keuntungan-hari">Rp 87.500</div>
+            <div class="kpi-lbl">Keuntungan Hari Ini</div>
+          </div>
+        </div>
+        <div class="card-box">
+          <h3 class="card-box__title">Grafik Transaksi PPOB 7 Hari Terakhir</h3>
+          <canvas id="chartPPOB" height="110"></canvas>
+        </div>
+      </section>
+
+      <!-- RIWAYAT TRANSAKSI PPOB -->
+      <section class="sec" id="adm-ppob-riwayat" style="display:none">
+        <div class="sec-hd"><div><h2>Riwayat Transaksi PPOB</h2><p>Semua transaksi anggota</p></div></div>
+        <div class="table-wrap">
+          <table class="dtable">
+            <thead><tr><th>Waktu</th><th>Anggota</th><th>Layanan</th><th>Nominal</th><th>Harga Jual</th><th>Status</th></tr></thead>
+            <tbody id="tbodyPPOBRiwayat"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PRODUK & MARGIN -->
+      <section class="sec" id="adm-ppob-produk" style="display:none">
+        <div class="sec-hd"><div><h2>Produk & Margin PPOB</h2><p>Atur harga jual dan margin koperasi</p></div></div>
+        <div class="table-wrap">
+          <table class="dtable">
+            <thead><tr><th>Produk</th><th>Harga Modal</th><th>Harga Jual</th><th>Margin</th><th>Aksi</th></tr></thead>
+            <tbody id="tbodyPPOBProduk"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- MANAJEMEN DEPOSIT -->
+      <section class="sec" id="adm-ppob-deposit" style="display:none">
+        <div class="sec-hd"><div><h2>Manajemen Deposit</h2><p>Saldo & riwayat top-up aggregator</p></div></div>
+        <div class="ppob-card">
+          <h3>Saldo Deposit Saat Ini</h3>
+          <div id="deposit-total" style="font-size:2.4rem; font-weight:800; color:var(--primary); margin:20px 0;">Rp 4.850.000</div>
+          <button onclick="topupDepositDemo()" class="btn-prim" style="width:100%; padding:14px;">Top-up Deposit Baru</button>
+        </div>
+      </section>
+
+      <!-- SECTION LAMA (tetap sama) -->
       <section class="sec" id="adm-barang" style="display:none">
         <div class="sec-hd"><div><h2>Kelola Barang</h2><p>Manajemen inventori koperasi</p></div></div>
         <div class="table-wrap">
@@ -161,7 +242,6 @@
         </div>
       </section>
 
-      <!-- ═══ ADM PENGGUNA ═══ -->
       <section class="sec" id="adm-pengguna" style="display:none">
         <div class="sec-hd"><div><h2>Kelola Pengguna</h2><p>Daftar anggota dan administrator</p></div></div>
         <div class="table-wrap">
@@ -172,15 +252,13 @@
         </div>
       </section>
 
-      <!-- ═══ ADM APPROVAL ═══ -->
       <section class="sec" id="adm-pinjaman" style="display:none">
         <div class="sec-hd"><div><h2>Approval Pinjaman</h2><p>Pengajuan yang menunggu persetujuan</p></div></div>
         <div id="approvalList"></div>
       </section>
 
-      <!-- ═══ ADM LAPORAN ═══ -->
       <section class="sec" id="adm-laporan" style="display:none">
-        <div class="sec-hd"><div><h2>Laporan</h2><p>Ekspor data &amp; laporan koperasi</p></div></div>
+        <div class="sec-hd"><div><h2>Laporan</h2><p>Ekspor data & laporan koperasi</p></div></div>
         <div class="card-box">
           <h3 class="card-box__title">Ekspor Laporan</h3>
           <div class="export-actions">
@@ -194,10 +272,10 @@
       </section>
 
     </main>
-  </div><!-- /main-wrap -->
-</div><!-- /dash-page -->
+  </div>
+</div>
 
-<!-- ══ MODAL EDIT BARANG ══ -->
+<!-- MODAL EDIT BARANG (tetap sama) -->
 <div id="modalBarang" class="modal-overlay">
   <div class="modal-box">
     <div class="modal-hd">
@@ -241,7 +319,7 @@
 
 <div id="toast" class="toast"></div>
 
-<!-- ══ SCRIPTS — load order matters ══ -->
+<!-- SCRIPTS -->
 <script src="../js/shared.js"></script>
 <script src="admin.js"></script>
 </body>
