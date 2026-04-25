@@ -2783,3 +2783,183 @@
   padding-left:  var(--pad, 16px);
   padding-right: var(--pad, 16px);
 }
+
+/* ================================================================
+   DASHBOARD KARYAWAN — UI/UX FIXES
+   Fix 1: Vertical spacing hero → simpanan carousel
+   Fix 2: Anti double-padding, kartu full-width
+   Fix 3: Tipografi tabel & padding internal kartu
+   Fix 4: Sembunyikan judul redundan di mobile
+   ================================================================ */
+
+/* ──────────────────────────────────────────────────────────────
+   FIX 1 — Spasi bawah hero card & atas konten setelahnya
+   Hero punya border-radius bawah 28px; beri ruang napas 20px
+   agar carousel simpanan tidak langsung menempel.
+   ────────────────────────────────────────────────────────────── */
+.karyawan-theme .hero-unified {
+  margin-bottom: 20px !important;
+}
+
+/* Carousel simpanan: hilangkan padding-top bawaan yang dobel */
+.karyawan-theme .simp-carousel-wrap {
+  padding-top: 0;
+  margin-bottom: 20px;
+}
+
+/* Card-section: pastikan jarak atas konsisten */
+.karyawan-theme #kar-home .card-section {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   FIX 2 — Satu sumber padding horizontal; kartu full-width
+   .content sudah memberi padding: 0 var(--page-x).
+   Semua .card-box, .widget-card, .saldo-card, .pcard tidak boleh
+   punya margin-left/right sendiri — mereka melebar penuh.
+   ────────────────────────────────────────────────────────────── */
+
+/* Reset margin horizontal rogue pada elemen kartu karyawan */
+.karyawan-theme #kar-home .card-box,
+.karyawan-theme #kar-home .widget-card,
+.karyawan-theme #kar-simpanan .card-box,
+.karyawan-theme #kar-simpanan .saldo-card,
+.karyawan-theme #kar-pinjaman .card-box,
+.karyawan-theme #kar-pinjaman .pcard,
+.karyawan-theme #kar-riwayat  .card-box,
+.karyawan-theme #kar-profil   .card-box {
+  margin-left:  0 !important;
+  margin-right: 0 !important;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Kartu simpanan (grid 2 kolom): lebar otomatis dari grid parent */
+.karyawan-theme .saldo-cards {
+  width: 100%;
+  box-sizing: border-box;
+}
+.karyawan-theme .saldo-card {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   FIX 3 — Tipografi tabel & padding internal kartu
+   ────────────────────────────────────────────────────────────── */
+
+/* Tingkatkan line-height baris tabel mutasi agar tidak menumpuk */
+.karyawan-theme .dtable td {
+  line-height: 1.55;
+  padding: 13px 14px;
+}
+.karyawan-theme .dtable th {
+  padding: 12px 14px;
+  line-height: 1.4;
+}
+
+/* Padding internal kartu simpanan — nominal tidak membentur tepi */
+.karyawan-theme .saldo-card {
+  padding: 18px 16px;
+}
+
+/* Nominal di kartu simpanan: proporsional & tidak terpotong */
+.karyawan-theme .sc-amount {
+  font-size:      1rem;
+  font-weight:    800;
+  line-height:    1.3;
+  word-break:     break-word;
+  overflow-wrap:  break-word;
+}
+
+/* Widget card padding seragam */
+.karyawan-theme .widget-card {
+  padding: 18px 16px;
+}
+
+/* Card-box padding seragam (minimal 16px) */
+.karyawan-theme .card-box {
+  padding: 18px 16px;
+}
+
+/* card-box--mb: tambah margin bawah */
+.karyawan-theme .card-box--mb {
+  margin-bottom: 16px !important;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   FIX 4 — Hapus judul redundan di bawah topbar
+   .sec-hd pada #kar-simpanan, #kar-pinjaman, dll.
+   Di mobile topbar sudah disembunyikan dan hero card menjadi
+   identitas halaman. Untuk section lain, .sec-hd sudah cukup
+   sebagai heading — tidak perlu <h2> besar di atas konten.
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Perkecil sec-hd agar tidak terlalu dominan di layar kecil */
+  .karyawan-theme .sec-hd h2 {
+    font-size: 1.15rem;
+  }
+  .karyawan-theme .sec-hd p {
+    font-size: 0.78rem;
+  }
+  .karyawan-theme .sec-hd {
+    margin-bottom: 14px;
+    padding-top: 4px;
+  }
+
+  /* Konten section: padding atas cukup kecil, tidak dobel */
+  .karyawan-theme .sec:not(#kar-home) {
+    padding-top: 14px;
+  }
+
+  /* Pastikan content tidak punya padding-top dobel */
+  .karyawan-theme .content {
+    padding-top: 0 !important;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   BONUS — Saldo card sc-icon-wrap (ikon di kartu simpanan)
+   Pastikan ukuran ikon konsisten dan tidak pecah di layar kecil
+   ────────────────────────────────────────────────────────────── */
+.karyawan-theme .sc-icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.karyawan-theme .sc-icon-wrap svg,
+.karyawan-theme .sc-svg {
+  width: 20px;
+  height: 20px;
+}
+.karyawan-theme .sc-icon-wrap--green  { background: #dcfce7; color: #15803d; }
+.karyawan-theme .sc-icon-wrap--blue   { background: #dbeafe; color: #2563eb; }
+.karyawan-theme .sc-icon-wrap--teal   { background: #ccfbf1; color: #0d9488; }
+.karyawan-theme .sc-icon-wrap--amber  { background: #fef3c7; color: #d97706; }
+
+/* sc-info: teks tidak terpotong */
+.karyawan-theme .sc-info {
+  flex: 1;
+  min-width: 0;
+}
+.karyawan-theme .sc-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+  line-height: 1.3;
+}
+.karyawan-theme .sc-desc {
+  font-size: 0.68rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   END UI/UX FIXES
+   ────────────────────────────────────────────────────────────── */
