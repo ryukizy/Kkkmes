@@ -214,69 +214,148 @@
     /* Section padding */
     .sec { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 80px); }
 
-    /* ── FIX: Padding horizontal pada konten dalam section ──────
-       Section admin di-strip padding-left/right (!important),
-       sehingga .sec-hd, .table-wrap, dan elemen lain perlu
-       diberi padding/margin kembali secara eksplisit.         */
-    #adm-barang   .sec-hd,
-    #adm-pengguna .sec-hd,
-    #adm-ppob     .sec-hd,
-    #adm-ppob-riwayat .sec-hd,
-    #adm-ppob-produk  .sec-hd,
-    #adm-ppob-deposit .sec-hd,
-    #adm-pinjaman .sec-hd,
-    #adm-laporan  .sec-hd {
-      padding-left:  var(--page-x, 16px);
-      padding-right: var(--page-x, 16px);
+    /* ═══════════════════════════════════════════════════════════
+       MOBILE FIX — Layout, Tabel, dan KPI
+       ═══════════════════════════════════════════════════════════
+
+       Root cause:
+       1. style.css strip padding section (padding: 0 !important)
+          → semua child element nempel ke tepi, tidak ada jarak.
+       2. .dtable punya min-width: 500px → tabel overflow scroll
+          dan kolom kiri terpotong di layar mobile ~390px.
+       3. .kpi-val tidak ada white-space → "Rp" wrap ke baris baru.
+    ═══════════════════════════════════════════════════════════ */
+
+    /* ── 1. Kembalikan padding horizontal ke semua section ─── */
+    .admin-page .sec {
+      padding-left:  16px;
+      padding-right: 16px;
     }
 
-    /* Table wrap — beri margin agar tidak nempel tepi layar */
-    #adm-barang       .table-wrap,
-    #adm-pengguna     .table-wrap,
-    #adm-ppob-riwayat .table-wrap,
-    #adm-ppob-produk  .table-wrap {
-      margin-left:  var(--page-x, 16px);
-      margin-right: var(--page-x, 16px);
-    }
-
-    /* Container yang di-render JS: ppob, deposit, approval, laporan */
-    #ppobOverviewCont,
-    #depositCont,
-    #approvalCont,
-    #laporanCont {
-      padding-left:  var(--page-x, 16px);
-      padding-right: var(--page-x, 16px);
-    }
-
-    /* kpi-grid di dalam ppobOverviewCont: hapus padding ganda */
-    #ppobOverviewCont .kpi-grid {
+    /* Pastikan .sec-hd ikut dapat padding (sudah di-inherit,
+       tapi overide explicit untuk keamanan) */
+    .admin-page .sec .sec-hd {
       padding-left:  0;
       padding-right: 0;
     }
 
-    /* Search bar wrapper yang sudah ditambahkan sebelumnya */
-    #adm-barang   > div[style*="padding"],
-    #adm-pengguna > div[style*="padding"] {
-      padding-left:  var(--page-x, 16px) !important;
-      padding-right: var(--page-x, 16px) !important;
+    /* ── 2. Tabel Barang & Pengguna — mobile responsive ────── */
+
+    /* Hapus min-width dan overflow scroll pada mobile */
+    @media (max-width: 640px) {
+      #adm-barang   .table-wrap,
+      #adm-pengguna .table-wrap {
+        overflow-x: visible;
+        border-radius: 14px;
+      }
+
+      /* Reset min-width agar tabel mengikuti lebar container */
+      #adm-barang   .dtable,
+      #adm-pengguna .dtable {
+        min-width: unset;
+        width: 100%;
+        table-layout: fixed;
+      }
+
+      /* Sembunyikan kolom # (nomor urut) di mobile — hemat ruang */
+      #adm-barang   .dtable th:first-child,
+      #adm-barang   .dtable td:first-child,
+      #adm-pengguna .dtable th:first-child,
+      #adm-pengguna .dtable td:first-child {
+        display: none;
+      }
+
+      /* Atur lebar kolom tabel Barang: Nama | Kategori | Harga | Stok | Aksi */
+      #adm-barang .dtable th:nth-child(2),
+      #adm-barang .dtable td:nth-child(2) { width: 28%; }   /* Nama */
+      #adm-barang .dtable th:nth-child(3),
+      #adm-barang .dtable td:nth-child(3) { width: 18%; }   /* Kategori */
+      #adm-barang .dtable th:nth-child(4),
+      #adm-barang .dtable td:nth-child(4) { width: 22%; }   /* Harga */
+      #adm-barang .dtable th:nth-child(5),
+      #adm-barang .dtable td:nth-child(5) { width: 12%; }   /* Stok */
+      #adm-barang .dtable th:nth-child(6),
+      #adm-barang .dtable td:nth-child(6) { width: 20%; }   /* Aksi */
+
+      /* Atur lebar kolom tabel Pengguna: NIK | Nama | Dept | Role | Status | Aksi */
+      #adm-pengguna .dtable th:nth-child(2),
+      #adm-pengguna .dtable td:nth-child(2) { width: 22%; } /* NIK */
+      #adm-pengguna .dtable th:nth-child(3),
+      #adm-pengguna .dtable td:nth-child(3) { width: 26%; } /* Nama */
+      #adm-pengguna .dtable th:nth-child(4),
+      #adm-pengguna .dtable td:nth-child(4) { width: 18%; } /* Dept */
+      #adm-pengguna .dtable th:nth-child(5),
+      #adm-pengguna .dtable td:nth-child(5) { width: 14%; } /* Role */
+      #adm-pengguna .dtable th:nth-child(6),
+      #adm-pengguna .dtable td:nth-child(6) { display: none; } /* Sembunyikan Status */
+      #adm-pengguna .dtable th:nth-child(7),
+      #adm-pengguna .dtable td:nth-child(7) { width: 20%; } /* Aksi */
+
+      /* Padding cell lebih rapat di mobile */
+      #adm-barang   .dtable th,
+      #adm-barang   .dtable td,
+      #adm-pengguna .dtable th,
+      #adm-pengguna .dtable td {
+        padding: 9px 8px;
+        font-size: 0.76rem;
+      }
+
+      /* Teks yang panjang: potong dengan ellipsis */
+      #adm-barang   .dtable td,
+      #adm-pengguna .dtable td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 0; /* trick untuk text-overflow di table-layout:fixed */
+      }
+
+      /* Kolom Aksi: jangan di-clip, tombol harus kelihatan */
+      #adm-barang   .dtable td:nth-child(6),
+      #adm-pengguna .dtable td:nth-child(7) {
+        white-space: normal;
+        overflow: visible;
+      }
+
+      /* Tombol Edit & Hapus — lebih compact di mobile */
+      #adm-barang   .dtable .btn-s,
+      #adm-pengguna .dtable .btn-s {
+        padding: 4px 8px;
+        font-size: 0.7rem;
+        gap: 3px;
+      }
     }
 
-    /* ── FIX: Nilai KPI — cegah "Rp" terpisah dari angka ──────
-       Gunakan nowrap + font lebih kecil agar muat di 2-col grid */
+    /* ── 3. KPI nilai — cegah "Rp" terpisah dari angka ─────── */
     .kpi-val {
-      font-size: 1.05rem !important;
+      font-size: 1rem !important;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      line-height: 1.3;
     }
 
-    /* KPI grid di dalam ppobOverviewCont & laporanCont juga ikut */
-    #ppobOverviewCont .kpi-val,
-    #laporanCont      .kpi-val {
-      font-size: 1.05rem !important;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    /* ── 4. Container JS-rendered — beri padding ───────────── */
+    #ppobOverviewCont,
+    #depositCont,
+    #approvalCont,
+    #laporanCont {
+      padding-left:  0;
+      padding-right: 0;
+    }
+
+    /* ── 5. Kolom Aksi tabel — stack vertikal di mobile ──── */
+    .td-aksi {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      align-items: center;
+    }
+    @media (max-width: 640px) {
+      .td-aksi {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 3px;
+      }
     }
   </style>
 </head>
